@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card mb-3 border-0">
+    <div class="row g-0">
+        <div class="col-md-6">
+            <img src="{{ product.image_url }}" class="img-fluid rounded-start" alt="{{ product.name }}">
+        </div>
+        <div class="col-md-6">
+            <div class="card-body p-5">
+                <h6 class="text-uppercase text-muted">{{ product.category }}</h6>
+                <h1 class="card-title display-5 fw-bold">{{ product.name }}</h1>
+                <h3 class="text-gold my-3">{{ product.price }} MAD</h3>
+                <p class="card-text lead">{{ product.description }}</p>
+                <div class="d-grid gap-2 col-6 mx-auto mt-5">
+                    <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-gold btn-lg">Add to Cart</a>
+                    <a href="{{ url_for('main.shop') }}" class="btn btn-outline-secondary">Back to Shop</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

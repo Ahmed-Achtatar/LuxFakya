@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="p-5 mb-4 bg-light rounded-3 text-center" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1596040033229-a9821ebd058d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); background-size: cover; background-position: center; color: white;">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold text-gold">Welcome to LuxFakia</h1>
+        <p class="col-md-8 fs-4 mx-auto">Discover the finest selection of Premium Moroccan Dates, Nuts, and Spices.</p>
+        <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg" type="button">Shop Now</a>
+    </div>
+</div>
+
+<h2 class="text-center mb-4 text-gold">Featured Collections</h2>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for product in featured_products %}
+    <div class="col">
+        <div class="card h-100">
+            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
+            <div class="card-body text-center">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text text-muted">{{ product.price }} MAD</p>
+                <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-outline-dark btn-sm">View Details</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
