@@ -1,31 +1,49 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
+<div class="row g-5">
     <div class="col-md-3">
-        <h4 class="text-gold">Categories</h4>
-        <div class="list-group">
-            <a href="{{ url_for('main.shop') }}" class="list-group-item list-group-item-action {% if not current_category %}active{% endif %}">All Products</a>
-            {% for cat in categories %}
-            <a href="{{ url_for('main.shop', category=cat) }}" class="list-group-item list-group-item-action {% if current_category == cat %}active{% endif %}">{{ cat }}</a>
-            {% endfor %}
+        <div class="p-4 bg-white rounded shadow-sm">
+            <h4 class="font-serif fw-bold mb-4 pb-2 border-bottom">Categories</h4>
+            <div class="list-group list-group-flush">
+                <a href="{{ url_for('main.shop') }}" class="list-group-item list-group-item-action border-0 px-0 {% if not current_category %}text-gold fw-bold{% else %}text-muted{% endif %}">
+                    <i class="fas fa-circle me-2 small {% if not current_category %}text-gold{% else %}text-light{% endif %}"></i> All Products
+                </a>
+                {% for cat in categories %}
+                <a href="{{ url_for('main.shop', category=cat) }}" class="list-group-item list-group-item-action border-0 px-0 {% if current_category == cat %}text-gold fw-bold{% else %}text-muted{% endif %}">
+                    <i class="fas fa-circle me-2 small {% if current_category == cat %}text-gold{% else %}text-light{% endif %}"></i> {{ cat }}
+                </a>
+                {% endfor %}
+            </div>
         </div>
     </div>
+
     <div class="col-md-9">
-        <h2 class="mb-4">Shop</h2>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="font-serif fw-bold">Shop Our Collection</h2>
+            <span class="text-muted">{{ products|length }} Products found</span>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for product in products %}
             <div class="col">
-                <div class="card h-100">
-                    <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ product.name }}</h5>
-                        <p class="card-text text-truncate">{{ product.description }}</p>
-                        <h6 class="text-gold fw-bold">{{ product.price }} MAD</h6>
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="position-relative">
+                        <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 220px; object-fit: cover;">
+                        {% if product.price < 50 %}
+                        <span class="position-absolute top-0 end-0 m-2 badge bg-gold text-white">Best Value</span>
+                        {% endif %}
                     </div>
-                    <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between">
-                        <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-outline-dark btn-sm">Details</a>
-                        <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-gold btn-sm"><i class="fas fa-cart-plus"></i> Add</a>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title font-serif fw-bold">{{ product.name }}</h5>
+                        <p class="card-text text-muted text-truncate small">{{ product.description }}</p>
+                        <div class="mt-auto d-flex align-items-center justify-content-between pt-3">
+                            <span class="fs-5 text-gold fw-bold">{{ product.price }} MAD</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between p-3">
+                        <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Details</a>
+                        <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-gold btn-sm rounded-pill px-3 shadow-sm"><i class="fas fa-cart-plus me-1"></i> Add</a>
                     </div>
                 </div>
             </div>
