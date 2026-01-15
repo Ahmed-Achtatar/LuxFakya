@@ -26,7 +26,20 @@ def shop():
 @main_bp.route('/product/<int:product_id>')
 def product_detail(product_id):
     product = Product.query.get_or_404(product_id)
-    return render_template('product_detail.html', product=product)
+
+    # Related products strategy: Same category, exclude current
+    related_products = Product.query.filter(
+        Product.category == product.category,
+        Product.id != product.id
+    ).limit(3).all()
+
+    # Fallback to fill up to 3 items
+    if len(related_products) < 3:
+        exclude_ids = [p.id for p in related_products] + [product.id]
+        more_products = Product.query.filter(Product.id.notin_(exclude_ids)).limit(3 - len(related_products)).all()
+        related_products.extend(more_products)
+
+    return render_template('product_detail.html', product=product, related_products=related_products)
 
 @main_bp.route('/cart')
 def cart():
@@ -44,22 +57,25 @@ def cart():
 
     return render_template('cart.html', cart_items=cart_items, total=total_price)
 
-@main_bp.route('/cart/add/<int:product_id>')
+@main_bp.route('/cart/add/<int:product_id>', methods=['GET', 'POST'])
 def add_to_cart(product_id):
     if 'cart' not in session:
         session['cart'] = {}
 
     cart = session['cart']
-    # cart keys are strings in json session
     pid = str(product_id)
 
+    quantity = int(request.values.get('quantity', 1))
+    if quantity < 1:
+        quantity = 1
+
     if pid in cart:
-        cart[pid] += 1
+        cart[pid] += quantity
     else:
-        cart[pid] = 1
+        cart[pid] = quantity
 
     session.modified = True
-    flash('Item added to cart', 'success')
+    flash(f'Added {quantity} item(s) to cart', 'success')
     return redirect(request.referrer or url_for('main.shop'))
 
 @main_bp.route('/cart/remove/<int:product_id>')
