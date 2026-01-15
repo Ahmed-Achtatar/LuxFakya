@@ -144,7 +144,7 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
     background-size: cover;
     background-position: center;
     color: white;
-    /* Immersive full-width style with slight curve */
+    /* Styles for standalone hero, might be overridden by inline styles in swiper */
     border-radius: 0 0 50% 50% / 4%;
     overflow: hidden;
     margin-bottom: 5rem;
@@ -215,4 +215,31 @@ footer .social-icon {
 .alert {
     border-radius: 10px;
     border: none;
+}
+
+/* Swiper Customizations */
+.swiper-pagination-bullet-active {
+    background-color: var(--primary-gold) !important;
+}
+
+.swiper-button-next, .swiper-button-prev {
+    color: var(--primary-gold) !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Category Grid Hover Effects */
+.hover-scale {
+    transition: transform 0.5s ease;
+}
+
+.card:hover .hover-scale {
+    transform: scale(1.1);
+}
+
+.hover-darken {
+    transition: background-color 0.3s ease;
+}
+
+.card:hover .hover-darken {
+    background-color: rgba(0, 0, 0, 0.5) !important;
 }

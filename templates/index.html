@@ -1,15 +1,54 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="hero-section text-center" style="background-image: url('https://images.unsplash.com/photo-1596040033229-a9821ebd058d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
-    <div class="hero-overlay"></div>
-    <div class="hero-content container" data-aos="fade-up">
-        <h1 class="display-3 fw-bold text-gold mb-4">Welcome to LuxFakia</h1>
-        <p class="lead text-light mb-5 fs-4">Discover the finest selection of Premium Moroccan Dates, Nuts, and Spices.</p>
-        <div data-aos="fade-up" data-aos-delay="200">
-            <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg px-5 py-3 rounded-pill">Shop Collection</a>
+<!-- Hero Swiper -->
+<div class="swiper hero-swiper mb-5" style="border-radius: 0 0 50% 50% / 4%; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+    <div class="swiper-wrapper">
+        <!-- Slide 1 -->
+        <div class="swiper-slide">
+            <div class="hero-section text-center" style="background-image: url('https://images.unsplash.com/photo-1596040033229-a9821ebd058d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); margin-bottom: 0; border-radius: 0;">
+                <div class="hero-overlay"></div>
+                <div class="hero-content container" data-aos="fade-up">
+                    <h1 class="display-3 fw-bold text-gold mb-4">Welcome to LuxFakia</h1>
+                    <p class="lead text-light mb-5 fs-4">Discover the finest selection of Premium Moroccan Dates, Nuts, and Spices.</p>
+                    <div>
+                        <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg px-5 py-3 rounded-pill">Shop Collection</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="swiper-slide">
+            <div class="hero-section text-center" style="background-image: url('https://images.unsplash.com/photo-1516709315038-c53ce87e8705?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); margin-bottom: 0; border-radius: 0;">
+                <div class="hero-overlay"></div>
+                <div class="hero-content container">
+                    <h1 class="display-3 fw-bold text-gold mb-4">Ramadan Special</h1>
+                    <p class="lead text-light mb-5 fs-4">Share the blessings with our exclusive gift boxes.</p>
+                    <div>
+                        <a href="{{ url_for('main.shop') }}" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill">View Gifts</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="swiper-slide">
+            <div class="hero-section text-center" style="background-image: url('https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80'); margin-bottom: 0; border-radius: 0;">
+                <div class="hero-overlay"></div>
+                <div class="hero-content container">
+                    <h1 class="display-3 fw-bold text-gold mb-4">Taste of Luxury</h1>
+                    <p class="lead text-light mb-5 fs-4">Experience the authentic flavors of Morocco.</p>
+                    <div>
+                        <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg px-5 py-3 rounded-pill">Explore Now</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    <!-- Add Pagination -->
+    <div class="swiper-pagination"></div>
+    <!-- Add Navigation -->
+    <div class="swiper-button-next text-gold"></div>
+    <div class="swiper-button-prev text-gold"></div>
 </div>
 
 <div class="container my-5">
@@ -36,6 +75,35 @@
             </div>
         </div>
     </div>
+
+    <!-- Category Grid -->
+    <div class="row mb-5 g-4" data-aos="fade-up">
+        <div class="col-md-4">
+            <a href="{{ url_for('main.shop', category='Dates') }}" class="card text-white border-0 shadow-lg overflow-hidden h-100">
+                <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" class="card-img h-100 object-fit-cover opacity-75 hover-scale transition-all" alt="Dates">
+                <div class="card-img-overlay d-flex align-items-center justify-content-center bg-dark bg-opacity-25 hover-darken transition-all">
+                    <h3 class="font-serif fw-bold display-6">Dates</h3>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('main.shop', category='Nuts') }}" class="card text-white border-0 shadow-lg overflow-hidden h-100">
+                <img src="https://images.unsplash.com/photo-1516709315038-c53ce87e8705?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" class="card-img h-100 object-fit-cover opacity-75 hover-scale transition-all" alt="Nuts">
+                <div class="card-img-overlay d-flex align-items-center justify-content-center bg-dark bg-opacity-25 hover-darken transition-all">
+                    <h3 class="font-serif fw-bold display-6">Nuts</h3>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('main.shop', category='Spices') }}" class="card text-white border-0 shadow-lg overflow-hidden h-100">
+                <img src="https://images.unsplash.com/photo-1532339142463-fd0a8979791a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" class="card-img h-100 object-fit-cover opacity-75 hover-scale transition-all" alt="Spices">
+                <div class="card-img-overlay d-flex align-items-center justify-content-center bg-dark bg-opacity-25 hover-darken transition-all">
+                    <h3 class="font-serif fw-bold display-6">Spices</h3>
+                </div>
+            </a>
+        </div>
+    </div>
+
     <div class="row mb-5 text-center" data-aos="fade-up">
         <div class="col-lg-8 mx-auto">
             <h2 class="display-5 fw-bold mb-3 font-serif">Featured Collections</h2>
@@ -46,21 +114,166 @@
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for product in featured_products %}
         <div class="col" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
-            <div class="card h-100 border-0 shadow-sm h-100">
+            <div class="card h-100 border-0 shadow-sm h-100 product-card">
                 <div class="position-relative overflow-hidden">
                     <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 300px; object-fit: cover;">
-                    <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient-dark text-white opacity-0 transition-all">
-                        <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-light btn-sm w-100 stretched-link">Quick Add</a>
+
+                    <!-- Badges -->
+                    {% if loop.index == 1 %}
+                    <span class="position-absolute top-0 start-0 m-3 badge bg-gold text-white rounded-pill px-3 py-2">Best Seller</span>
+                    {% endif %}
+
+                    <!-- Wishlist Button -->
+                    <button class="btn btn-light rounded-circle shadow-sm position-absolute top-0 end-0 m-3 wishlist-btn" style="width: 40px; height: 40px; z-index: 2;">
+                        <i class="far fa-heart"></i>
+                    </button>
+
+                    <!-- Hover Actions -->
+                    <div class="card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-25 opacity-0 transition-all">
+                        <button class="btn btn-light rounded-circle shadow mx-2 p-3"
+                                data-bs-toggle="modal"
+                                data-bs-target="#quickViewModal"
+                                data-name="{{ product.name }}"
+                                data-price="{{ product.price }}"
+                                data-image="{{ product.image_url }}"
+                                data-description="{{ product.description }}"
+                                data-add-url="{{ url_for('main.add_to_cart', product_id=product.id) }}"
+                                data-detail-url="{{ url_for('main.product_detail', product_id=product.id) }}"
+                                title="Quick View">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-gold rounded-circle shadow mx-2 p-3" title="Add to Cart">
+                            <i class="fas fa-shopping-bag"></i>
+                        </a>
                     </div>
                 </div>
                 <div class="card-body text-center p-4">
-                    <h5 class="card-title font-serif fw-bold mb-2">{{ product.name }}</h5>
+                    <h5 class="card-title font-serif fw-bold mb-2">
+                        <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">{{ product.name }}</a>
+                    </h5>
                     <p class="card-text text-gold fw-bold fs-5">{{ product.price }} MAD</p>
-                    <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-outline-dark btn-sm mt-2 rounded-pill px-4">View Details</a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+
+    <!-- Testimonials Section -->
+    <div class="row my-5 py-5 bg-light rounded-3" data-aos="fade-up">
+        <div class="col-12 text-center mb-5">
+            <h2 class="font-serif fw-bold display-5">Trusted by Connoisseurs</h2>
+            <div class="text-gold"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        </div>
+        <div class="col-12">
+            <div class="swiper testimonial-swiper pb-5 px-4">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="card border-0 shadow-sm text-center p-4 h-100">
+                            <div class="card-body">
+                                <p class="lead fst-italic mb-4">"The quality of the Majhool dates is unmatched. Simply the best I've ever tasted!"</p>
+                                <h5 class="font-serif fw-bold">Sarah A.</h5>
+                                <small class="text-muted">Verified Buyer</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="card border-0 shadow-sm text-center p-4 h-100">
+                            <div class="card-body">
+                                <p class="lead fst-italic mb-4">"Beautiful packaging and fast delivery. Perfect for Ramadan gifts."</p>
+                                <h5 class="font-serif fw-bold">Mohammed K.</h5>
+                                <small class="text-muted">Verified Buyer</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="card border-0 shadow-sm text-center p-4 h-100">
+                            <div class="card-body">
+                                <p class="lead fst-italic mb-4">"LuxFakia brings the authentic taste of Morocco right to my door."</p>
+                                <h5 class="font-serif fw-bold">Emily R.</h5>
+                                <small class="text-muted">Verified Buyer</small>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="swiper-slide">
+                        <div class="card border-0 shadow-sm text-center p-4 h-100">
+                            <div class="card-body">
+                                <p class="lead fst-italic mb-4">"The saffron quality is incredible. Highly recommended!"</p>
+                                <h5 class="font-serif fw-bold">Youssef B.</h5>
+                                <small class="text-muted">Verified Buyer</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Newsletter Section -->
+    <div class="row my-5" data-aos="fade-up">
+        <div class="col-12">
+            <div class="bg-dark text-white rounded-3 p-5 text-center position-relative overflow-hidden">
+                <div class="position-absolute top-0 start-0 w-100 h-100 opacity-25" style="background-image: url('https://images.unsplash.com/photo-1596040033229-a9821ebd058d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); background-size: cover;"></div>
+                <div class="position-relative z-1">
+                    <h2 class="font-serif fw-bold mb-3">Join Our Exclusive Club</h2>
+                    <p class="lead mb-4">Subscribe for early access to new harvests and special offers.</p>
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <form class="d-flex gap-2">
+                                <input type="email" class="form-control rounded-pill px-4 py-3" placeholder="Enter your email address">
+                                <button type="button" class="btn btn-gold rounded-pill px-4 py-3 fw-bold">Subscribe</button>
+                            </form>
+                            <small class="d-block mt-3 text-white-50">We respect your privacy.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Initialize Swiper -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var heroSwiper = new Swiper('.hero-swiper', {
+            loop: true,
+            effect: 'fade',
+            speed: 1000,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+
+        var testimonialSwiper = new Swiper('.testimonial-swiper', {
+            loop: true,
+            slidesPerView: 1,
+            spaceBetween: 30,
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            breakpoints: {
+                768: {
+                    slidesPerView: 2,
+                },
+                992: {
+                    slidesPerView: 3,
+                },
+            }
+        });
+    });
+</script>
 {% endblock %}

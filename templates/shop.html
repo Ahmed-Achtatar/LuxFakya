@@ -27,23 +27,46 @@
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for product in products %}
             <div class="col" data-aos="fade-up" data-aos-delay="{{ (loop.index % 6) * 100 }}">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="position-relative">
+                <div class="card h-100 border-0 shadow-sm product-card">
+                    <div class="position-relative overflow-hidden">
                         <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 220px; object-fit: cover;">
+
+                        <!-- Badges -->
                         {% if product.price < 50 %}
-                        <span class="position-absolute top-0 end-0 m-2 badge bg-gold text-white">Best Value</span>
+                        <span class="position-absolute top-0 start-0 m-2 badge bg-gold text-white rounded-pill px-2 py-1">Best Value</span>
                         {% endif %}
-                    </div>
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title font-serif fw-bold">{{ product.name }}</h5>
-                        <p class="card-text text-muted text-truncate small">{{ product.description }}</p>
-                        <div class="mt-auto d-flex align-items-center justify-content-between pt-3">
-                            <span class="fs-5 text-gold fw-bold">{{ product.price }} MAD</span>
+
+                        <!-- Wishlist -->
+                        <button class="btn btn-light rounded-circle shadow-sm position-absolute top-0 end-0 m-2 wishlist-btn" style="width: 35px; height: 35px; z-index: 2;">
+                            <i class="far fa-heart small"></i>
+                        </button>
+
+                        <!-- Hover Actions -->
+                        <div class="card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-25 opacity-0 transition-all">
+                            <button class="btn btn-light rounded-circle shadow mx-2 p-3"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#quickViewModal"
+                                    data-name="{{ product.name }}"
+                                    data-price="{{ product.price }}"
+                                    data-image="{{ product.image_url }}"
+                                    data-description="{{ product.description }}"
+                                    data-add-url="{{ url_for('main.add_to_cart', product_id=product.id) }}"
+                                    data-detail-url="{{ url_for('main.product_detail', product_id=product.id) }}"
+                                    title="Quick View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-gold rounded-circle shadow mx-2 p-3" title="Add to Cart">
+                                <i class="fas fa-shopping-bag"></i>
+                            </a>
                         </div>
                     </div>
-                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between p-3">
-                        <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Details</a>
-                        <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-gold btn-sm rounded-pill px-3 shadow-sm"><i class="fas fa-cart-plus me-1"></i> Add</a>
+                    <div class="card-body d-flex flex-column text-center">
+                        <h5 class="card-title font-serif fw-bold">
+                            <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">{{ product.name }}</a>
+                        </h5>
+                        <div class="mt-auto pt-2">
+                            <span class="fs-5 text-gold fw-bold">{{ product.price }} MAD</span>
+                        </div>
                     </div>
                 </div>
             </div>
