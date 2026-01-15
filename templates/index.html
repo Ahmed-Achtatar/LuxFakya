@@ -3,30 +3,32 @@
 {% block content %}
 <div class="hero-section text-center" style="background-image: url('https://images.unsplash.com/photo-1596040033229-a9821ebd058d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
     <div class="hero-overlay"></div>
-    <div class="hero-content container">
+    <div class="hero-content container" data-aos="fade-up">
         <h1 class="display-3 fw-bold text-gold mb-4">Welcome to LuxFakia</h1>
         <p class="lead text-light mb-5 fs-4">Discover the finest selection of Premium Moroccan Dates, Nuts, and Spices.</p>
-        <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg px-5 py-3 rounded-pill">Shop Collection</a>
+        <div data-aos="fade-up" data-aos-delay="200">
+            <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg px-5 py-3 rounded-pill">Shop Collection</a>
+        </div>
     </div>
 </div>
 
 <div class="container my-5">
     <div class="row text-center mb-5">
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
             <div class="p-4 shadow-sm rounded-3 bg-white h-100 feature-box">
                 <div class="text-gold mb-3"><i class="fas fa-crown fa-3x"></i></div>
                 <h4 class="font-serif fw-bold">Premium Quality</h4>
                 <p class="text-muted">Sourced directly from the finest growers in Morocco.</p>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
             <div class="p-4 shadow-sm rounded-3 bg-white h-100 feature-box">
                 <div class="text-gold mb-3"><i class="fas fa-truck fa-3x"></i></div>
                 <h4 class="font-serif fw-bold">Fast Delivery</h4>
                 <p class="text-muted">Quick and secure shipping to your doorstep.</p>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
             <div class="p-4 shadow-sm rounded-3 bg-white h-100 feature-box">
                 <div class="text-gold mb-3"><i class="fas fa-shield-alt fa-3x"></i></div>
                 <h4 class="font-serif fw-bold">Secure Payment</h4>
@@ -34,7 +36,7 @@
             </div>
         </div>
     </div>
-    <div class="row mb-5 text-center">
+    <div class="row mb-5 text-center" data-aos="fade-up">
         <div class="col-lg-8 mx-auto">
             <h2 class="display-5 fw-bold mb-3 font-serif">Featured Collections</h2>
             <p class="text-muted">Handpicked for quality and taste, our featured selection represents the best of what we offer.</p>
@@ -43,7 +45,7 @@
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for product in featured_products %}
-        <div class="col">
+        <div class="col" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
             <div class="card h-100 border-0 shadow-sm h-100">
                 <div class="position-relative overflow-hidden">
                     <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 300px; object-fit: cover;">
