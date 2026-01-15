@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <h4 class="text-gold">Categories</h4>
+        <div class="list-group">
+            <a href="{{ url_for('main.shop') }}" class="list-group-item list-group-item-action {% if not current_category %}active{% endif %}">All Products</a>
+            {% for cat in categories %}
+            <a href="{{ url_for('main.shop', category=cat) }}" class="list-group-item list-group-item-action {% if current_category == cat %}active{% endif %}">{{ cat }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-9">
+        <h2 class="mb-4">Shop</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for product in products %}
+            <div class="col">
+                <div class="card h-100">
+                    <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-truncate">{{ product.description }}</p>
+                        <h6 class="text-gold fw-bold">{{ product.price }} MAD</h6>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between">
+                        <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-outline-dark btn-sm">Details</a>
+                        <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-gold btn-sm"><i class="fas fa-cart-plus"></i> Add</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
