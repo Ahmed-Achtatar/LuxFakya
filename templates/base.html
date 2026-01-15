@@ -4,71 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LuxFakia - Premium Dates & Nuts</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-gold: #D4AF37;
-            --dark-bg: #1a1a1a;
-            --light-text: #f8f9fa;
-        }
-        body {
-            font-family: 'Playfair Display', serif; /* Luxurious font */
-            background-color: #fcfcfc;
-            color: #333;
-        }
-        .navbar {
-            background-color: var(--dark-bg);
-        }
-        .navbar-brand, .nav-link {
-            color: var(--primary-gold) !important;
-        }
-        .btn-gold {
-            background-color: var(--primary-gold);
-            color: #fff;
-            border: none;
-        }
-        .btn-gold:hover {
-            background-color: #b3902d;
-            color: #fff;
-        }
-        .text-gold {
-            color: var(--primary-gold);
-        }
-        footer {
-            background-color: var(--dark-bg);
-            color: var(--light-text);
-            padding: 2rem 0;
-        }
-        .card {
-            border: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-    </style>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
     {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg sticky-top">
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ url_for('main.index') }}">
-                <i class="fas fa-crown"></i> LuxFakia
+                <i class="fas fa-crown me-2"></i>LuxFakia
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+                <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">Shop</a></li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.cart') }}">
+                        <a class="nav-link position-relative" href="{{ url_for('main.cart') }}">
                             <i class="fas fa-shopping-cart"></i> Cart
                             {% if session.get('cart') %}
-                            <span class="badge bg-danger rounded-pill">{{ session.get('cart')|length }}</span>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                                {{ session.get('cart')|length }}
+                            </span>
                             {% endif %}
                         </a>
                     </li>
@@ -83,11 +55,11 @@
         </div>
     </nav>
 
-    <div class="container mt-4 min-vh-100">
+    <main class="container mt-4 flex-grow-1">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
@@ -96,11 +68,48 @@
         {% endwith %}
 
         {% block content %}{% endblock %}
-    </div>
+    </main>
 
-    <footer class="text-center mt-5">
+    <footer>
         <div class="container">
-            <p>&copy; 2025 LuxFakia. Premium Quality.</p>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold"><i class="fas fa-crown me-2"></i>LuxFakia</h5>
+                    <p class="text-muted">Experience the luxury of premium Moroccan dates, nuts, and spices. Sourced with care, delivered with elegance.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('main.index') }}">Home</a></li>
+                        <li><a href="{{ url_for('main.shop') }}">Shop</a></li>
+                        <li><a href="{{ url_for('main.cart') }}">Cart</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled text-muted">
+                        <li><i class="fas fa-envelope me-2"></i> info@luxfakia.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +212 555 0000</li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Newsletter</h5>
+                    <form class="d-flex">
+                        <input class="form-control me-2" type="email" placeholder="Your email">
+                        <button class="btn btn-gold" type="button">Subscribe</button>
+                    </form>
+                    <div class="mt-3">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4 pt-3 border-top border-secondary">
+                <div class="col-12 text-center text-muted">
+                    <small>&copy; 2025 LuxFakia. All rights reserved.</small>
+                </div>
+            </div>
         </div>
     </footer>
 
