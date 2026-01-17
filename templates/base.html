@@ -26,16 +26,32 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top {% if request.endpoint == 'main.index' %}navbar-transparent{% else %}bg-dark-scrolled{% endif %} transition-all" id="mainNavbar">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ url_for('main.index') }}">
-                <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Logo-2x-min.png" alt="LuxFakia" height="40">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <div class="container-fluid px-lg-5">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}">Home</a></li>
+
+            <!-- Mobile Logo (Center) -->
+            <a class="navbar-brand d-lg-none mx-auto" href="{{ url_for('main.index') }}">
+                <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Logo-2x-min.png" alt="LuxFakia" height="30">
+            </a>
+
+            <!-- Right Icons Mobile (Cart only?) - Optional, but keeps layout balanced -->
+             <div class="d-flex d-lg-none align-items-center">
+                 <a class="nav-link position-relative text-white" href="{{ url_for('main.cart') }}">
+                    <i class="fas fa-shopping-bag"></i>
+                    {% if session.get('cart') %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gold" style="font-size: 0.5rem;">
+                        {{ session.get('cart')|length }}
+                    </span>
+                    {% endif %}
+                </a>
+             </div>
+
+            <div class="collapse navbar-collapse justify-content-between align-items-center" id="navbarContent">
+                <!-- Left Nav: Menu Links -->
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}"><i class="fas fa-home d-none d-lg-inline-block"></i><span class="d-lg-none">Home</span></a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Categories
@@ -56,11 +72,35 @@
                     <li class="nav-item"><a class="nav-link" href="#">About us</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Contacts</a></li>
+                </ul>
 
-                    <li class="nav-item ms-2">
+                <!-- Center Logo (Desktop) -->
+                <a class="navbar-brand d-none d-lg-block mx-auto" href="{{ url_for('main.index') }}">
+                    <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Logo-2x-min.png" alt="LuxFakia" height="40">
+                </a>
+
+                <!-- Right Nav: Icons -->
+                <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+                    <li class="nav-item">
                         <a class="nav-link" href="#"><i class="fas fa-search"></i></a>
                     </li>
                     <li class="nav-item">
+                        {% if current_user.is_authenticated %}
+                         <div class="dropdown">
+                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                 <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">Admin</a></li>
+                                 <li><hr class="dropdown-divider"></li>
+                                 <li><a class="dropdown-item" href="{{ url_for('admin.logout') }}">Logout</a></li>
+                            </ul>
+                        </div>
+                        {% else %}
+                        <a class="nav-link" href="{{ url_for('admin.login') }}"><i class="fas fa-user"></i></a>
+                        {% endif %}
+                    </li>
+                     <li class="nav-item">
                         <a class="nav-link" href="#"><i class="far fa-heart"></i></a>
                     </li>
                     <li class="nav-item">
@@ -73,21 +113,6 @@
                             {% endif %}
                         </a>
                     </li>
-
-                    {% if current_user.is_authenticated %}
-                    <li class="nav-item dropdown ms-2">
-                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                             <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">Admin</a></li>
-                             <li><hr class="dropdown-divider"></li>
-                             <li><a class="dropdown-item" href="{{ url_for('admin.logout') }}">Logout</a></li>
-                        </ul>
-                    </li>
-                    {% else %}
-                    <li class="nav-item ms-2"><a class="nav-link" href="{{ url_for('admin.login') }}">Login</a></li>
-                    {% endif %}
                 </ul>
             </div>
         </div>
