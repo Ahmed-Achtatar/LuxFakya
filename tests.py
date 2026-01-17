@@ -45,5 +45,33 @@ class LuxFakiaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Admin Dashboard', response.data)
 
+    def test_add_to_cart_quantity(self):
+        # Find the product id
+        with self.app.app_context():
+            p = Product.query.filter_by(name='Test').first()
+            pid = p.id
+
+        # Test adding with default quantity (GET)
+        response = self.client.get(f'/cart/add/{pid}', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+        with self.client.session_transaction() as sess:
+            cart = sess['cart']
+            self.assertIn(str(pid), cart)
+            self.assertEqual(cart[str(pid)], 1)
+
+        # Clear cart
+        with self.client.session_transaction() as sess:
+            sess['cart'] = {}
+
+        # Test adding with custom quantity via POST
+        response = self.client.post(f'/cart/add/{pid}', data={'quantity': 3}, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+        with self.client.session_transaction() as sess:
+            cart = sess['cart']
+            self.assertIn(str(pid), cart)
+            self.assertEqual(cart[str(pid)], 3)
+
 if __name__ == '__main__':
     unittest.main()

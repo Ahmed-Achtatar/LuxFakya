@@ -473,3 +473,13 @@ footer .social-icon {
     padding-bottom: 0;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
+
+/* Quantity Selector */
+.quantity-selector {
+    width: 70px;
+    border: none;
+    font-size: 0.8rem;
+    height: 31px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}

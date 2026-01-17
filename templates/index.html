@@ -106,9 +106,17 @@
                 <div class="product-image-container">
                     <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 300px; object-fit: cover;">
                     <div class="product-actions">
-                        <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-quick-add">
-                            <i class="fas fa-shopping-bag me-1"></i> Add to cart
-                        </a>
+                        <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST" class="d-flex justify-content-center align-items-center gap-2">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <select name="quantity" class="form-select form-select-sm rounded-pill shadow-sm quantity-selector" aria-label="Select quantity">
+                                <option value="1" selected>1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                            <button type="submit" class="btn btn-quick-add">
+                                <i class="fas fa-shopping-bag me-1"></i> Add
+                            </button>
+                        </form>
                     </div>
                 </div>
                 <div class="card-body text-center pt-4">
