@@ -510,3 +510,70 @@ footer .social-icon {
     padding-top: 2px;
     padding-bottom: 2px;
 }
+
+/* Mobile Offcanvas Menu Styling */
+.offcanvas {
+    background-color: var(--dark-bg) !important;
+}
+
+.offcanvas-header .btn-close-white {
+    opacity: 0.8;
+}
+
+.offcanvas-body .nav-link {
+    color: var(--light-text) !important;
+    font-size: 1.1rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-left: 0;
+}
+
+.offcanvas-body .nav-link:hover, .offcanvas-body .nav-link:focus {
+    color: var(--primary-gold) !important;
+    padding-left: 10px;
+}
+
+.offcanvas-body .dropdown-menu {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding-left: 1rem;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.offcanvas-body .dropdown-item {
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.6rem 0;
+    font-size: 1rem;
+}
+
+.offcanvas-body .dropdown-item:hover {
+    color: var(--primary-gold);
+    background-color: transparent;
+    padding-left: 5px;
+}
+
+/* Mobile Header Layout */
+@media (max-width: 991.98px) {
+    .navbar-brand {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0 !important;
+        z-index: 10;
+        text-align: center;
+        width: auto;
+    }
+
+    /* Ensure icons don't overlap logo on very small screens */
+    .navbar .container-fluid {
+        position: relative;
+        justify-content: space-between; /* Ensure left/right spacing */
+    }
+
+    .offcanvas {
+        width: 300px;
+        border-right: 1px solid rgba(255,255,255,0.1);
+    }
+}
