@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -48,3 +49,21 @@ class Product(db.Model):
             'image_url': self.image_url,
             'pricings': [p.to_dict() for p in self.pricings]
         }
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    customer_name = db.Column(db.String(150), nullable=False)
+    customer_phone = db.Column(db.String(50), nullable=True)
+    total_amount = db.Column(db.Float, nullable=False)
+    status = db.Column(db.String(50), default='Pending') # Pending, Completed, Cancelled
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    items = db.relationship('OrderItem', backref='order', lazy=True, cascade="all, delete-orphan")
+
+class OrderItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
+    product_id = db.Column(db.Integer, nullable=True)
+    product_name = db.Column(db.String(150), nullable=False)
+    quantity = db.Column(db.Float, nullable=False)
+    unit = db.Column(db.String(50), nullable=False)
+    price_at_purchase = db.Column(db.Float, nullable=False)

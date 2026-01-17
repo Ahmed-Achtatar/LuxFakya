@@ -67,7 +67,7 @@
                 <span class="fs-5 fw-bold">Total</span>
                 <span class="fs-5 fw-bold text-gold">{{ total }} MAD</span>
             </div>
-            <button class="btn btn-gold w-100 py-3 mb-3 shadow-sm">Proceed to Checkout</button>
+            <a href="{{ url_for('main.checkout') }}" class="btn btn-gold w-100 py-3 mb-3 shadow-sm">Proceed to Checkout</a>
             <a href="{{ url_for('main.shop') }}" class="btn btn-outline-secondary w-100 py-2 border-0">Continue Shopping</a>
         </div>
     </div>
