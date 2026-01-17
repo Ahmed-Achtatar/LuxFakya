@@ -69,8 +69,8 @@ def cart():
             item_total = product.price * quantity
 
             # Check for quantity-based pricing
-            # Assuming product.pricings is sorted or we iterate to find match
-            # Since it's a list, we can iterate.
+            # Use float comparison tolerance if needed, but for now strict float equality for exact matches
+            # from seed data (e.g. 1.0, 2.0)
             found_pricing = False
             for pricing in product.pricings:
                 if pricing.quantity == quantity:
@@ -78,9 +78,13 @@ def cart():
                     found_pricing = True
                     break
 
+            # Format to 2 decimal places for display consistency
+            item_total = round(item_total, 2)
+
             total_price += item_total
             cart_items.append({'product': product, 'quantity': quantity, 'total': item_total})
 
+    total_price = round(total_price, 2)
     return render_template('cart.html', cart_items=cart_items, total=total_price)
 
 @main_bp.route('/cart/add/<int:product_id>', methods=['GET', 'POST'])
@@ -91,9 +95,14 @@ def add_to_cart(product_id):
     cart = session['cart']
     pid = str(product_id)
 
-    quantity = int(request.values.get('quantity', 1))
-    if quantity < 1:
-        quantity = 1
+    # Allow float quantity
+    try:
+        quantity = float(request.values.get('quantity', 1.0))
+    except ValueError:
+        quantity = 1.0
+
+    if quantity <= 0:
+        quantity = 1.0
 
     if pid in cart:
         cart[pid] += quantity
@@ -124,7 +133,11 @@ def update_cart(product_id):
     if 'cart' not in session:
         return redirect(url_for('main.cart'))
 
-    quantity = int(request.form.get('quantity', 1))
+    try:
+        quantity = float(request.form.get('quantity', 1.0))
+    except ValueError:
+        quantity = 1.0
+
     if quantity <= 0:
         return remove_from_cart(product_id)
 

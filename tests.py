@@ -16,7 +16,7 @@ class LuxFakiaTestCase(unittest.TestCase):
             u = User(username='admin')
             u.set_password('password')
             db.session.add(u)
-            p = Product(name='Test', price=10.0, category='Dates', image_url='')
+            p = Product(name='Test', price=10.0, category='Dates', image_url='', unit='kg')
             db.session.add(p)
             db.session.commit()
 
@@ -33,6 +33,8 @@ class LuxFakiaTestCase(unittest.TestCase):
     def test_shop(self):
         response = self.client.get('/shop')
         self.assertEqual(response.status_code, 200)
+        # Check if unit is displayed
+        self.assertIn(b'/ kg', response.data)
 
     def test_admin_access_denied(self):
         response = self.client.get('/admin/')
@@ -58,7 +60,7 @@ class LuxFakiaTestCase(unittest.TestCase):
         with self.client.session_transaction() as sess:
             cart = sess['cart']
             self.assertIn(str(pid), cart)
-            self.assertEqual(cart[str(pid)], 1)
+            self.assertEqual(cart[str(pid)], 1.0)
 
         # Clear cart
         with self.client.session_transaction() as sess:
@@ -71,7 +73,22 @@ class LuxFakiaTestCase(unittest.TestCase):
         with self.client.session_transaction() as sess:
             cart = sess['cart']
             self.assertIn(str(pid), cart)
-            self.assertEqual(cart[str(pid)], 3)
+            self.assertEqual(cart[str(pid)], 3.0)
+
+    def test_add_to_cart_float_quantity(self):
+        # Find the product id
+        with self.app.app_context():
+            p = Product.query.filter_by(name='Test').first()
+            pid = p.id
+
+        # Test adding with float quantity via POST
+        response = self.client.post(f'/cart/add/{pid}', data={'quantity': 1.5}, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+        with self.client.session_transaction() as sess:
+            cart = sess['cart']
+            self.assertIn(str(pid), cart)
+            self.assertEqual(cart[str(pid)], 1.5)
 
 if __name__ == '__main__':
     unittest.main()
