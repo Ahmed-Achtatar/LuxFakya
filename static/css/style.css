@@ -453,15 +453,6 @@ footer .social-icon {
     }
 }
 
-/* Desktop Absolute Centering */
-@media (min-width: 992px) {
-    .navbar-brand-center {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
-    }
-}
 
 /* Hero Carousel */
 .hero-carousel-item {
