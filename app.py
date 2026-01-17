@@ -8,7 +8,13 @@ from translations import translations
 def create_app(test_config=None):
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-luxfakia')
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///luxfakia.db'
+
+    # Database configuration
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url and database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///luxfakia.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     if test_config:
