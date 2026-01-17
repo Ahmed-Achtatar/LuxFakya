@@ -15,6 +15,18 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+class ProductPricing(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+
+    def to_dict(self):
+        return {
+            'quantity': self.quantity,
+            'price': self.price
+        }
+
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
@@ -22,6 +34,7 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     category = db.Column(db.String(100), nullable=False)
     image_url = db.Column(db.String(500), nullable=True)
+    pricings = db.relationship('ProductPricing', backref='product', cascade="all, delete-orphan", lazy=True, order_by='ProductPricing.quantity')
 
     def to_dict(self):
         return {
@@ -30,5 +43,6 @@ class Product(db.Model):
             'description': self.description,
             'price': self.price,
             'category': self.category,
-            'image_url': self.image_url
+            'image_url': self.image_url,
+            'pricings': [p.to_dict() for p in self.pricings]
         }

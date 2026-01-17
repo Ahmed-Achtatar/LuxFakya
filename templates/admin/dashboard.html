@@ -29,6 +29,7 @@
                         <td>{{ product.category }}</td>
                         <td>{{ product.price }} MAD</td>
                         <td>
+                            <a href="{{ url_for('admin.edit_product', product_id=product.id) }}" class="btn btn-sm btn-primary me-2"><i class="fas fa-edit"></i> Edit</a>
                             <form action="{{ url_for('admin.delete_product', product_id=product.id) }}" method="POST" onsubmit="return confirm('Are you sure?');" style="display:inline;">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>

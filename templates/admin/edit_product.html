@@ -5,34 +5,39 @@
     <div class="col-md-8">
         <div class="card shadow-sm">
             <div class="card-header bg-white">
-                <h4>Add New Product</h4>
+                <h4>Edit Product</h4>
             </div>
             <div class="card-body p-4">
                 <form method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="mb-3">
                         <label for="name" class="form-label">Product Name</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}" required>
                     </div>
                     <div class="mb-3">
                         <label for="category" class="form-label">Category</label>
                         <select class="form-select" id="category" name="category" required>
-                            <option value="Dates">Dates</option>
-                            <option value="Nuts">Nuts</option>
-                            <option value="Dried Fruits">Dried Fruits</option>
-                            <option value="Gift Boxes">Gift Boxes</option>
+                            <option value="Dates" {% if product.category == 'Dates' %}selected{% endif %}>Dates</option>
+                            <option value="Nuts" {% if product.category == 'Nuts' %}selected{% endif %}>Nuts</option>
+                            <option value="Dried Fruits" {% if product.category == 'Dried Fruits' %}selected{% endif %}>Dried Fruits</option>
+                            <option value="Gift Boxes" {% if product.category == 'Gift Boxes' %}selected{% endif %}>Gift Boxes</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="price" class="form-label">Base Price (MAD) (Unit Price)</label>
-                        <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+                        <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ product.price }}" required>
                     </div>
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        <textarea class="form-control" id="description" name="description" rows="3">{{ product.description }}</textarea>
                     </div>
                     <div class="mb-3">
                         <label for="image" class="form-label">Product Image</label>
+                         {% if product.image_url %}
+                            <div class="mb-2">
+                                <img src="{{ product.image_url }}" alt="Current Image" style="height: 100px; object-fit: cover; border-radius: 4px;">
+                            </div>
+                        {% endif %}
                         <input type="file" class="form-control" id="image" name="image">
                         <div class="form-text">Allowed formats: jpg, jpeg, png, webp</div>
                     </div>
@@ -41,8 +46,20 @@
                     <h5 class="mb-3">Quantity-Based Pricing</h5>
                     <p class="text-muted small">Define custom prices for specific quantities (e.g., Bundles).</p>
                     <div id="pricing-container">
-                        <!-- Pricing rows will go here -->
+                        {% for pricing in product.pricings %}
                         <div class="row g-2 mb-2 pricing-row">
+                            <div class="col-5">
+                                <input type="number" class="form-control" name="pricing_quantity[]" placeholder="Quantity (e.g. 2)" value="{{ pricing.quantity }}">
+                            </div>
+                            <div class="col-5">
+                                <input type="number" step="0.01" class="form-control" name="pricing_price[]" placeholder="Total Price (MAD)" value="{{ pricing.price }}">
+                            </div>
+                            <div class="col-2">
+                                <button type="button" class="btn btn-outline-danger w-100 remove-pricing"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                        {% else %}
+                         <div class="row g-2 mb-2 pricing-row">
                             <div class="col-5">
                                 <input type="number" class="form-control" name="pricing_quantity[]" placeholder="Quantity (e.g. 2)">
                             </div>
@@ -53,11 +70,12 @@
                                 <button type="button" class="btn btn-outline-danger w-100 remove-pricing"><i class="fas fa-times"></i></button>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
                     <button type="button" class="btn btn-outline-secondary btn-sm mb-4" id="add-pricing-btn"><i class="fas fa-plus"></i> Add Pricing Tier</button>
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-gold">Add Product</button>
+                        <button type="submit" class="btn btn-gold">Update Product</button>
                         <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
@@ -91,8 +109,6 @@ document.addEventListener('DOMContentLoaded', function() {
     container.addEventListener('click', function(e) {
         if (e.target.closest('.remove-pricing')) {
             const row = e.target.closest('.pricing-row');
-            // Don't remove if it's the only one (optional, but good UX to keep at least one empty)
-            // But here we can remove all if desired.
             if (container.querySelectorAll('.pricing-row').length > 1) {
                 row.remove();
             } else {
