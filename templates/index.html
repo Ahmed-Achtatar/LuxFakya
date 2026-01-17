@@ -99,36 +99,40 @@
         <h2 class="font-serif fw-bold">Discover Our Premium Selection</h2>
         <p class="text-muted">A handpicked assortment of our finest Moroccan delicacies.</p>
     </div>
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
         {% for product in featured_products %}
         <div class="col" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
-            <div class="card product-card h-100">
-                <div class="product-image-container">
-                    <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 300px; object-fit: cover;">
-                    <div class="product-actions">
-                        <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST" class="d-flex justify-content-center align-items-center gap-2">
+            <div class="card product-card h-100 shadow-sm">
+                <div class="product-image-container overflow-hidden">
+                    <a href="{{ url_for('main.product_detail', product_id=product.id) }}">
+                        <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                    </a>
+                </div>
+                <div class="card-body text-center p-3 d-flex flex-column">
+                    <h6 class="card-title font-serif fw-bold mb-1 text-truncate">
+                        <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">{{ product.name }}</a>
+                    </h6>
+                    <p class="product-price-range mb-2 text-gold fw-bold small">{{ product.price }} MAD / {{ product.unit }}</p>
+
+                    <div class="mt-auto">
+                        <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST" class="d-flex flex-column gap-2">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                            <select name="quantity" class="form-select form-select-sm rounded-pill shadow-sm quantity-selector" aria-label="Select quantity" onchange="updateProductPrice(this)" data-unit="{{ product.unit }}">
+                            <select name="quantity" class="form-select form-select-sm rounded-pill shadow-sm quantity-selector text-center" style="font-size: 0.8rem;" aria-label="Select quantity" onchange="updateProductPrice(this)" data-unit="{{ product.unit }}">
                                 {% if product.pricings %}
                                     {% for pricing in product.pricings %}
-                                    <option value="{{ pricing.quantity }}" data-price="{{ pricing.price }}" {% if loop.first %}selected{% endif %}>{{ pricing.quantity }} {{ product.unit }} - {{ pricing.price }} MAD</option>
+                                    <option value="{{ pricing.quantity }}" data-price="{{ pricing.price }}" {% if loop.first %}selected{% endif %}>{{ pricing.quantity }} {{ product.unit }}</option>
                                     {% endfor %}
                                 {% else %}
-                                    <option value="1" data-price="{{ product.price }}" selected>1 {{ product.unit }} - {{ product.price }} MAD</option>
-                                    <option value="2" data-price="{{ product.price * 2 }}">2 {{ product.unit }} - {{ product.price * 2 }} MAD</option>
-                                    <option value="3" data-price="{{ product.price * 3 }}">3 {{ product.unit }} - {{ product.price * 3 }} MAD</option>
+                                    <option value="1" data-price="{{ product.price }}" selected>1 {{ product.unit }}</option>
+                                    <option value="2" data-price="{{ product.price * 2 }}">2 {{ product.unit }}</option>
+                                    <option value="3" data-price="{{ product.price * 3 }}">3 {{ product.unit }}</option>
                                 {% endif %}
                             </select>
-                            <button type="submit" class="btn btn-quick-add">
-                                <i class="fas fa-shopping-bag me-1"></i> Add
+                            <button type="submit" class="btn btn-gold btn-sm rounded-pill w-100 fw-bold">
+                                Add
                             </button>
                         </form>
                     </div>
-                </div>
-                <div class="card-body text-center pt-4">
-                    <h5 class="card-title font-serif fw-bold h6">{{ product.name }}</h5>
-                    <p class="product-price-range mb-2 text-gold fw-bold">{{ product.price }} MAD / {{ product.unit }}</p>
-                    <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-link text-muted text-decoration-none p-0" style="font-size: 0.8rem;">Select options</a>
                 </div>
             </div>
         </div>
