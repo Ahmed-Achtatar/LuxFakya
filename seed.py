@@ -17,84 +17,107 @@ def seed():
             db.session.add(user)
             print("Admin user created (admin/password123)")
 
+        # Verified Unsplash URLs
+        dates_url = "https://images.unsplash.com/photo-1679949499517-1ce03d17f20b?auto=format&fit=crop&w=800&q=80"
+        almonds_url = "https://images.unsplash.com/photo-1756361947189-29e0baae7bcd?auto=format&fit=crop&w=800&q=80"
+        walnuts_url = "https://images.unsplash.com/photo-1644245903028-9b184b04e59e?auto=format&fit=crop&w=800&q=80"
+        mix_url = "https://images.unsplash.com/photo-1722109998479-461ba34cd75a?auto=format&fit=crop&w=800&q=80"
+
+        # Fallback/Generic URLs (using the ones we found as base)
+        # Using the mix for gift boxes, walnuts for other nuts, dates for dried fruits
+
         products = [
+            # Dates
             Product(
-                name="Organic Cayenne Powder",
-                description="High quality organic cayenne powder.",
-                price=9.99,
-                category="Spices",
-                image_url="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Product-image-1-min-300x300.jpg"
+                name="Premium Mejhoul Dates",
+                description="The king of dates, sweet and succulent.",
+                price=25.00,
+                category="Dates",
+                image_url=dates_url
             ),
             Product(
-                name="Madras Curry Powder",
-                description="Authentic Madras Curry Powder.",
-                price=30.99,
-                category="Spices",
-                image_url="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Product-image-2-min-300x300.jpg"
-            ),
-            Product(
-                name="Cinnamon Powder",
-                description="Fresh Cinnamon Powder.",
-                price=9.89,
-                category="Spices",
-                image_url="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Product-image-3-min-300x300.jpg"
-            ),
-            Product(
-                name="Granulated Garlic",
-                description="Premium Granulated Garlic.",
-                price=9.99,
-                category="Spices",
-                image_url="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Product-image-5-min-300x300.jpg"
-            ),
-            Product(
-                name="Cayenne Red Pepper",
-                description="Spicy Cayenne Red Pepper.",
-                price=9.99,
-                category="Chiles",
-                image_url="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Product-image-6-min-300x300.jpg"
-            ),
-            Product(
-                name="Ground Mexican Salt",
-                description="Flavorful Ground Mexican Salt.",
-                price=9.99,
-                category="Sea Salts",
-                image_url="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Product-image-8-min-300x300.jpg"
-            ),
-            Product(
-                name="Ground Turmeric",
-                description="Vibrant Ground Turmeric.",
+                name="Deglet Nour Dates",
+                description="Translucent color and a soft honey-like taste.",
                 price=15.00,
-                category="Turmeric",
-                image_url="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Product-image-7-min-300x300.jpg"
+                category="Dates",
+                image_url=dates_url
+            ),
+
+            # Nuts
+            Product(
+                name="Roasted Almonds",
+                description="Crunchy and salted roasted almonds.",
+                price=18.00,
+                category="Nuts",
+                image_url=almonds_url
             ),
             Product(
-                name="Italian Herb Blend",
-                description="Classic Italian Herb Blend.",
-                price=40.00,
-                category="Herbs",
-                image_url="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Product-image-19-min-300x300.jpg"
-            ),
-            Product(
-                name="Apple Pie Spice",
-                description="Perfect spice for apple pies.",
-                price=16.00,
-                category="Spices",
-                image_url="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Product-image-18-min-300x300.jpg"
-            ),
-            Product(
-                name="Bloody Mary Mate",
-                description="Spice up your Bloody Mary.",
-                price=35.00,
-                category="Spices",
-                image_url="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Product-image-17-min-300x300.jpg"
-            ),
-            Product(
-                name="Chile Rub",
-                description="Rub for meats and grilling.",
+                name="Premium Walnuts",
+                description="High quality walnuts, rich in Omega-3.",
                 price=22.00,
-                category="Chiles",
-                image_url="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Product-image-16-min-300x300.jpg"
+                category="Nuts",
+                image_url=walnuts_url
             ),
+            Product(
+                name="Salted Pistachios",
+                description="Deliciously salted pistachios in shell.",
+                price=24.00,
+                category="Nuts",
+                image_url=mix_url # Using mix as fallback for pistachios
+            ),
+            Product(
+                name="Roasted Cashews",
+                description="Creamy and crunchy roasted cashews.",
+                price=26.00,
+                category="Nuts",
+                image_url=mix_url # Using mix as fallback
+            ),
+
+            # Dried Fruits
+            Product(
+                name="Dried Apricots",
+                description="Sweet and tangy dried apricots.",
+                price=12.00,
+                category="Dried Fruits",
+                image_url=mix_url # Using mix
+            ),
+            Product(
+                name="Dried Figs",
+                description="Natural sweetness and chewy texture.",
+                price=14.00,
+                category="Dried Fruits",
+                image_url=dates_url # Using dates as fallback for figs
+            ),
+            Product(
+                name="Golden Raisins",
+                description="Sweet golden raisins, perfect for snacking.",
+                price=10.00,
+                category="Dried Fruits",
+                image_url=mix_url
+            ),
+
+            # Gift Boxes
+            Product(
+                name="Luxury Fakia Box",
+                description="An assortment of our finest nuts and dried fruits.",
+                price=55.00,
+                category="Gift Boxes",
+                image_url=mix_url
+            ),
+            Product(
+                name="Dates Assortment Plateau",
+                description="A beautiful arrangement of stuffed dates.",
+                price=45.00,
+                category="Gift Boxes",
+                image_url=dates_url
+            ),
+            Product(
+                name="Moroccan Tea Time Set",
+                description="Perfect companion for Moroccan mint tea.",
+                price=35.00,
+                category="Gift Boxes",
+                image_url=mix_url
+            )
         ]
 
         db.session.bulk_save_objects(products)

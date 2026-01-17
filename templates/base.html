@@ -32,8 +32,8 @@
             </button>
 
             <!-- Mobile Logo (Center) -->
-            <a class="navbar-brand d-lg-none mx-auto" href="{{ url_for('main.index') }}">
-                <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Logo-2x-min.png" alt="LuxFakia" height="30">
+            <a class="navbar-brand d-lg-none mx-auto font-serif fw-bold text-gold" href="{{ url_for('main.index') }}">
+                Fakia Maroc
             </a>
 
             <!-- Right Icons Mobile (Cart only?) - Optional, but keeps layout balanced -->
@@ -57,14 +57,10 @@
                             Categories
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Chiles') }}">Chiles</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Garlic') }}">Garlic</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Herbs') }}">Herbs</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Onion') }}">Onion</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Pepper') }}">Pepper</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Sea Salts') }}">Sea Salts</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Tropical') }}">Tropical</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Turmeric') }}">Turmeric</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Dates') }}">Dates</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Nuts') }}">Nuts</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Dried Fruits') }}">Dried Fruits</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Gift Boxes') }}">Gift Boxes</a></li>
                         </ul>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">Shop</a></li>
@@ -75,8 +71,8 @@
                 </ul>
 
                 <!-- Center Logo (Desktop) -->
-                <a class="navbar-brand d-none d-lg-block mx-auto" href="{{ url_for('main.index') }}">
-                    <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Logo-2x-min.png" alt="LuxFakia" height="40">
+                <a class="navbar-brand d-none d-lg-block mx-auto font-serif fw-bold text-gold fs-3" href="{{ url_for('main.index') }}">
+                    Fakia Maroc
                 </a>
 
                 <!-- Right Nav: Icons -->
@@ -168,11 +164,10 @@
                 <div class="col-md-3 mb-4">
                     <h5 class="fw-bold mb-3 font-serif">Categories</h5>
                     <ul class="list-unstyled footer-links">
-                        <li><a href="#">BBQ & Grilling</a></li>
-                        <li><a href="#">Chiles & Paprikas</a></li>
-                        <li><a href="#">Dips & Dressing</a></li>
-                        <li><a href="#">Garlic & Onion</a></li>
-                        <li><a href="#">Salt & Pepper</a></li>
+                        <li><a href="{{ url_for('main.shop', category='Dates') }}">Dates</a></li>
+                        <li><a href="{{ url_for('main.shop', category='Nuts') }}">Nuts</a></li>
+                        <li><a href="{{ url_for('main.shop', category='Dried Fruits') }}">Dried Fruits</a></li>
+                        <li><a href="{{ url_for('main.shop', category='Gift Boxes') }}">Gift Boxes</a></li>
                     </ul>
                 </div>
 
@@ -191,7 +186,7 @@
                 <div class="col-md-3 mb-4">
                     <h5 class="fw-bold mb-3 font-serif">Contact Us</h5>
                     <ul class="list-unstyled footer-links">
-                        <li><a href="#">Become a XStore</a></li>
+                        <li><a href="#">Become a Partner</a></li>
                         <li><a href="#">Contract Manufacturing</a></li>
                         <li><a href="#">Terms & Condition</a></li>
                         <li><a href="#">Career with us</a></li>
@@ -202,7 +197,7 @@
 
             <div class="row mt-5 pt-4 border-top border-secondary align-items-center">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    <p class="text-muted mb-0">Copyright &copy; 2024 XStore theme. Created by 8theme.</p>
+                    <p class="text-muted mb-0">Copyright &copy; 2024 Fakia Maroc. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <div class="d-inline-flex align-items-center gap-3">
