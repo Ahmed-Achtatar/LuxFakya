@@ -261,19 +261,24 @@ footer .social-icon {
 
 /* Product Grid Enhancements */
 .product-card {
-    border: none;
-    background: transparent;
-    box-shadow: none;
+    border: 1px solid rgba(0,0,0,0.04);
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border-radius: 15px;
+    overflow: hidden;
 }
 .product-card:hover {
-    box-shadow: none;
-    transform: none;
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+    border-color: rgba(212, 175, 55, 0.4);
+}
+.product-card:hover .card-img-top {
+    transform: scale(1.08);
 }
 .product-image-container {
     position: relative;
-    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 .product-actions {
     position: absolute;
@@ -503,12 +508,19 @@ footer .social-icon {
 
 /* Quantity Selector */
 .quantity-selector {
-    width: 70px;
-    border: none;
-    font-size: 0.8rem;
-    height: 31px;
-    padding-top: 2px;
-    padding-bottom: 2px;
+    width: 100%;
+    max-width: 140px;
+    margin: 0 auto;
+    border: 1px solid #eee;
+    font-size: 0.9rem;
+    height: auto;
+    padding: 0.4rem 0.5rem;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+.quantity-selector:focus {
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.15);
 }
 
 /* Mobile Offcanvas Menu Styling */
