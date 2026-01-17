@@ -30,14 +30,14 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
 .navbar-transparent {
     background-color: transparent !important;
     box-shadow: none !important;
-    padding: 2.0rem 0;
+    padding: 1.5rem 0;
 }
 
 .bg-dark-scrolled {
     background-color: rgba(26, 26, 26, 0.95) !important;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(0,0,0,0.2) !important;
-    padding: 1.0rem 0;
+    padding: 1.5rem 0;
 }
 
 .transition-all {
@@ -461,6 +461,10 @@ footer .social-icon {
 
 /* Desktop Absolute Centering */
 @media (min-width: 992px) {
+    .navbar {
+        min-height: 180px;
+    }
+
     .navbar-brand-center {
         position: absolute;
         left: 50%;
