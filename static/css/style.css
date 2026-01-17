@@ -453,11 +453,25 @@ footer .social-icon {
 
 /* Hero Carousel */
 .hero-carousel-item {
-    height: 85vh;
+    height: 100vh;
     min-height: 600px;
     background-size: cover;
     background-position: center;
     position: relative;
+}
+
+/* Floating Categories Overlay */
+.floating-categories {
+    position: relative;
+    z-index: 10;
+    margin-top: -100px;
+    padding-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+    .floating-categories {
+        margin-top: -50px;
+    }
 }
 .hero-carousel-overlay {
     background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6));
