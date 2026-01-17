@@ -108,10 +108,16 @@
                     <div class="product-actions">
                         <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST" class="d-flex justify-content-center align-items-center gap-2">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                            <select name="quantity" class="form-select form-select-sm rounded-pill shadow-sm quantity-selector" aria-label="Select quantity">
-                                <option value="1" selected>1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
+                            <select name="quantity" class="form-select form-select-sm rounded-pill shadow-sm quantity-selector" aria-label="Select quantity" onchange="updateProductPrice(this)">
+                                {% if product.pricings %}
+                                    {% for pricing in product.pricings %}
+                                    <option value="{{ pricing.quantity }}" data-price="{{ pricing.price }}" {% if loop.first %}selected{% endif %}>{{ pricing.quantity }} - {{ pricing.price }} MAD</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="1" data-price="{{ product.price }}" selected>1 - {{ product.price }} MAD</option>
+                                    <option value="2" data-price="{{ product.price * 2 }}">2 - {{ product.price * 2 }} MAD</option>
+                                    <option value="3" data-price="{{ product.price * 3 }}">3 - {{ product.price * 3 }} MAD</option>
+                                {% endif %}
                             </select>
                             <button type="submit" class="btn btn-quick-add">
                                 <i class="fas fa-shopping-bag me-1"></i> Add
@@ -121,7 +127,7 @@
                 </div>
                 <div class="card-body text-center pt-4">
                     <h5 class="card-title font-serif fw-bold h6">{{ product.name }}</h5>
-                    <p class="product-price-range mb-2 text-gold fw-bold">${{ product.price }}</p>
+                    <p class="product-price-range mb-2 text-gold fw-bold">{{ product.price }} MAD</p>
                     <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-link text-muted text-decoration-none p-0" style="font-size: 0.8rem;">Select options</a>
                 </div>
             </div>
@@ -240,7 +246,7 @@
                         </div>
                         <div class="card-body text-center pt-3">
                             <h6 class="card-title font-serif fw-bold">{{ product.name }}</h6>
-                            <p class="text-gold fw-bold">${{ product.price }}</p>
+                            <p class="text-gold fw-bold">{{ product.price }} MAD</p>
                         </div>
                     </div>
                 </div>
@@ -261,7 +267,7 @@
                         </div>
                         <div class="card-body text-center pt-3">
                             <h6 class="card-title font-serif fw-bold">{{ product.name }}</h6>
-                            <p class="text-gold fw-bold">${{ product.price }}</p>
+                            <p class="text-gold fw-bold">{{ product.price }} MAD</p>
                         </div>
                     </div>
                 </div>
@@ -282,7 +288,7 @@
                         </div>
                         <div class="card-body text-center pt-3">
                             <h6 class="card-title font-serif fw-bold">{{ product.name }}</h6>
-                            <p class="text-gold fw-bold">${{ product.price }}</p>
+                            <p class="text-gold fw-bold">{{ product.price }} MAD</p>
                         </div>
                     </div>
                 </div>
@@ -328,4 +334,26 @@
         </div>
     </div>
 </div>
+
+<script>
+    function updateProductPrice(selectElement) {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const price = parseFloat(selectedOption.getAttribute('data-price')).toFixed(2);
+
+        // Find the card body and the price element
+        const card = selectElement.closest('.product-card');
+        const priceElement = card.querySelector('.product-price-range');
+
+        if (priceElement) {
+            priceElement.textContent = price + ' MAD';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectors = document.querySelectorAll('.quantity-selector');
+        selectors.forEach(selector => {
+            updateProductPrice(selector);
+        });
+    });
+</script>
 {% endblock %}

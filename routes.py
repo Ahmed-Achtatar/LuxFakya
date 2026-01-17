@@ -65,8 +65,21 @@ def cart():
     for product_id, quantity in session['cart'].items():
         product = Product.query.get(int(product_id))
         if product:
-            total_price += product.price * quantity
-            cart_items.append({'product': product, 'quantity': quantity})
+            # Calculate price logic
+            item_total = product.price * quantity
+
+            # Check for quantity-based pricing
+            # Assuming product.pricings is sorted or we iterate to find match
+            # Since it's a list, we can iterate.
+            found_pricing = False
+            for pricing in product.pricings:
+                if pricing.quantity == quantity:
+                    item_total = pricing.price
+                    found_pricing = True
+                    break
+
+            total_price += item_total
+            cart_items.append({'product': product, 'quantity': quantity, 'total': item_total})
 
     return render_template('cart.html', cart_items=cart_items, total=total_price)
 
