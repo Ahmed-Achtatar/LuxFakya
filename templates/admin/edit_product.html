@@ -17,10 +17,9 @@
                     <div class="mb-3">
                         <label for="category" class="form-label">Category</label>
                         <select class="form-select" id="category" name="category" required>
-                            <option value="Dates" {% if product.category == 'Dates' %}selected{% endif %}>Dates</option>
-                            <option value="Nuts" {% if product.category == 'Nuts' %}selected{% endif %}>Nuts</option>
-                            <option value="Dried Fruits" {% if product.category == 'Dried Fruits' %}selected{% endif %}>Dried Fruits</option>
-                            <option value="Gift Boxes" {% if product.category == 'Gift Boxes' %}selected{% endif %}>Gift Boxes</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.name }}" {% if product.category == cat.name %}selected{% endif %}>{{ cat.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="row">
