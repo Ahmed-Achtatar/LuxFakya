@@ -62,10 +62,9 @@
                             {{ get_text('categories') }}
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Dates') }}">{{ get_text('cat_dates') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Nuts') }}">{{ get_text('cat_nuts') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Dried Fruits') }}">{{ get_text('cat_dried') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Gift Boxes') }}">{{ get_text('cat_gifts') }}</a></li>
+                            {% for cat in all_categories %}
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category=cat.name) }}">{{ cat.name }}</a></li>
+                            {% endfor %}
                         </ul>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">{{ get_text('shop') }}</a></li>
@@ -154,10 +153,9 @@
                     </a>
                     <div class="collapse ps-3" id="mobileCategories">
                         <ul class="navbar-nav">
-                            <li><a class="nav-link py-1" href="{{ url_for('main.shop', category='Dates') }}">{{ get_text('cat_dates') }}</a></li>
-                            <li><a class="nav-link py-1" href="{{ url_for('main.shop', category='Nuts') }}">{{ get_text('cat_nuts') }}</a></li>
-                            <li><a class="nav-link py-1" href="{{ url_for('main.shop', category='Dried Fruits') }}">{{ get_text('cat_dried') }}</a></li>
-                            <li><a class="nav-link py-1" href="{{ url_for('main.shop', category='Gift Boxes') }}">{{ get_text('cat_gifts') }}</a></li>
+                            {% for cat in all_categories %}
+                            <li><a class="nav-link py-1" href="{{ url_for('main.shop', category=cat.name) }}">{{ cat.name }}</a></li>
+                            {% endfor %}
                         </ul>
                     </div>
                 </li>
@@ -231,10 +229,9 @@
                 <div class="col-md-3 mb-4">
                     <h5 class="fw-bold mb-3 font-serif">{{ get_text('footer_categories') }}</h5>
                     <ul class="list-unstyled footer-links">
-                        <li><a href="{{ url_for('main.shop', category='Dates') }}">{{ get_text('cat_dates') }}</a></li>
-                        <li><a href="{{ url_for('main.shop', category='Nuts') }}">{{ get_text('cat_nuts') }}</a></li>
-                        <li><a href="{{ url_for('main.shop', category='Dried Fruits') }}">{{ get_text('cat_dried') }}</a></li>
-                        <li><a href="{{ url_for('main.shop', category='Gift Boxes') }}">{{ get_text('cat_gifts') }}</a></li>
+                        {% for cat in all_categories %}
+                        <li><a href="{{ url_for('main.shop', category=cat.name) }}">{{ cat.name }}</a></li>
+                        {% endfor %}
                     </ul>
                 </div>
 

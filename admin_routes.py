@@ -57,7 +57,7 @@ def order_detail(order_id):
 @admin_bp.route('/categories')
 @login_required
 def categories():
-    categories = Category.query.all()
+    categories = db.session.execute(db.select(Category)).scalars().all()
     return render_template('admin/categories.html', categories=categories)
 
 @admin_bp.route('/categories/add', methods=['GET', 'POST'])
@@ -118,7 +118,7 @@ def delete_category(id):
 @admin_bp.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_product():
-    categories = Category.query.all()
+    categories = db.session.execute(db.select(Category)).scalars().all()
     if request.method == 'POST':
         name = request.form.get('name')
         description = request.form.get('description')
@@ -182,7 +182,7 @@ def add_product():
 @login_required
 def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
-    categories = Category.query.all()
+    categories = db.session.execute(db.select(Category)).scalars().all()
 
     if request.method == 'POST':
         product.name = request.form.get('name')
