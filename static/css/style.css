@@ -54,7 +54,8 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
     color: var(--light-text) !important;
     font-weight: 500;
     transition: color 0.3s;
-    margin-left: 1rem;
+    margin-left: 0.5rem;
+    font-size: 0.95rem;
 }
 
 .nav-link:hover {
