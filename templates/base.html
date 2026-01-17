@@ -37,8 +37,8 @@
             </button>
 
             <!-- Mobile Logo (Center) -->
-            <a class="navbar-brand d-lg-none mx-auto font-serif fw-bold text-gold" href="{{ url_for('main.index') }}">
-                Fakia Maroc
+            <a class="navbar-brand d-lg-none mx-auto" href="{{ url_for('main.index') }}">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="LuxFakia" style="height: 50px; width: auto;">
             </a>
 
             <!-- Mobile Icons (End) -->
@@ -76,8 +76,8 @@
                 </ul>
 
                 <!-- Center Logo (Desktop) -->
-                <a class="navbar-brand d-none d-lg-block navbar-brand-center font-serif fw-bold text-gold fs-3" href="{{ url_for('main.index') }}">
-                    Fakia Maroc
+                <a class="navbar-brand d-none d-lg-block navbar-brand-center" href="{{ url_for('main.index') }}">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="LuxFakia" style="height: 60px; width: auto;">
                 </a>
 
                 <!-- End Nav: Icons -->
