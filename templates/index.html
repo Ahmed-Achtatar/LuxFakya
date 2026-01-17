@@ -1,66 +1,307 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Hero Section -->
 <div class="hero-section text-center" style="background-image: url('https://images.unsplash.com/photo-1596040033229-a9821ebd058d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
     <div class="hero-overlay"></div>
     <div class="hero-content container" data-aos="fade-up">
-        <h1 class="display-3 fw-bold text-gold mb-4">Welcome to LuxFakia</h1>
-        <p class="lead text-light mb-5 fs-4">Discover the finest selection of Premium Moroccan Dates, Nuts, and Spices.</p>
-        <div data-aos="fade-up" data-aos-delay="200">
-            <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg px-5 py-3 rounded-pill">Shop Collection</a>
+        <h5 class="text-gold text-uppercase letter-spacing-2 mb-3">Your Perfect Secret Ingredient</h5>
+        <h1 class="display-2 fw-bold text-white mb-4 font-serif">A Selection of Spices</h1>
+        <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap" data-aos="fade-up" data-aos-delay="200">
+             <a href="{{ url_for('main.shop') }}" class="btn btn-outline-light rounded-pill px-4">See new arrival</a>
+             <a href="{{ url_for('main.shop') }}" class="btn btn-gold rounded-pill px-4">See best products</a>
+             <a href="{{ url_for('main.shop') }}" class="btn btn-outline-light rounded-pill px-4">See new products</a>
         </div>
     </div>
 </div>
 
-<div class="container my-5">
-    <div class="row text-center mb-5">
-        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
-            <div class="p-4 shadow-sm rounded-3 bg-white h-100 feature-box">
-                <div class="text-gold mb-3"><i class="fas fa-crown fa-3x"></i></div>
-                <h4 class="font-serif fw-bold">Premium Quality</h4>
-                <p class="text-muted">Sourced directly from the finest growers in Morocco.</p>
-            </div>
+<!-- Categories Section -->
+<div class="container my-5 pt-5">
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-8 g-4 justify-content-center">
+        <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <a href="{{ url_for('main.shop', category='Onion') }}" class="text-decoration-none">
+                <div class="category-item">
+                    <div class="category-img-wrapper">
+                        <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Image-4.jpeg" alt="Onion">
+                    </div>
+                    <h6 class="category-title">Onion</h6>
+                </div>
+            </a>
         </div>
-        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
-            <div class="p-4 shadow-sm rounded-3 bg-white h-100 feature-box">
-                <div class="text-gold mb-3"><i class="fas fa-truck fa-3x"></i></div>
-                <h4 class="font-serif fw-bold">Fast Delivery</h4>
-                <p class="text-muted">Quick and secure shipping to your doorstep.</p>
-            </div>
+        <div class="col" data-aos="fade-up" data-aos-delay="150">
+            <a href="{{ url_for('main.shop', category='Chiles') }}" class="text-decoration-none">
+                <div class="category-item">
+                    <div class="category-img-wrapper">
+                        <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Image6.jpeg" alt="Chiles">
+                    </div>
+                    <h6 class="category-title">Chiles</h6>
+                </div>
+            </a>
         </div>
-        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
-            <div class="p-4 shadow-sm rounded-3 bg-white h-100 feature-box">
-                <div class="text-gold mb-3"><i class="fas fa-shield-alt fa-3x"></i></div>
-                <h4 class="font-serif fw-bold">Secure Payment</h4>
-                <p class="text-muted">100% secure checkout for your peace of mind.</p>
-            </div>
+        <div class="col" data-aos="fade-up" data-aos-delay="200">
+            <a href="{{ url_for('main.shop', category='Garlic') }}" class="text-decoration-none">
+                <div class="category-item">
+                    <div class="category-img-wrapper">
+                        <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Image2.jpeg" alt="Garlic">
+                    </div>
+                    <h6 class="category-title">Garlic</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col" data-aos="fade-up" data-aos-delay="250">
+            <a href="{{ url_for('main.shop', category='Herbs') }}" class="text-decoration-none">
+                <div class="category-item">
+                    <div class="category-img-wrapper">
+                        <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Image5.jpeg" alt="Herbs">
+                    </div>
+                    <h6 class="category-title">Herbs</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col" data-aos="fade-up" data-aos-delay="300">
+            <a href="{{ url_for('main.shop', category='Pepper') }}" class="text-decoration-none">
+                <div class="category-item">
+                    <div class="category-img-wrapper">
+                        <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Image3.jpeg" alt="Pepper">
+                    </div>
+                    <h6 class="category-title">Pepper</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col" data-aos="fade-up" data-aos-delay="350">
+            <a href="{{ url_for('main.shop', category='Sea Salts') }}" class="text-decoration-none">
+                <div class="category-item">
+                    <div class="category-img-wrapper">
+                        <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Image4.jpeg" alt="Sea Salts">
+                    </div>
+                    <h6 class="category-title">Sea Salts</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col" data-aos="fade-up" data-aos-delay="400">
+            <a href="{{ url_for('main.shop', category='Tropical') }}" class="text-decoration-none">
+                <div class="category-item">
+                    <div class="category-img-wrapper">
+                        <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Image8.jpeg" alt="Tropical">
+                    </div>
+                    <h6 class="category-title">Tropical</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col" data-aos="fade-up" data-aos-delay="450">
+            <a href="{{ url_for('main.shop', category='Turmeric') }}" class="text-decoration-none">
+                <div class="category-item">
+                    <div class="category-img-wrapper">
+                        <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2024/04/Image7.jpeg" alt="Turmeric">
+                    </div>
+                    <h6 class="category-title">Turmeric</h6>
+                </div>
+            </a>
         </div>
     </div>
-    <div class="row mb-5 text-center" data-aos="fade-up">
-        <div class="col-lg-8 mx-auto">
-            <h2 class="display-5 fw-bold mb-3 font-serif">Featured Collections</h2>
-            <p class="text-muted">Handpicked for quality and taste, our featured selection represents the best of what we offer.</p>
-        </div>
-    </div>
+</div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+<!-- New Spices (Featured) -->
+<div class="container my-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="font-serif fw-bold">Discover Our New Spices</h2>
+        <p class="text-muted">Handpicked selection of our finest products.</p>
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
         {% for product in featured_products %}
-        <div class="col" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
-            <div class="card h-100 border-0 shadow-sm h-100">
-                <div class="position-relative overflow-hidden">
+        <div class="col" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+            <div class="card product-card h-100">
+                <div class="product-image-container">
                     <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 300px; object-fit: cover;">
-                    <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient-dark text-white opacity-0 transition-all">
-                        <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-light btn-sm w-100 stretched-link">Quick Add</a>
+                    <div class="product-actions">
+                        <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-quick-add">
+                            <i class="fas fa-shopping-bag me-1"></i> Add to cart
+                        </a>
                     </div>
                 </div>
-                <div class="card-body text-center p-4">
-                    <h5 class="card-title font-serif fw-bold mb-2">{{ product.name }}</h5>
-                    <p class="card-text text-gold fw-bold fs-5">{{ product.price }} MAD</p>
-                    <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-outline-dark btn-sm mt-2 rounded-pill px-4">View Details</a>
+                <div class="card-body text-center pt-4">
+                    <h5 class="card-title font-serif fw-bold h6">{{ product.name }}</h5>
+                    <p class="product-price-range mb-2">{{ product.price }} MAD</p>
+                    <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-link text-muted text-decoration-none p-0" style="font-size: 0.8rem;">Select options</a>
                 </div>
             </div>
         </div>
         {% endfor %}
+    </div>
+</div>
+
+<!-- Deals of the Month -->
+<div class="countdown-section text-center">
+    <div class="container" data-aos="fade-up">
+        <h2 class="font-serif fw-bold mb-4">Deals of the month</h2>
+        <p class="text-muted mb-5 mx-auto" style="max-width: 600px;">Yes! Send me exclusive offers, personalised, and unique gift ideas, tips for shopping on LuxFakia.</p>
+
+        <div class="d-flex justify-content-center mb-5 flex-wrap">
+            <div class="countdown-box">
+                <div class="countdown-number">12</div>
+                <div class="countdown-label">Days</div>
+            </div>
+            <div class="countdown-box">
+                <div class="countdown-number">04</div>
+                <div class="countdown-label">Hours</div>
+            </div>
+            <div class="countdown-box">
+                <div class="countdown-number">15</div>
+                <div class="countdown-label">Minutes</div>
+            </div>
+            <div class="countdown-box">
+                <div class="countdown-number">30</div>
+                <div class="countdown-label">Seconds</div>
+            </div>
+        </div>
+
+        <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg px-5">View All Deals</a>
+    </div>
+</div>
+
+<!-- Flavour Inspiration (Recipes) -->
+<div class="container my-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="font-serif fw-bold">Flavour Inspiration & Exploration</h2>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-6" data-aos="fade-right">
+            <div class="recipe-card h-100">
+                <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/elementor/thumbs/Post-image-4-q6orjq03xmwi3q342frqvkijdb7x0wm5ahj2n8abi4.jpg" class="w-100 h-100" style="object-fit: cover; min-height: 400px;" alt="Recipe 1">
+                <div class="recipe-overlay">
+                    <div class="recipe-meta">Spicy, Vegetarian</div>
+                    <h3 class="font-serif fw-bold mb-3">Black Pepper Spice Beef Recipe</h3>
+                    <a href="#" class="text-white text-decoration-none fw-bold">Read More <i class="fas fa-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" data-aos="fade-left">
+            <div class="recipe-card h-100">
+                <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/elementor/thumbs/Post-image-7-q6orjrvsbaz2qy0drgl00k1gk2yngatlyqu1ls7j5o.jpg" class="w-100 h-100" style="object-fit: cover; min-height: 400px;" alt="Recipe 2">
+                <div class="recipe-overlay">
+                    <div class="recipe-meta">Garlicky punch</div>
+                    <h3 class="font-serif fw-bold mb-3">Garlicky punch and finishes</h3>
+                    <a href="#" class="text-white text-decoration-none fw-bold">Read More <i class="fas fa-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabs (Best Sellers, etc) -->
+<div class="container my-5 py-5">
+    <ul class="nav nav-pills justify-content-center mb-5" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="pills-bestsellers-tab" data-bs-toggle="pill" data-bs-target="#pills-bestsellers" type="button" role="tab" aria-selected="true">Best Sellers</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pills-new-tab" data-bs-toggle="pill" data-bs-target="#pills-new" type="button" role="tab" aria-selected="false">New Arrivals</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pills-popular-tab" data-bs-toggle="pill" data-bs-target="#pills-popular" type="button" role="tab" aria-selected="false">Popular Items</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="pills-tabContent">
+        <!-- Best Sellers -->
+        <div class="tab-pane fade show active" id="pills-bestsellers" role="tabpanel">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                {% for product in best_sellers %}
+                <div class="col">
+                   <div class="card product-card h-100">
+                        <div class="product-image-container">
+                            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
+                            <div class="product-actions">
+                                <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-quick-add">Add to cart</a>
+                            </div>
+                        </div>
+                        <div class="card-body text-center pt-3">
+                            <h6 class="card-title font-serif fw-bold">{{ product.name }}</h6>
+                            <p class="text-gold fw-bold">{{ product.price }} MAD</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- New Arrivals -->
+        <div class="tab-pane fade" id="pills-new" role="tabpanel">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                {% for product in new_arrivals %}
+                <div class="col">
+                   <div class="card product-card h-100">
+                        <div class="product-image-container">
+                            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
+                            <div class="product-actions">
+                                <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-quick-add">Add to cart</a>
+                            </div>
+                        </div>
+                        <div class="card-body text-center pt-3">
+                            <h6 class="card-title font-serif fw-bold">{{ product.name }}</h6>
+                            <p class="text-gold fw-bold">{{ product.price }} MAD</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Popular -->
+        <div class="tab-pane fade" id="pills-popular" role="tabpanel">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                {% for product in popular_items %}
+                <div class="col">
+                   <div class="card product-card h-100">
+                        <div class="product-image-container">
+                            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
+                            <div class="product-actions">
+                                <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-quick-add">Add to cart</a>
+                            </div>
+                        </div>
+                        <div class="card-body text-center pt-3">
+                            <h6 class="card-title font-serif fw-bold">{{ product.name }}</h6>
+                            <p class="text-gold fw-bold">{{ product.price }} MAD</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bundle Banner -->
+<div class="bundle-banner">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-4 mb-md-0" data-aos="fade-right">
+                <h5 class="text-gold text-uppercase mb-3">Shop in Bundle & Save More</h5>
+                <h2 class="font-serif fw-bold mb-4">Discover the ultimate bundle of spice sets.</h2>
+                <ul class="list-unstyled bundle-list mb-4">
+                    <li><i class="fas fa-check"></i> 3 spices, save 10%</li>
+                    <li><i class="fas fa-check"></i> 6 spices, save 15% (Free Shipping)</li>
+                    <li><i class="fas fa-check"></i> 9 spices, save 20% (Free Shipping)</li>
+                </ul>
+                <a href="{{ url_for('main.shop') }}" class="btn btn-gold rounded-pill px-4">Build Your Own Set</a>
+            </div>
+             <div class="col-md-6 text-center" data-aos="fade-left">
+                <img src="https://xstore.b-cdn.net/elementor2/spices/wp-content/uploads/sites/10/2023/05/Product-image-2-min-300x300.jpg" class="img-fluid rounded-3 shadow" alt="Spice Bundle" style="max-height: 400px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Newsletter -->
+<div class="newsletter-section text-center">
+    <div class="container" data-aos="fade-up">
+        <h2 class="font-serif fw-bold mb-3">Newsletter</h2>
+        <p class="text-muted mb-4">Enter your email below to be the first to know about collections</p>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form class="d-flex border-bottom border-dark pb-2">
+                    <input type="email" class="form-control border-0 bg-transparent ps-0 newsletter-input" placeholder="Your email address" required>
+                    <button type="submit" class="btn text-uppercase fw-bold">Subscribe</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
