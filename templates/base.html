@@ -26,7 +26,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top {% if request.endpoint == 'main.index' %}navbar-transparent{% else %}bg-dark-scrolled{% endif %} transition-all" id="mainNavbar">
-        <div class="container-fluid px-lg-5">
+        <div class="container-fluid px-lg-5 position-relative">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -65,18 +65,18 @@
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">Shop</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Recipes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">About us</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Contacts</a></li>
                 </ul>
 
                 <!-- Center Logo (Desktop) -->
-                <a class="navbar-brand d-none d-lg-block mx-auto font-serif fw-bold text-gold fs-3" href="{{ url_for('main.index') }}">
+                <a class="navbar-brand d-none d-lg-block navbar-brand-center font-serif fw-bold text-gold fs-3" href="{{ url_for('main.index') }}">
                     Fakia Maroc
                 </a>
 
                 <!-- Right Nav: Icons -->
                 <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#">About us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contacts</a></li>
                     <li class="nav-item">
                         <a class="nav-link" href="#"><i class="fas fa-search"></i></a>
                     </li>

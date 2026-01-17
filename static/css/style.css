@@ -23,21 +23,21 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
 .navbar {
     background-color: var(--dark-bg);
     box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    padding: 1rem 0;
+    padding: 0.8rem 0;
     transition: all 0.4s ease;
 }
 
 .navbar-transparent {
     background-color: transparent !important;
     box-shadow: none !important;
-    padding: 1.5rem 0;
+    padding: 1rem 0;
 }
 
 .bg-dark-scrolled {
     background-color: rgba(26, 26, 26, 0.95) !important;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(0,0,0,0.2) !important;
-    padding: 0.8rem 0;
+    padding: 0.6rem 0;
 }
 
 .transition-all {
@@ -440,13 +440,26 @@ footer .social-icon {
 }
 
 /* Custom Navbar Centering */
-@media (min-width: 992px) {
-    .navbar-collapse .navbar-nav {
-        flex: 1;
+/* Mobile Styling */
+@media (max-width: 991.98px) {
+    .navbar {
+        padding: 0.5rem 0 !important;
     }
-    .navbar-collapse .navbar-nav:last-of-type {
-        justify-content: flex-end;
-        display: flex;
+    .navbar-transparent {
+        padding: 0.5rem 0 !important;
+    }
+    .navbar-brand {
+        font-size: 1.4rem;
+    }
+}
+
+/* Desktop Absolute Centering */
+@media (min-width: 992px) {
+    .navbar-brand-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
     }
 }
 
