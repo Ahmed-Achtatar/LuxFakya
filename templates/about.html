@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8" data-aos="fade-up">
+        <div class="text-center mb-5">
+            <h1 class="display-4 font-serif fw-bold text-gold mb-3">{{ get_text('about_us') }}</h1>
+            <p class="lead text-muted">{{ get_text('welcome_text') }}</p>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-5">
+            <div class="card-body p-4 p-md-5">
+                <h3 class="font-serif fw-bold mb-4 border-bottom pb-2">{{ get_text('contacts') }}</h3>
+
+                <div class="row g-4">
+                    <!-- Address -->
+                    <div class="col-md-12">
+                        <div class="d-flex align-items-start">
+                            <div class="text-gold me-3">
+                                <i class="fas fa-map-marker-alt fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">{{ get_text('address_label') }}</h5>
+                                <p class="text-muted fs-5">{{ get_text('address_val') }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="col-md-6">
+                         <div class="d-flex align-items-start">
+                            <div class="text-gold me-3">
+                                <i class="fas fa-phone fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">WhatsApp / Phone</h5>
+                                <p class="text-muted mb-0"><a href="tel:+212676459945" class="text-decoration-none text-secondary fs-5" dir="ltr">+212 676 459 945</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <div class="text-gold me-3">
+                                <i class="fas fa-envelope fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Email</h5>
+                                <p class="text-muted mb-0"><a href="mailto:luxfakya@gmail.com" class="text-decoration-none text-secondary fs-5">luxfakya@gmail.com</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Map Link -->
+                    <div class="col-md-12 text-center mt-4">
+                        <a href="https://maps.google.com/?q=31.620874,-8.057280" target="_blank" class="btn btn-gold rounded-pill px-4 py-2">
+                             <i class="fas fa-map me-2"></i> {{ get_text('location_label') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -69,7 +69,7 @@
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">{{ get_text('shop') }}</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">{{ get_text('recipes') }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">{{ get_text('about_us') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.about') }}">{{ get_text('about_us') }}</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">{{ get_text('blog') }}</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">{{ get_text('contacts') }}</a></li>
                 </ul>
@@ -161,7 +161,7 @@
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">{{ get_text('shop') }}</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">{{ get_text('recipes') }}</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">{{ get_text('about_us') }}</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('main.about') }}">{{ get_text('about_us') }}</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">{{ get_text('blog') }}</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">{{ get_text('contacts') }}</a></li>
             </ul>
@@ -250,6 +250,8 @@
                 <div class="col-md-3 mb-4">
                     <h5 class="fw-bold mb-3 font-serif">{{ get_text('footer_contact') }}</h5>
                     <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i>{{ get_text('address_val') }}</li>
+                        <li class="mb-2"><a href="https://maps.google.com/?q=31.620874,-8.057280" target="_blank" class="text-gold fw-bold"><i class="fas fa-map me-2"></i>{{ get_text('location_label') }}</a></li>
                         <li><a href="tel:+212676459945"><i class="fas fa-phone me-2"></i>+212 676 459 945</a></li>
                         <li><a href="https://wa.me/212676459945" target="_blank"><i class="fab fa-whatsapp me-2"></i>WhatsApp</a></li>
                         <li><a href="mailto:luxfakya@gmail.com"><i class="fas fa-envelope me-2"></i>luxfakya@gmail.com</a></li>
