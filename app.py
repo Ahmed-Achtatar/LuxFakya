@@ -2,7 +2,7 @@ import os
 from flask import Flask, session, request
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
-from models import db, User
+from models import db, User, Category
 from translations import translations
 
 def create_app(test_config=None):
@@ -34,17 +34,23 @@ def create_app(test_config=None):
     app.register_blueprint(admin_bp)
 
     @app.context_processor
-    def inject_translations():
+    def inject_global_context():
         lang = session.get('lang', 'fr')
         def get_text(key):
             # Fallback to key if translation missing, or fallback to FR/EN if needed?
             # Ideally fallback to English or the key itself.
             return translations.get(lang, {}).get(key, key)
 
+        try:
+            categories = Category.query.all()
+        except Exception:
+            categories = []
+
         return dict(
             get_text=get_text,
             current_lang=lang,
-            text_dir='rtl' if lang == 'ar' else 'ltr'
+            text_dir='rtl' if lang == 'ar' else 'ltr',
+            all_categories=categories
         )
 
     with app.app_context():
