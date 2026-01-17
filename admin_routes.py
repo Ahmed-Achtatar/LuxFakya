@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from models import db, User, Product, ProductPricing, Order, OrderItem
+from models import db, User, Product, ProductPricing, Order, OrderItem, Category
 import os
 from werkzeug.utils import secure_filename
 
@@ -54,9 +54,71 @@ def order_detail(order_id):
     order = Order.query.get_or_404(order_id)
     return render_template('admin/order_detail.html', order=order)
 
+@admin_bp.route('/categories')
+@login_required
+def categories():
+    categories = Category.query.all()
+    return render_template('admin/categories.html', categories=categories)
+
+@admin_bp.route('/categories/add', methods=['GET', 'POST'])
+@login_required
+def add_category():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        if Category.query.filter_by(name=name).first():
+            flash('Category already exists', 'danger')
+        else:
+            category = Category(name=name)
+            db.session.add(category)
+            db.session.commit()
+            flash('Category added successfully', 'success')
+            return redirect(url_for('admin.categories'))
+    return render_template('admin/category_form.html', title='Add Category')
+
+@admin_bp.route('/categories/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_category(id):
+    category = Category.query.get_or_404(id)
+    if request.method == 'POST':
+        old_name = category.name
+        new_name = request.form.get('name')
+
+        if new_name != old_name:
+            if Category.query.filter_by(name=new_name).first():
+                flash('Category with this name already exists', 'danger')
+                return render_template('admin/category_form.html', title='Edit Category', category=category)
+
+            category.name = new_name
+            # Update associated products
+            products = Product.query.filter_by(category=old_name).all()
+            for p in products:
+                p.category = new_name
+
+            db.session.commit()
+            flash('Category updated successfully', 'success')
+            return redirect(url_for('admin.categories'))
+        else:
+             return redirect(url_for('admin.categories'))
+
+    return render_template('admin/category_form.html', title='Edit Category', category=category)
+
+@admin_bp.route('/categories/delete/<int:id>', methods=['POST'])
+@login_required
+def delete_category(id):
+    category = Category.query.get_or_404(id)
+    # Check if products exist in this category
+    if Product.query.filter_by(category=category.name).first():
+        flash('Cannot delete category with associated products. Please reassign products first.', 'danger')
+    else:
+        db.session.delete(category)
+        db.session.commit()
+        flash('Category deleted successfully', 'success')
+    return redirect(url_for('admin.categories'))
+
 @admin_bp.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_product():
+    categories = Category.query.all()
     if request.method == 'POST':
         name = request.form.get('name')
         description = request.form.get('description')
@@ -114,12 +176,13 @@ def add_product():
         flash('Product added successfully', 'success')
         return redirect(url_for('admin.dashboard'))
 
-    return render_template('admin/add_product.html')
+    return render_template('admin/add_product.html', categories=categories)
 
 @admin_bp.route('/edit/<int:product_id>', methods=['GET', 'POST'])
 @login_required
 def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
+    categories = Category.query.all()
 
     if request.method == 'POST':
         product.name = request.form.get('name')
@@ -159,7 +222,7 @@ def edit_product(product_id):
         flash('Product updated successfully', 'success')
         return redirect(url_for('admin.dashboard'))
 
-    return render_template('admin/edit_product.html', product=product)
+    return render_template('admin/edit_product.html', product=product, categories=categories)
 
 @admin_bp.route('/delete/<int:product_id>', methods=['POST'])
 @login_required

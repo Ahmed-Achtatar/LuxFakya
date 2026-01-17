@@ -17,10 +17,9 @@
                     <div class="mb-3">
                         <label for="category" class="form-label">Category</label>
                         <select class="form-select" id="category" name="category" required>
-                            <option value="Dates">Dates</option>
-                            <option value="Nuts">Nuts</option>
-                            <option value="Dried Fruits">Dried Fruits</option>
-                            <option value="Gift Boxes">Gift Boxes</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.name }}">{{ cat.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="row">

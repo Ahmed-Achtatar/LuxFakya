@@ -1,5 +1,5 @@
 from app import create_app
-from models import db, User, Product, ProductPricing
+from models import db, User, Product, ProductPricing, Category
 import os
 
 app = create_app()
@@ -16,6 +16,14 @@ def seed():
             user.set_password('password123')
             db.session.add(user)
             print("Admin user created (admin/password123)")
+
+        # Seed Categories
+        categories = ["Dates", "Nuts", "Dried Fruits", "Gift Boxes"]
+        for cat_name in categories:
+            c = Category(name=cat_name)
+            db.session.add(c)
+        db.session.commit()
+        print(f"Seeded {len(categories)} categories.")
 
         # Verified Unsplash URLs
         dates_url = "https://images.unsplash.com/photo-1679949499517-1ce03d17f20b?auto=format&fit=crop&w=800&q=80"
