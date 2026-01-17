@@ -5,10 +5,23 @@ main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def index():
-    # Featured products or categories
-    # For LuxFakia, maybe show top 3 dates, nuts, spices
-    featured_products = Product.query.limit(6).all()
-    return render_template('index.html', featured_products=featured_products)
+    # Fetch all products to distribute across sections
+    all_products = Product.query.all()
+
+    # Simulate different collections
+    # In a real app, these would be filtered by date added, sales count, etc.
+    new_arrivals = all_products[:4]
+    best_sellers = all_products[4:8] if len(all_products) > 4 else all_products[:4]
+    popular_items = all_products[2:6] if len(all_products) > 6 else all_products[:4]
+
+    # For the main grid
+    featured_collection = all_products[:4]
+
+    return render_template('index.html',
+                         new_arrivals=new_arrivals,
+                         best_sellers=best_sellers,
+                         popular_items=popular_items,
+                         featured_products=featured_collection)
 
 @main_bp.route('/shop')
 def shop():
