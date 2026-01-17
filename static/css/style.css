@@ -594,3 +594,14 @@ footer .social-icon {
         border-right: 1px solid rgba(255,255,255,0.1);
     }
 }
+
+/* Page Content Spacer for Fixed Navbar */
+.page-content-spacer {
+    padding-top: 200px;
+}
+
+@media (max-width: 991.98px) {
+    .page-content-spacer {
+        padding-top: 180px;
+    }
+}
