@@ -13,27 +13,27 @@
         <div class="carousel-item active hero-carousel-item" style="background-image: url('https://images.unsplash.com/photo-1679949499517-1ce03d17f20b?auto=format&fit=crop&w=1350&q=80');">
             <div class="hero-carousel-overlay"></div>
             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100">
-                <h5 class="text-gold text-uppercase letter-spacing-2 mb-3 display-6" style="font-size: 1.2rem;">Authentic Moroccan Tradition</h5>
-                <h1 class="display-1 fw-bold text-white mb-4 font-serif">Premium Dates & Nuts</h1>
-                <a href="{{ url_for('main.shop') }}" class="btn btn-gold rounded-pill px-5 py-3 text-uppercase fw-bold mt-4">Shop Now</a>
+                <h5 class="text-gold text-uppercase letter-spacing-2 mb-3 display-6" style="font-size: 1.2rem;">{{ get_text('hero_slide1_pre') }}</h5>
+                <h1 class="display-1 fw-bold text-white mb-4 font-serif">{{ get_text('hero_slide1_title') }}</h1>
+                <a href="{{ url_for('main.shop') }}" class="btn btn-gold rounded-pill px-5 py-3 text-uppercase fw-bold mt-4">{{ get_text('hero_slide1_btn') }}</a>
             </div>
         </div>
         <!-- Slide 2 -->
         <div class="carousel-item hero-carousel-item" style="background-image: url('https://images.unsplash.com/photo-1722109998479-461ba34cd75a?auto=format&fit=crop&w=1350&q=80');">
              <div class="hero-carousel-overlay"></div>
             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100">
-                <h5 class="text-gold text-uppercase letter-spacing-2 mb-3 display-6" style="font-size: 1.2rem;">Handpicked Perfection</h5>
-                <h1 class="display-1 fw-bold text-white mb-4 font-serif">Exquisite Dried Fruits</h1>
-                <a href="{{ url_for('main.shop') }}" class="btn btn-gold rounded-pill px-5 py-3 text-uppercase fw-bold mt-4">Discover More</a>
+                <h5 class="text-gold text-uppercase letter-spacing-2 mb-3 display-6" style="font-size: 1.2rem;">{{ get_text('hero_slide2_pre') }}</h5>
+                <h1 class="display-1 fw-bold text-white mb-4 font-serif">{{ get_text('hero_slide2_title') }}</h1>
+                <a href="{{ url_for('main.shop') }}" class="btn btn-gold rounded-pill px-5 py-3 text-uppercase fw-bold mt-4">{{ get_text('hero_slide2_btn') }}</a>
             </div>
         </div>
         <!-- Slide 3 -->
         <div class="carousel-item hero-carousel-item" style="background-image: url('https://images.unsplash.com/photo-1722109998479-461ba34cd75a?auto=format&fit=crop&w=1350&q=80');">
              <div class="hero-carousel-overlay"></div>
             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100">
-                <h5 class="text-gold text-uppercase letter-spacing-2 mb-3 display-6" style="font-size: 1.2rem;">The Perfect Gift</h5>
-                <h1 class="display-1 fw-bold text-white mb-4 font-serif">Elegant Gift Boxes</h1>
-                <a href="{{ url_for('main.shop') }}" class="btn btn-gold rounded-pill px-5 py-3 text-uppercase fw-bold mt-4">View Collection</a>
+                <h5 class="text-gold text-uppercase letter-spacing-2 mb-3 display-6" style="font-size: 1.2rem;">{{ get_text('hero_slide3_pre') }}</h5>
+                <h1 class="display-1 fw-bold text-white mb-4 font-serif">{{ get_text('hero_slide3_title') }}</h1>
+                <a href="{{ url_for('main.shop') }}" class="btn btn-gold rounded-pill px-5 py-3 text-uppercase fw-bold mt-4">{{ get_text('hero_slide3_btn') }}</a>
             </div>
         </div>
     </div>
@@ -56,7 +56,7 @@
                     <div class="category-img-wrapper">
                         <img src="https://images.unsplash.com/photo-1679949499517-1ce03d17f20b?auto=format&fit=crop&w=400&q=80" alt="Dates">
                     </div>
-                    <h6 class="category-title">Dates</h6>
+                    <h6 class="category-title">{{ get_text('cat_dates') }}</h6>
                 </div>
             </a>
         </div>
@@ -66,7 +66,7 @@
                     <div class="category-img-wrapper">
                         <img src="https://images.unsplash.com/photo-1756361947189-29e0baae7bcd?auto=format&fit=crop&w=400&q=80" alt="Nuts">
                     </div>
-                    <h6 class="category-title">Nuts</h6>
+                    <h6 class="category-title">{{ get_text('cat_nuts') }}</h6>
                 </div>
             </a>
         </div>
@@ -76,7 +76,7 @@
                     <div class="category-img-wrapper">
                         <img src="https://images.unsplash.com/photo-1722109998479-461ba34cd75a?auto=format&fit=crop&w=400&q=80" alt="Dried Fruits">
                     </div>
-                    <h6 class="category-title">Dried Fruits</h6>
+                    <h6 class="category-title">{{ get_text('cat_dried') }}</h6>
                 </div>
             </a>
         </div>
@@ -86,7 +86,7 @@
                     <div class="category-img-wrapper">
                         <img src="https://images.unsplash.com/photo-1722109998479-461ba34cd75a?auto=format&fit=crop&w=400&q=80" alt="Gift Boxes">
                     </div>
-                    <h6 class="category-title">Gift Boxes</h6>
+                    <h6 class="category-title">{{ get_text('cat_gifts') }}</h6>
                 </div>
             </a>
         </div>
@@ -96,8 +96,8 @@
 <!-- Featured Products -->
 <div class="container my-5 py-5">
     <div class="text-center mb-5">
-        <h2 class="font-serif fw-bold">Discover Our Premium Selection</h2>
-        <p class="text-muted">A handpicked assortment of our finest Moroccan delicacies.</p>
+        <h2 class="font-serif fw-bold">{{ get_text('featured_title') }}</h2>
+        <p class="text-muted">{{ get_text('featured_sub') }}</p>
     </div>
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
         {% for product in featured_products %}
@@ -112,7 +112,7 @@
                     <h6 class="card-title font-serif fw-bold mb-1 text-truncate">
                         <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">{{ product.name }}</a>
                     </h6>
-                    <p class="product-price-range mb-2 text-gold fw-bold small">{{ product.price }} MAD / {{ product.unit }}</p>
+                    <p class="product-price-range mb-2 text-gold fw-bold small">{{ product.price }} {{ get_text('currency') }} {{ get_text('unit_separator') }} {{ product.unit }}</p>
 
                     <div class="mt-auto">
                         <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST" class="d-flex flex-column gap-2">
@@ -129,7 +129,7 @@
                                 {% endif %}
                             </select>
                             <button type="submit" class="btn btn-gold btn-sm rounded-pill w-100 fw-bold">
-                                Add
+                                {{ get_text('add_btn') }}
                             </button>
                         </form>
                     </div>
@@ -145,29 +145,29 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-6 text-center text-md-start mb-4 mb-md-0" data-aos="fade-right">
-                <h2 class="font-serif fw-bold mb-4">Ramadan Essentials</h2>
-                <p class="text-muted mb-5" style="max-width: 500px;">Prepare for the holy month with our premium selection of Dates and Fakia. Order now to ensure delivery before Ramadan.</p>
+                <h2 class="font-serif fw-bold mb-4">{{ get_text('deals_title') }}</h2>
+                <p class="text-muted mb-5" style="max-width: 500px;">{{ get_text('deals_text') }}</p>
 
                 <div class="d-flex justify-content-center justify-content-md-start mb-5 flex-wrap">
                     <div class="countdown-box">
                         <div class="countdown-number">12</div>
-                        <div class="countdown-label">Days</div>
+                        <div class="countdown-label">{{ get_text('days') }}</div>
                     </div>
                     <div class="countdown-box">
                         <div class="countdown-number">04</div>
-                        <div class="countdown-label">Hours</div>
+                        <div class="countdown-label">{{ get_text('hours') }}</div>
                     </div>
                     <div class="countdown-box">
                         <div class="countdown-number">15</div>
-                        <div class="countdown-label">Minutes</div>
+                        <div class="countdown-label">{{ get_text('minutes') }}</div>
                     </div>
                     <div class="countdown-box">
                         <div class="countdown-number">30</div>
-                        <div class="countdown-label">Seconds</div>
+                        <div class="countdown-label">{{ get_text('seconds') }}</div>
                     </div>
                 </div>
 
-                <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg px-5">View Offers</a>
+                <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg px-5">{{ get_text('view_offers') }}</a>
             </div>
             <div class="col-md-6 text-center" data-aos="fade-left">
                 <img src="https://images.unsplash.com/photo-1679949499517-1ce03d17f20b?auto=format&fit=crop&w=800&q=80" alt="Deals" class="img-fluid rounded-3 shadow">
@@ -179,16 +179,16 @@
 <!-- Gift Ideas & Inspiration -->
 <div class="container my-5 py-5">
     <div class="text-center mb-5">
-        <h2 class="font-serif fw-bold">Gift Ideas & Inspiration</h2>
+        <h2 class="font-serif fw-bold">{{ get_text('ideas_title') }}</h2>
     </div>
     <div class="row g-4">
         <div class="col-md-6" data-aos="fade-right">
             <div class="recipe-card h-100">
                 <img src="https://images.unsplash.com/photo-1722109998479-461ba34cd75a?auto=format&fit=crop&w=800&q=80" class="w-100 h-100" style="object-fit: cover; min-height: 400px;" alt="Gift 1">
                 <div class="recipe-overlay">
-                    <div class="recipe-meta">Fakia Box</div>
-                    <h3 class="font-serif fw-bold mb-3">The Perfect Wedding Gift</h3>
-                    <a href="#" class="text-white text-decoration-none fw-bold">Shop Gifts <i class="fas fa-arrow-right ms-2"></i></a>
+                    <div class="recipe-meta">{{ get_text('gift1_meta') }}</div>
+                    <h3 class="font-serif fw-bold mb-3">{{ get_text('gift1_title') }}</h3>
+                    <a href="#" class="text-white text-decoration-none fw-bold">{{ get_text('shop_gifts') }} <i class="fas fa-arrow-right ms-2"></i></a>
                 </div>
             </div>
         </div>
@@ -196,15 +196,15 @@
             <div class="recipe-card h-100">
                 <img src="https://images.unsplash.com/photo-1679949499517-1ce03d17f20b?auto=format&fit=crop&w=800&q=80" class="w-100 h-100" style="object-fit: cover; min-height: 400px;" alt="Gift 2">
                 <div class="recipe-overlay">
-                    <div class="recipe-meta">Healthy Living</div>
-                    <h3 class="font-serif fw-bold mb-3">Benefits of Daily Dates</h3>
-                    <a href="#" class="text-white text-decoration-none fw-bold">Learn More <i class="fas fa-arrow-right ms-2"></i></a>
+                    <div class="recipe-meta">{{ get_text('gift2_meta') }}</div>
+                    <h3 class="font-serif fw-bold mb-3">{{ get_text('gift2_title') }}</h3>
+                    <a href="#" class="text-white text-decoration-none fw-bold">{{ get_text('learn_more') }} <i class="fas fa-arrow-right ms-2"></i></a>
                 </div>
             </div>
         </div>
     </div>
     <div class="text-center mt-5">
-        <a href="{{ url_for('main.shop') }}" class="btn btn-outline-dark rounded-pill px-5 text-uppercase fw-bold" style="letter-spacing: 1px;">Explore Collection</a>
+        <a href="{{ url_for('main.shop') }}" class="btn btn-outline-dark rounded-pill px-5 text-uppercase fw-bold" style="letter-spacing: 1px;">{{ get_text('explore_collection') }}</a>
     </div>
 </div>
 
@@ -212,128 +212,11 @@
 <div class="container my-5 py-5">
     <div class="row justify-content-center text-center">
         <div class="col-md-8">
-            <h5 class="text-gold text-uppercase mb-3 letter-spacing-2">Welcome to Fakia Maroc</h5>
-            <h2 class="font-serif fw-bold mb-4 display-5">Bringing the finest Moroccan dried fruits and nuts to your doorstep. Experience the authentic taste of tradition.</h2>
+            <h5 class="text-gold text-uppercase mb-3 letter-spacing-2">{{ get_text('welcome_pre') }}</h5>
+            <h2 class="font-serif fw-bold mb-4 display-5">{{ get_text('welcome_text') }}</h2>
             <div class="d-flex justify-content-center gap-4 mt-4 text-uppercase fw-bold letter-spacing-1">
-                <a href="#" class="text-dark text-decoration-none border-bottom border-dark pb-1">Gift Cards</a>
-                <a href="#pills-tab" class="text-dark text-decoration-none border-bottom border-dark pb-1">Best Sellers</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Tabs (Best Sellers, etc) -->
-<div class="container my-5 py-5">
-    <ul class="nav nav-pills justify-content-center mb-5" id="pills-tab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="pills-bestsellers-tab" data-bs-toggle="pill" data-bs-target="#pills-bestsellers" type="button" role="tab" aria-selected="true">Best Sellers</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pills-new-tab" data-bs-toggle="pill" data-bs-target="#pills-new" type="button" role="tab" aria-selected="false">New Arrivals</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pills-popular-tab" data-bs-toggle="pill" data-bs-target="#pills-popular" type="button" role="tab" aria-selected="false">Popular Items</button>
-        </li>
-    </ul>
-    <div class="tab-content" id="pills-tabContent">
-        <!-- Best Sellers -->
-        <div class="tab-pane fade show active" id="pills-bestsellers" role="tabpanel">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                {% for product in best_sellers %}
-                <div class="col">
-                   <div class="card product-card h-100">
-                        <div class="product-image-container">
-                            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
-                            <div class="product-actions">
-                                <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-quick-add">Add to cart</a>
-                            </div>
-                        </div>
-                        <div class="card-body text-center pt-3">
-                            <h6 class="card-title font-serif fw-bold">{{ product.name }}</h6>
-                            <p class="text-gold fw-bold">{{ product.price }} MAD / {{ product.unit }}</p>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        <!-- New Arrivals -->
-        <div class="tab-pane fade" id="pills-new" role="tabpanel">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                {% for product in new_arrivals %}
-                <div class="col">
-                   <div class="card product-card h-100">
-                        <div class="product-image-container">
-                            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
-                            <div class="product-actions">
-                                <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-quick-add">Add to cart</a>
-                            </div>
-                        </div>
-                        <div class="card-body text-center pt-3">
-                            <h6 class="card-title font-serif fw-bold">{{ product.name }}</h6>
-                            <p class="text-gold fw-bold">{{ product.price }} MAD / {{ product.unit }}</p>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        <!-- Popular -->
-        <div class="tab-pane fade" id="pills-popular" role="tabpanel">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                {% for product in popular_items %}
-                <div class="col">
-                   <div class="card product-card h-100">
-                        <div class="product-image-container">
-                            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
-                            <div class="product-actions">
-                                <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-quick-add">Add to cart</a>
-                            </div>
-                        </div>
-                        <div class="card-body text-center pt-3">
-                            <h6 class="card-title font-serif fw-bold">{{ product.name }}</h6>
-                            <p class="text-gold fw-bold">{{ product.price }} MAD / {{ product.unit }}</p>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Bundle Banner -->
-<div class="bundle-banner">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-6 mb-4 mb-md-0" data-aos="fade-right">
-                <h5 class="text-gold text-uppercase mb-3 letter-spacing-2">Perfect Gift Bundles</h5>
-                <h2 class="font-serif fw-bold mb-4">Discover our curated gift sets. Perfect for weddings, holidays, and special occasions.</h2>
-                <ul class="list-unstyled bundle-list mb-4">
-                    <li><i class="fas fa-check"></i> Authentic Moroccan Selection</li>
-                    <li><i class="fas fa-check"></i> Premium Packaging</li>
-                    <li><i class="fas fa-check"></i> Free Shipping on Large Orders</li>
-                </ul>
-                <a href="{{ url_for('main.shop') }}" class="btn btn-gold rounded-pill px-4 text-uppercase">Shop Gifts</a>
-            </div>
-             <div class="col-md-6 text-center" data-aos="fade-left">
-                <img src="https://images.unsplash.com/photo-1722109998479-461ba34cd75a?auto=format&fit=crop&w=800&q=80" class="img-fluid rounded-3 shadow" alt="Gift Bundle" style="max-height: 400px;">
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Newsletter -->
-<div class="newsletter-section text-center">
-    <div class="container" data-aos="fade-up">
-        <h2 class="font-serif fw-bold mb-3">Newsletter</h2>
-        <p class="text-muted mb-4">Subscribe to receive exclusive offers and updates.</p>
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <form class="d-flex border-bottom border-dark pb-2">
-                    <input type="email" class="form-control border-0 bg-transparent ps-0 newsletter-input" placeholder="Your email address" required>
-                    <button type="submit" class="btn text-uppercase fw-bold">Subscribe</button>
-                </form>
+                <a href="#" class="text-dark text-decoration-none border-bottom border-dark pb-1">{{ get_text('gift_cards_link') }}</a>
+                <a href="{{ url_for('main.shop') }}" class="text-dark text-decoration-none border-bottom border-dark pb-1">{{ get_text('best_sellers_link') }}</a>
             </div>
         </div>
     </div>
@@ -350,7 +233,7 @@
         const priceElement = card.querySelector('.product-price-range');
 
         if (priceElement) {
-            priceElement.textContent = price + ' MAD / ' + unit;
+            priceElement.textContent = price + ' {{ get_text("currency") }} {{ get_text("unit_separator") }} ' + unit;
         }
     }
 
