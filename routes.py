@@ -29,6 +29,10 @@ def index():
                          popular_items=popular_items,
                          featured_products=featured_collection)
 
+@main_bp.route('/about')
+def about():
+    return render_template('about.html')
+
 @main_bp.route('/shop')
 def shop():
     category = request.args.get('category')
