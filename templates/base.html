@@ -39,7 +39,6 @@
 
             <!-- Mobile Icons (Right) -->
              <div class="d-flex d-lg-none align-items-center gap-3">
-                 <a class="text-white" href="#"><i class="fas fa-search"></i></a>
                  <a class="position-relative text-white" href="{{ url_for('main.cart') }}">
                     <i class="fas fa-shopping-bag"></i>
                     {% if session.get('cart') %}
@@ -117,9 +116,16 @@
     </nav>
 
     <!-- Mobile Offcanvas Menu -->
-    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileMenu">
         <div class="offcanvas-header border-bottom border-secondary">
-            <h5 class="offcanvas-title font-serif text-gold" id="mobileMenuLabel">Menu</h5>
+            <form action="{{ url_for('main.shop') }}" method="get" class="d-flex flex-grow-1 me-3">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control bg-transparent text-white border-secondary" placeholder="Search items..." aria-label="Search">
+                    <button class="btn btn-outline-secondary text-gold border-secondary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
