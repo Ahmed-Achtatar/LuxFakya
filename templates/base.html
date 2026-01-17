@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_lang }}" dir="{{ text_dir }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LuxFakia - Premium Dates & Nuts</title>
+    <title>LuxFakia - {{ get_text('hero_slide1_title') }}</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,7 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
+    {% if text_dir == 'rtl' %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    {% else %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% endif %}
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -27,7 +31,7 @@
 <body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top {% if request.endpoint == 'main.index' %}navbar-transparent{% else %}bg-dark-scrolled{% endif %} transition-all" id="mainNavbar">
         <div class="container-fluid px-lg-5 position-relative">
-            <!-- Mobile Toggle (Left) -->
+            <!-- Mobile Toggle (Start) -->
             <button class="d-lg-none btn border-0 text-white p-0 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
                 <i class="fas fa-bars fa-lg"></i>
             </button>
@@ -37,7 +41,7 @@
                 Fakia Maroc
             </a>
 
-            <!-- Mobile Icons (Right) -->
+            <!-- Mobile Icons (End) -->
              <div class="d-flex d-lg-none align-items-center gap-3">
                  <a class="position-relative text-white" href="{{ url_for('main.cart') }}">
                     <i class="fas fa-shopping-bag"></i>
@@ -50,25 +54,25 @@
              </div>
 
             <div class="collapse navbar-collapse justify-content-between align-items-center d-none d-lg-flex" id="navbarContent">
-                <!-- Left Nav: Menu Links -->
+                <!-- Start Nav: Menu Links -->
                 <ul class="navbar-nav mb-2 mb-lg-0">
-                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}"><i class="fas fa-home d-none d-lg-inline-block"></i><span class="d-lg-none">Home</span></a></li>
+                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}"><i class="fas fa-home d-none d-lg-inline-block"></i><span class="d-lg-none">{{ get_text('home') }}</span></a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Categories
+                            {{ get_text('categories') }}
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Dates') }}">Dates</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Nuts') }}">Nuts</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Dried Fruits') }}">Dried Fruits</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Gift Boxes') }}">Gift Boxes</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Dates') }}">{{ get_text('cat_dates') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Nuts') }}">{{ get_text('cat_nuts') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Dried Fruits') }}">{{ get_text('cat_dried') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Gift Boxes') }}">{{ get_text('cat_gifts') }}</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Recipes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">About us</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Contacts</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">{{ get_text('shop') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">{{ get_text('recipes') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">{{ get_text('about_us') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">{{ get_text('blog') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">{{ get_text('contacts') }}</a></li>
                 </ul>
 
                 <!-- Center Logo (Desktop) -->
@@ -76,8 +80,17 @@
                     Fakia Maroc
                 </a>
 
-                <!-- Right Nav: Icons -->
+                <!-- End Nav: Icons -->
                 <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-uppercase" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ current_lang }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown" style="min-width: auto;">
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_lang', lang_code='fr') }}">FR</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_lang', lang_code='ar') }}">AR</a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#"><i class="fas fa-search"></i></a>
                     </li>
@@ -90,7 +103,7 @@
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                  <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">Admin</a></li>
                                  <li><hr class="dropdown-divider"></li>
-                                 <li><a class="dropdown-item" href="{{ url_for('admin.logout') }}">Logout</a></li>
+                                 <li><a class="dropdown-item" href="{{ url_for('admin.logout') }}">{{ get_text('logout') }}</a></li>
                             </ul>
                         </div>
                         {% else %}
@@ -120,7 +133,7 @@
         <div class="offcanvas-header border-bottom border-secondary">
             <form action="{{ url_for('main.shop') }}" method="get" class="d-flex flex-grow-1 me-3">
                 <div class="input-group">
-                    <input type="text" name="q" class="form-control bg-transparent text-white border-secondary" placeholder="Search items..." aria-label="Search">
+                    <input type="text" name="q" class="form-control bg-transparent text-white border-secondary" placeholder="{{ get_text('search_placeholder') }}" aria-label="Search">
                     <button class="btn btn-outline-secondary text-gold border-secondary" type="submit">
                         <i class="fas fa-search"></i>
                     </button>
@@ -129,36 +142,40 @@
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
+            <div class="d-flex justify-content-end mb-3">
+                 <a href="{{ url_for('main.set_lang', lang_code='fr') }}" class="btn btn-sm {% if current_lang == 'fr' %}btn-gold{% else %}btn-outline-light{% endif %} me-2">FR</a>
+                 <a href="{{ url_for('main.set_lang', lang_code='ar') }}" class="btn btn-sm {% if current_lang == 'ar' %}btn-gold{% else %}btn-outline-light{% endif %}">AR</a>
+            </div>
             <ul class="navbar-nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}">{{ get_text('home') }}</a></li>
                 <li class="nav-item">
                     <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#mobileCategories" role="button" aria-expanded="false" aria-controls="mobileCategories">
-                        Categories <i class="fas fa-chevron-down small"></i>
+                        {{ get_text('categories') }} <i class="fas fa-chevron-down small"></i>
                     </a>
                     <div class="collapse ps-3" id="mobileCategories">
                         <ul class="navbar-nav">
-                            <li><a class="nav-link py-1" href="{{ url_for('main.shop', category='Dates') }}">Dates</a></li>
-                            <li><a class="nav-link py-1" href="{{ url_for('main.shop', category='Nuts') }}">Nuts</a></li>
-                            <li><a class="nav-link py-1" href="{{ url_for('main.shop', category='Dried Fruits') }}">Dried Fruits</a></li>
-                            <li><a class="nav-link py-1" href="{{ url_for('main.shop', category='Gift Boxes') }}">Gift Boxes</a></li>
+                            <li><a class="nav-link py-1" href="{{ url_for('main.shop', category='Dates') }}">{{ get_text('cat_dates') }}</a></li>
+                            <li><a class="nav-link py-1" href="{{ url_for('main.shop', category='Nuts') }}">{{ get_text('cat_nuts') }}</a></li>
+                            <li><a class="nav-link py-1" href="{{ url_for('main.shop', category='Dried Fruits') }}">{{ get_text('cat_dried') }}</a></li>
+                            <li><a class="nav-link py-1" href="{{ url_for('main.shop', category='Gift Boxes') }}">{{ get_text('cat_gifts') }}</a></li>
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">Shop</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Recipes</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">About us</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Contacts</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">{{ get_text('shop') }}</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">{{ get_text('recipes') }}</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">{{ get_text('about_us') }}</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">{{ get_text('blog') }}</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">{{ get_text('contacts') }}</a></li>
             </ul>
 
             <hr class="border-secondary my-4">
 
             <div class="d-flex flex-column gap-3">
                 {% if not current_user.is_authenticated %}
-                <a href="{{ url_for('admin.login') }}" class="btn btn-outline-light w-100 rounded-pill">Login / Register</a>
+                <a href="{{ url_for('admin.login') }}" class="btn btn-outline-light w-100 rounded-pill">{{ get_text('login_register') }}</a>
                 {% else %}
-                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-light w-100 rounded-pill">My Account</a>
-                <a href="{{ url_for('admin.logout') }}" class="btn btn-gold w-100 rounded-pill">Logout</a>
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-light w-100 rounded-pill">{{ get_text('my_account') }}</a>
+                <a href="{{ url_for('admin.logout') }}" class="btn btn-gold w-100 rounded-pill">{{ get_text('logout') }}</a>
                 {% endif %}
             </div>
         </div>
@@ -200,54 +217,54 @@
             <div class="row">
                 <!-- Our Story -->
                 <div class="col-md-3 mb-4">
-                    <h5 class="fw-bold mb-3 font-serif">Our Story</h5>
+                    <h5 class="fw-bold mb-3 font-serif">{{ get_text('footer_story') }}</h5>
                     <ul class="list-unstyled footer-links">
-                        <li><a href="#">Company Profile</a></li>
-                        <li><a href="#">Our Facility</a></li>
-                        <li><a href="#">Commitment To Quality</a></li>
-                        <li><a href="#">Contract Manufacturing</a></li>
-                        <li><a href="#">Our Awards</a></li>
+                        <li><a href="#">{{ get_text('footer_company_profile') }}</a></li>
+                        <li><a href="#">{{ get_text('footer_facility') }}</a></li>
+                        <li><a href="#">{{ get_text('footer_quality') }}</a></li>
+                        <li><a href="#">{{ get_text('footer_manufacturing') }}</a></li>
+                        <li><a href="#">{{ get_text('footer_awards') }}</a></li>
                     </ul>
                 </div>
 
                 <!-- Categories -->
                 <div class="col-md-3 mb-4">
-                    <h5 class="fw-bold mb-3 font-serif">Categories</h5>
+                    <h5 class="fw-bold mb-3 font-serif">{{ get_text('footer_categories') }}</h5>
                     <ul class="list-unstyled footer-links">
-                        <li><a href="{{ url_for('main.shop', category='Dates') }}">Dates</a></li>
-                        <li><a href="{{ url_for('main.shop', category='Nuts') }}">Nuts</a></li>
-                        <li><a href="{{ url_for('main.shop', category='Dried Fruits') }}">Dried Fruits</a></li>
-                        <li><a href="{{ url_for('main.shop', category='Gift Boxes') }}">Gift Boxes</a></li>
+                        <li><a href="{{ url_for('main.shop', category='Dates') }}">{{ get_text('cat_dates') }}</a></li>
+                        <li><a href="{{ url_for('main.shop', category='Nuts') }}">{{ get_text('cat_nuts') }}</a></li>
+                        <li><a href="{{ url_for('main.shop', category='Dried Fruits') }}">{{ get_text('cat_dried') }}</a></li>
+                        <li><a href="{{ url_for('main.shop', category='Gift Boxes') }}">{{ get_text('cat_gifts') }}</a></li>
                     </ul>
                 </div>
 
                 <!-- Support -->
                 <div class="col-md-3 mb-4">
-                    <h5 class="fw-bold mb-3 font-serif">Support</h5>
+                    <h5 class="fw-bold mb-3 font-serif">{{ get_text('footer_support') }}</h5>
                     <ul class="list-unstyled footer-links">
-                        <li><a href="#">Look Up Order</a></li>
-                        <li><a href="#">Refer a Friend</a></li>
-                        <li><a href="#">Returns</a></li>
-                        <li><a href="#">Shipping & Delivery</a></li>
+                        <li><a href="#">{{ get_text('footer_order') }}</a></li>
+                        <li><a href="#">{{ get_text('footer_refer') }}</a></li>
+                        <li><a href="#">{{ get_text('footer_returns') }}</a></li>
+                        <li><a href="#">{{ get_text('footer_shipping') }}</a></li>
                     </ul>
                 </div>
 
                 <!-- Contact Us -->
                 <div class="col-md-3 mb-4">
-                    <h5 class="fw-bold mb-3 font-serif">Contact Us</h5>
+                    <h5 class="fw-bold mb-3 font-serif">{{ get_text('footer_contact') }}</h5>
                     <ul class="list-unstyled footer-links">
-                        <li><a href="#">Become a Partner</a></li>
-                        <li><a href="#">Contract Manufacturing</a></li>
-                        <li><a href="#">Terms & Condition</a></li>
-                        <li><a href="#">Career with us</a></li>
-                        <li><a href="#">Consumer enquiry</a></li>
+                        <li><a href="#">{{ get_text('footer_partner') }}</a></li>
+                        <li><a href="#">{{ get_text('footer_manufacturing') }}</a></li>
+                        <li><a href="#">{{ get_text('footer_terms') }}</a></li>
+                        <li><a href="#">{{ get_text('footer_career') }}</a></li>
+                        <li><a href="#">{{ get_text('footer_enquiry') }}</a></li>
                     </ul>
                 </div>
             </div>
 
             <div class="row mt-5 pt-4 border-top border-secondary align-items-center">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    <p class="text-muted mb-0">Copyright &copy; 2024 Fakia Maroc. All rights reserved.</p>
+                    <p class="text-muted mb-0">Copyright &copy; 2024 Fakia Maroc. {{ get_text('copyright') }}</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <div class="d-inline-flex align-items-center gap-3">

@@ -3,6 +3,12 @@ from models import Product, db
 
 main_bp = Blueprint('main', __name__)
 
+@main_bp.route('/set_lang/<lang_code>')
+def set_lang(lang_code):
+    if lang_code in ['fr', 'ar']:
+        session['lang'] = lang_code
+    return redirect(request.referrer or url_for('main.index'))
+
 @main_bp.route('/')
 def index():
     # Fetch all products to distribute across sections
