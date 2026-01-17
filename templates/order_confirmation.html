@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5 text-center">
+            <div class="mb-4">
+                <i class="fas fa-check-circle fa-4x text-success"></i>
+            </div>
+            <h2 class="mb-3 font-serif fw-bold">Order Placed!</h2>
+            <p class="text-muted mb-4">Your order #{{ order.id }} has been successfully recorded.</p>
+
+            <div class="bg-light p-3 rounded-3 mb-4 text-start">
+                <p class="mb-1"><strong>Name:</strong> {{ order.customer_name }}</p>
+                <p class="mb-1"><strong>Total Amount:</strong> <span class="text-gold fw-bold">{{ order.total_amount }} MAD</span></p>
+            </div>
+
+            <p class="mb-4">Click the button below to send your order details to us on WhatsApp to finalize the payment and delivery.</p>
+
+            {% set wa_text = "Hello, I would like to confirm my Order #" ~ order.id ~ ". My name is " ~ order.customer_name ~ "." %}
+
+            <a href="https://wa.me/212706235893?text={{ wa_text | urlencode }}" target="_blank" class="btn btn-success btn-lg py-3 w-100 shadow-sm mb-3">
+                <i class="fab fa-whatsapp me-2"></i> Send to WhatsApp
+            </a>
+
+            <a href="{{ url_for('main.index') }}" class="btn btn-link text-muted">Return to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

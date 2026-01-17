@@ -1,6 +1,6 @@
 import unittest
 from app import create_app, db
-from models import User, Product
+from models import User, Product, Order, OrderItem
 
 class LuxFakiaTestCase(unittest.TestCase):
     def setUp(self):
@@ -89,6 +89,64 @@ class LuxFakiaTestCase(unittest.TestCase):
             cart = sess['cart']
             self.assertIn(str(pid), cart)
             self.assertEqual(cart[str(pid)], 1.5)
+
+    def test_checkout_flow(self):
+        # Find the product id
+        with self.app.app_context():
+            p = Product.query.filter_by(name='Test').first()
+            pid = p.id
+
+        # 1. Add to cart
+        self.client.post(f'/cart/add/{pid}', data={'quantity': 2.0})
+
+        # 2. Checkout GET
+        response = self.client.get('/checkout')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Checkout', response.data)
+
+        # 3. Checkout POST
+        response = self.client.post('/checkout', data={'name': 'John Doe', 'phone': '123456789'})
+
+        # Check redirect to order confirmation
+        self.assertEqual(response.status_code, 302)
+
+        with self.app.app_context():
+            order = Order.query.first()
+            self.assertIsNotNone(order)
+            self.assertEqual(order.customer_name, 'John Doe')
+            self.assertEqual(order.total_amount, 20.0) # 2 * 10.0
+
+            # Check Order Items
+            items = OrderItem.query.filter_by(order_id=order.id).all()
+            self.assertEqual(len(items), 1)
+            self.assertEqual(items[0].product_name, 'Test')
+            self.assertEqual(items[0].quantity, 2.0)
+            self.assertEqual(items[0].price_at_purchase, 10.0)
+
+        # 4. Check Cart Cleared
+        with self.client.session_transaction() as sess:
+            self.assertIsNone(sess.get('cart'))
+
+    def test_admin_orders(self):
+        # Create an order
+        with self.app.app_context():
+            order = Order(customer_name='Jane Doe', total_amount=150.0)
+            db.session.add(order)
+            db.session.commit()
+            order_id = order.id
+
+        # Login admin
+        self.client.post('/admin/login', data={'username': 'admin', 'password': 'password'})
+
+        # Check Orders Page
+        response = self.client.get('/admin/orders')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Jane Doe', response.data)
+
+        # Check Order Detail
+        response = self.client.get(f'/admin/orders/{order_id}')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Jane Doe', response.data)
 
 if __name__ == '__main__':
     unittest.main()

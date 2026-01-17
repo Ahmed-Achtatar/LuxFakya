@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from models import db, User, Product, ProductPricing
+from models import db, User, Product, ProductPricing, Order, OrderItem
 import os
 from werkzeug.utils import secure_filename
 
@@ -41,6 +41,18 @@ def logout():
 def dashboard():
     products = Product.query.all()
     return render_template('admin/dashboard.html', products=products)
+
+@admin_bp.route('/orders')
+@login_required
+def orders():
+    orders = Order.query.order_by(Order.created_at.desc()).all()
+    return render_template('admin/orders.html', orders=orders)
+
+@admin_bp.route('/orders/<int:order_id>')
+@login_required
+def order_detail(order_id):
+    order = Order.query.get_or_404(order_id)
+    return render_template('admin/order_detail.html', order=order)
 
 @admin_bp.route('/add', methods=['GET', 'POST'])
 @login_required

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash
-from models import Product, db
+from models import Product, db, Order, OrderItem
 
 main_bp = Blueprint('main', __name__)
 
@@ -153,3 +153,68 @@ def update_cart(product_id):
     session.modified = True
 
     return redirect(url_for('main.cart'))
+
+@main_bp.route('/checkout', methods=['GET', 'POST'])
+def checkout():
+    if 'cart' not in session or not session['cart']:
+        return redirect(url_for('main.shop'))
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        phone = request.form.get('phone')
+
+        cart = session['cart']
+        total_price = 0
+        order_items = []
+
+        # Calculate total and prepare items
+        for product_id, quantity in cart.items():
+            product = Product.query.get(int(product_id))
+            if product:
+                item_total = product.price * quantity
+
+                # Pricing logic
+                for pricing in product.pricings:
+                    if pricing.quantity == quantity:
+                        item_total = pricing.price
+                        break
+
+                total_price += item_total
+
+                order_item = OrderItem(
+                    product_id=product.id,
+                    product_name=product.name,
+                    quantity=quantity,
+                    unit=product.unit,
+                    price_at_purchase=item_total/quantity if quantity > 0 else 0 # Unit price roughly or total
+                )
+                # Store the effective unit price based on the total calculated with tier pricing
+                order_item.price_at_purchase = item_total / quantity if quantity > 0 else 0
+                order_items.append(order_item)
+
+        new_order = Order(
+            customer_name=name,
+            customer_phone=phone,
+            total_amount=round(total_price, 2),
+            status='Pending'
+        )
+        db.session.add(new_order)
+        db.session.commit()
+
+        for item in order_items:
+            item.order_id = new_order.id
+            db.session.add(item)
+
+        db.session.commit()
+
+        # Clear cart
+        session.pop('cart', None)
+
+        return redirect(url_for('main.order_confirmation', order_id=new_order.id))
+
+    return render_template('checkout.html')
+
+@main_bp.route('/order-confirmation/<int:order_id>')
+def order_confirmation(order_id):
+    order = Order.query.get_or_404(order_id)
+    return render_template('order_confirmation.html', order=order)
