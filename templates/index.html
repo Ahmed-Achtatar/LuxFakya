@@ -10,7 +10,7 @@
     </div>
     <div class="carousel-inner">
         <!-- Slide 1 -->
-        <div class="carousel-item active hero-carousel-item" style="background-image: url('https://images.unsplash.com/photo-1679949499517-1ce03d17f20b?auto=format&fit=crop&w=1350&q=80');">
+        <div class="carousel-item active hero-carousel-item" style="background-image: url('{{ url_for('static', filename='images/slide1.png') }}');">
             <div class="hero-carousel-overlay"></div>
             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100">
                 <h5 class="text-gold text-uppercase letter-spacing-2 mb-3 display-6" style="font-size: 1.2rem;">{{ get_text('hero_slide1_pre') }}</h5>
@@ -19,7 +19,7 @@
             </div>
         </div>
         <!-- Slide 2 -->
-        <div class="carousel-item hero-carousel-item" style="background-image: url('https://images.unsplash.com/photo-1722109998479-461ba34cd75a?auto=format&fit=crop&w=1350&q=80');">
+        <div class="carousel-item hero-carousel-item" style="background-image: url('{{ url_for('static', filename='images/slide2.png') }}');">
              <div class="hero-carousel-overlay"></div>
             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100">
                 <h5 class="text-gold text-uppercase letter-spacing-2 mb-3 display-6" style="font-size: 1.2rem;">{{ get_text('hero_slide2_pre') }}</h5>
@@ -28,7 +28,7 @@
             </div>
         </div>
         <!-- Slide 3 -->
-        <div class="carousel-item hero-carousel-item" style="background-image: url('https://images.unsplash.com/photo-1722109998479-461ba34cd75a?auto=format&fit=crop&w=1350&q=80');">
+        <div class="carousel-item hero-carousel-item" style="background-image: url('{{ url_for('static', filename='images/slide3.png') }}');">
              <div class="hero-carousel-overlay"></div>
             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100">
                 <h5 class="text-gold text-uppercase letter-spacing-2 mb-3 display-6" style="font-size: 1.2rem;">{{ get_text('hero_slide3_pre') }}</h5>
@@ -54,7 +54,7 @@
             <a href="{{ url_for('main.shop', category='Dates') }}" class="text-decoration-none">
                 <div class="category-item">
                     <div class="category-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1679949499517-1ce03d17f20b?auto=format&fit=crop&w=400&q=80" alt="Dates">
+                        <img src="{{ url_for('static', filename='images/dates.png') }}" alt="Dates">
                     </div>
                     <h6 class="category-title">{{ get_text('cat_dates') }}</h6>
                 </div>
@@ -64,7 +64,7 @@
             <a href="{{ url_for('main.shop', category='Nuts') }}" class="text-decoration-none">
                 <div class="category-item">
                     <div class="category-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1756361947189-29e0baae7bcd?auto=format&fit=crop&w=400&q=80" alt="Nuts">
+                        <img src="{{ url_for('static', filename='images/nuts.png') }}" alt="Nuts">
                     </div>
                     <h6 class="category-title">{{ get_text('cat_nuts') }}</h6>
                 </div>
@@ -74,7 +74,7 @@
             <a href="{{ url_for('main.shop', category='Dried Fruits') }}" class="text-decoration-none">
                 <div class="category-item">
                     <div class="category-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1722109998479-461ba34cd75a?auto=format&fit=crop&w=400&q=80" alt="Dried Fruits">
+                        <img src="{{ url_for('static', filename='images/driedfood.png') }}" alt="Dried Fruits">
                     </div>
                     <h6 class="category-title">{{ get_text('cat_dried') }}</h6>
                 </div>
@@ -84,7 +84,7 @@
             <a href="{{ url_for('main.shop', category='Gift Boxes') }}" class="text-decoration-none">
                 <div class="category-item">
                     <div class="category-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1722109998479-461ba34cd75a?auto=format&fit=crop&w=400&q=80" alt="Gift Boxes">
+                        <img src="{{ url_for('static', filename='images/gift.png') }}" alt="Gift Boxes">
                     </div>
                     <h6 class="category-title">{{ get_text('cat_gifts') }}</h6>
                 </div>
@@ -170,7 +170,7 @@
                 <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg px-5">{{ get_text('view_offers') }}</a>
             </div>
             <div class="col-md-6 text-center" data-aos="fade-left">
-                <img src="https://images.unsplash.com/photo-1679949499517-1ce03d17f20b?auto=format&fit=crop&w=800&q=80" alt="Deals" class="img-fluid rounded-3 shadow">
+                <img src="{{ url_for('static', filename='images/dates.png') }}" alt="Deals" class="img-fluid rounded-3 shadow">
             </div>
         </div>
     </div>
@@ -184,7 +184,7 @@
     <div class="row g-4">
         <div class="col-md-6" data-aos="fade-right">
             <div class="recipe-card h-100">
-                <img src="https://images.unsplash.com/photo-1722109998479-461ba34cd75a?auto=format&fit=crop&w=800&q=80" class="w-100 h-100" style="object-fit: cover; min-height: 400px;" alt="Gift 1">
+                <img src="{{ url_for('static', filename='images/driedfood.png') }}" class="w-100 h-100" style="object-fit: cover; min-height: 400px;" alt="Gift 1">
                 <div class="recipe-overlay">
                     <div class="recipe-meta">{{ get_text('gift1_meta') }}</div>
                     <h3 class="font-serif fw-bold mb-3">{{ get_text('gift1_title') }}</h3>
@@ -194,7 +194,7 @@
         </div>
         <div class="col-md-6" data-aos="fade-left">
             <div class="recipe-card h-100">
-                <img src="https://images.unsplash.com/photo-1679949499517-1ce03d17f20b?auto=format&fit=crop&w=800&q=80" class="w-100 h-100" style="object-fit: cover; min-height: 400px;" alt="Gift 2">
+                <img src="{{ url_for('static', filename='images/dates.png') }}" class="w-100 h-100" style="object-fit: cover; min-height: 400px;" alt="Gift 2">
                 <div class="recipe-overlay">
                     <div class="recipe-meta">{{ get_text('gift2_meta') }}</div>
                     <h3 class="font-serif fw-bold mb-3">{{ get_text('gift2_title') }}</h3>

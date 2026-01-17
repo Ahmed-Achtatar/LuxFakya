@@ -25,11 +25,11 @@ def seed():
         db.session.commit()
         print(f"Seeded {len(categories)} categories.")
 
-        # Verified Unsplash URLs
-        dates_url = "https://images.unsplash.com/photo-1679949499517-1ce03d17f20b?auto=format&fit=crop&w=800&q=80"
-        almonds_url = "https://images.unsplash.com/photo-1756361947189-29e0baae7bcd?auto=format&fit=crop&w=800&q=80"
-        walnuts_url = "https://images.unsplash.com/photo-1644245903028-9b184b04e59e?auto=format&fit=crop&w=800&q=80"
-        mix_url = "https://images.unsplash.com/photo-1722109998479-461ba34cd75a?auto=format&fit=crop&w=800&q=80"
+        # Local Image URLs
+        dates_url = "/static/images/dates.png"
+        nuts_url = "/static/images/nuts.png"
+        dried_url = "/static/images/driedfood.png"
+        gift_url = "/static/images/gift.png"
 
         # Products
         p1 = Product(
@@ -58,7 +58,7 @@ def seed():
             price=18.00,
             unit="kg",
             category="Nuts",
-            image_url=almonds_url
+            image_url=nuts_url
         )
         db.session.add(p3)
 
@@ -68,7 +68,7 @@ def seed():
             price=22.00,
             unit="kg",
             category="Nuts",
-            image_url=walnuts_url
+            image_url=nuts_url
         )
         db.session.add(p4)
 
@@ -80,7 +80,7 @@ def seed():
                 price=24.00,
                 unit="kg",
                 category="Nuts",
-                image_url=mix_url
+                image_url=nuts_url
             ),
             Product(
                 name="Roasted Cashews",
@@ -88,7 +88,7 @@ def seed():
                 price=26.00,
                 unit="kg",
                 category="Nuts",
-                image_url=mix_url
+                image_url=nuts_url
             ),
             Product(
                 name="Dried Apricots",
@@ -96,7 +96,7 @@ def seed():
                 price=12.00,
                 unit="kg",
                 category="Dried Fruits",
-                image_url=mix_url
+                image_url=dried_url
             ),
             Product(
                 name="Dried Figs",
@@ -104,7 +104,7 @@ def seed():
                 price=14.00,
                 unit="kg",
                 category="Dried Fruits",
-                image_url=dates_url
+                image_url=dried_url
             ),
             Product(
                 name="Golden Raisins",
@@ -112,7 +112,7 @@ def seed():
                 price=10.00,
                 unit="kg",
                 category="Dried Fruits",
-                image_url=mix_url
+                image_url=dried_url
             ),
             Product(
                 name="Luxury Fakia Box",
@@ -120,7 +120,7 @@ def seed():
                 price=55.00,
                 unit="box",
                 category="Gift Boxes",
-                image_url=mix_url
+                image_url=gift_url
             ),
             Product(
                 name="Dates Assortment Plateau",
@@ -128,7 +128,7 @@ def seed():
                 price=45.00,
                 unit="plateau",
                 category="Gift Boxes",
-                image_url=dates_url
+                image_url=gift_url
             ),
             Product(
                 name="Moroccan Tea Time Set",
@@ -136,7 +136,7 @@ def seed():
                 price=35.00,
                 unit="set",
                 category="Gift Boxes",
-                image_url=mix_url
+                image_url=gift_url
             )
         ]
 
