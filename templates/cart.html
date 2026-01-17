@@ -31,11 +31,13 @@
                                     </div>
                                 </div>
                             </td>
-                            <td>{{ item.product.price }} MAD</td>
+                            <td>{{ item.product.price }} MAD / {{ item.product.unit }}</td>
                             <td>
-                                <form action="{{ url_for('main.update_cart', product_id=item.product.id) }}" method="POST" class="d-flex align-items-center" style="width: 120px;">
-                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control form-control-sm text-center me-2">
-                                    <button type="submit" class="btn btn-sm btn-link text-muted p-0"><i class="fas fa-sync"></i></button>
+                                <form action="{{ url_for('main.update_cart', product_id=item.product.id) }}" method="POST" class="d-flex align-items-center" style="width: 140px;">
+                                    <div class="input-group input-group-sm">
+                                        <input type="number" name="quantity" value="{{ item.quantity }}" min="0.1" step="0.01" class="form-control text-center">
+                                        <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-sync"></i></button>
+                                    </div>
                                 </form>
                             </td>
                             <td class="fw-bold text-gold">{{ item.total }} MAD</td>

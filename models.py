@@ -18,7 +18,7 @@ class User(UserMixin, db.Model):
 class ProductPricing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Float, nullable=False)
     price = db.Column(db.Float, nullable=False)
 
     def to_dict(self):
@@ -32,6 +32,7 @@ class Product(db.Model):
     name = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text, nullable=True)
     price = db.Column(db.Float, nullable=False)
+    unit = db.Column(db.String(50), nullable=False, default='pcs')
     category = db.Column(db.String(100), nullable=False)
     image_url = db.Column(db.String(500), nullable=True)
     pricings = db.relationship('ProductPricing', backref='product', cascade="all, delete-orphan", lazy=True, order_by='ProductPricing.quantity')
@@ -42,6 +43,7 @@ class Product(db.Model):
             'name': self.name,
             'description': self.description,
             'price': self.price,
+            'unit': self.unit,
             'category': self.category,
             'image_url': self.image_url,
             'pricings': [p.to_dict() for p in self.pricings]

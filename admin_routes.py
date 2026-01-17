@@ -49,6 +49,7 @@ def add_product():
         name = request.form.get('name')
         description = request.form.get('description')
         price = request.form.get('price')
+        unit = request.form.get('unit', 'pcs')
         category = request.form.get('category')
 
         # Image handling
@@ -75,6 +76,7 @@ def add_product():
             name=name,
             description=description,
             price=float(price),
+            unit=unit,
             category=category,
             image_url=image_url
         )
@@ -90,7 +92,7 @@ def add_product():
             if q and p:
                 new_pricing = ProductPricing(
                     product_id=new_product.id,
-                    quantity=int(q),
+                    quantity=float(q),
                     price=float(p)
                 )
                 db.session.add(new_pricing)
@@ -111,6 +113,7 @@ def edit_product(product_id):
         product.name = request.form.get('name')
         product.description = request.form.get('description')
         product.price = float(request.form.get('price'))
+        product.unit = request.form.get('unit', 'pcs')
         product.category = request.form.get('category')
 
         if 'image' in request.files:
@@ -135,7 +138,7 @@ def edit_product(product_id):
             if q and p: # Ensure values exist
                 new_pricing = ProductPricing(
                     product_id=product.id,
-                    quantity=int(q),
+                    quantity=float(q),
                     price=float(p)
                 )
                 db.session.add(new_pricing)

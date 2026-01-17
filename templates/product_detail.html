@@ -12,16 +12,16 @@
                     <span class="badge bg-gold bg-opacity-10 text-gold px-3 py-2 rounded-pill text-uppercase">{{ product.category }}</span>
                 </div>
                 <h1 class="display-4 fw-bold font-serif mb-3">{{ product.name }}</h1>
-                <h3 class="text-gold mb-4 display-6">{{ product.price }} MAD</h3>
+                <h3 class="text-gold mb-4 display-6">{{ product.price }} MAD <span class="fs-5 text-muted">/ {{ product.unit }}</span></h3>
                 <p class="card-text lead text-muted mb-5">{{ product.description }}</p>
 
                 <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="d-flex align-items-center mb-4">
-                        <label class="me-3 fw-bold text-muted">Quantity:</label>
+                        <label class="me-3 fw-bold text-muted">Quantity ({{ product.unit }}):</label>
                         <div class="input-group" style="width: 140px;">
                             <button class="btn btn-outline-secondary" type="button" onclick="this.parentNode.querySelector('input[type=number]').stepDown()"><i class="fas fa-minus"></i></button>
-                            <input type="number" name="quantity" value="1" min="1" class="form-control text-center border-secondary">
+                            <input type="number" name="quantity" value="1" min="0.1" step="0.01" class="form-control text-center border-secondary">
                             <button class="btn btn-outline-secondary" type="button" onclick="this.parentNode.querySelector('input[type=number]').stepUp()"><i class="fas fa-plus"></i></button>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                 </div>
                 <div class="card-body text-center p-4">
                     <h5 class="card-title font-serif fw-bold mb-2">{{ product.name }}</h5>
-                    <p class="card-text text-gold fw-bold fs-5">{{ product.price }} MAD</p>
+                    <p class="card-text text-gold fw-bold fs-5">{{ product.price }} MAD / {{ product.unit }}</p>
                     <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-outline-dark btn-sm mt-2 rounded-pill px-4">View Details</a>
                 </div>
             </div>

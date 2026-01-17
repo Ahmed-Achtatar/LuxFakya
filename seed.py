@@ -28,6 +28,7 @@ def seed():
             name="Premium Mejhoul Dates",
             description="The king of dates, sweet and succulent.",
             price=25.00,
+            unit="kg",
             category="Dates",
             image_url=dates_url
         )
@@ -37,6 +38,7 @@ def seed():
             name="Deglet Nour Dates",
             description="Translucent color and a soft honey-like taste.",
             price=15.00,
+            unit="kg",
             category="Dates",
             image_url=dates_url
         )
@@ -46,6 +48,7 @@ def seed():
             name="Roasted Almonds",
             description="Crunchy and salted roasted almonds.",
             price=18.00,
+            unit="kg",
             category="Nuts",
             image_url=almonds_url
         )
@@ -55,6 +58,7 @@ def seed():
             name="Premium Walnuts",
             description="High quality walnuts, rich in Omega-3.",
             price=22.00,
+            unit="kg",
             category="Nuts",
             image_url=walnuts_url
         )
@@ -66,6 +70,7 @@ def seed():
                 name="Salted Pistachios",
                 description="Deliciously salted pistachios in shell.",
                 price=24.00,
+                unit="kg",
                 category="Nuts",
                 image_url=mix_url
             ),
@@ -73,6 +78,7 @@ def seed():
                 name="Roasted Cashews",
                 description="Creamy and crunchy roasted cashews.",
                 price=26.00,
+                unit="kg",
                 category="Nuts",
                 image_url=mix_url
             ),
@@ -80,6 +86,7 @@ def seed():
                 name="Dried Apricots",
                 description="Sweet and tangy dried apricots.",
                 price=12.00,
+                unit="kg",
                 category="Dried Fruits",
                 image_url=mix_url
             ),
@@ -87,6 +94,7 @@ def seed():
                 name="Dried Figs",
                 description="Natural sweetness and chewy texture.",
                 price=14.00,
+                unit="kg",
                 category="Dried Fruits",
                 image_url=dates_url
             ),
@@ -94,6 +102,7 @@ def seed():
                 name="Golden Raisins",
                 description="Sweet golden raisins, perfect for snacking.",
                 price=10.00,
+                unit="kg",
                 category="Dried Fruits",
                 image_url=mix_url
             ),
@@ -101,6 +110,7 @@ def seed():
                 name="Luxury Fakia Box",
                 description="An assortment of our finest nuts and dried fruits.",
                 price=55.00,
+                unit="box",
                 category="Gift Boxes",
                 image_url=mix_url
             ),
@@ -108,6 +118,7 @@ def seed():
                 name="Dates Assortment Plateau",
                 description="A beautiful arrangement of stuffed dates.",
                 price=45.00,
+                unit="plateau",
                 category="Gift Boxes",
                 image_url=dates_url
             ),
@@ -115,6 +126,7 @@ def seed():
                 name="Moroccan Tea Time Set",
                 description="Perfect companion for Moroccan mint tea.",
                 price=35.00,
+                unit="set",
                 category="Gift Boxes",
                 image_url=mix_url
             )
@@ -127,16 +139,16 @@ def seed():
 
         # Add Pricing for p1 (Mejhoul Dates)
         pricings = [
-            ProductPricing(product_id=p1.id, quantity=1, price=25.00),
-            ProductPricing(product_id=p1.id, quantity=2, price=45.00),
-            ProductPricing(product_id=p1.id, quantity=3, price=65.00)
+            ProductPricing(product_id=p1.id, quantity=1.0, price=25.00),
+            ProductPricing(product_id=p1.id, quantity=2.0, price=45.00),
+            ProductPricing(product_id=p1.id, quantity=3.0, price=65.00)
         ]
 
         # Add Pricing for p2
         pricings.extend([
-            ProductPricing(product_id=p2.id, quantity=1, price=15.00),
-            ProductPricing(product_id=p2.id, quantity=2, price=28.00),
-            ProductPricing(product_id=p2.id, quantity=3, price=40.00)
+            ProductPricing(product_id=p2.id, quantity=1.0, price=15.00),
+            ProductPricing(product_id=p2.id, quantity=2.0, price=28.00),
+            ProductPricing(product_id=p2.id, quantity=3.0, price=40.00)
         ])
 
         for pr in pricings:
