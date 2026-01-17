@@ -3,3 +3,5 @@ Flask-SQLAlchemy
 Flask-Login
 email_validator
 Flask-WTF
+gunicorn
+psycopg2-binary
