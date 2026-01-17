@@ -34,24 +34,59 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}">Home</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Categories
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Chiles') }}">Chiles</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Garlic') }}">Garlic</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Herbs') }}">Herbs</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Onion') }}">Onion</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Pepper') }}">Pepper</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Sea Salts') }}">Sea Salts</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Tropical') }}">Tropical</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category='Turmeric') }}">Turmeric</a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Recipes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contacts</a></li>
+
+                    <li class="nav-item ms-2">
+                        <a class="nav-link" href="#"><i class="fas fa-search"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="far fa-heart"></i></a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link position-relative" href="{{ url_for('main.cart') }}">
-                            <i class="fas fa-shopping-cart"></i> Cart
+                            <i class="fas fa-shopping-bag"></i>
                             {% if session.get('cart') %}
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gold" style="font-size: 0.6rem;">
                                 {{ session.get('cart')|length }}
                             </span>
                             {% endif %}
                         </a>
                     </li>
+
                     {% if current_user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.dashboard') }}">Admin</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.logout') }}">Logout</a></li>
+                    <li class="nav-item dropdown ms-2">
+                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                             <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">Admin</a></li>
+                             <li><hr class="dropdown-divider"></li>
+                             <li><a class="dropdown-item" href="{{ url_for('admin.logout') }}">Logout</a></li>
+                        </ul>
+                    </li>
                     {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.login') }}">Login</a></li>
+                    <li class="nav-item ms-2"><a class="nav-link" href="{{ url_for('admin.login') }}">Login</a></li>
                     {% endif %}
                 </ul>
             </div>
