@@ -35,6 +35,11 @@ class LuxFakiaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'image/vnd.microsoft.icon')
 
+    def test_health(self):
+        response = self.client.get('/health')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {'status': 'healthy', 'message': 'Application is running'})
+
     def test_shop(self):
         response = self.client.get('/shop')
         self.assertEqual(response.status_code, 200)
