@@ -1,5 +1,7 @@
 import os
-from flask import Flask, session, request, send_from_directory
+import sys
+import logging
+from flask import Flask, session, request, send_from_directory, jsonify
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from models import db, User, Category
@@ -7,6 +9,12 @@ from translations import translations
 
 def create_app(test_config=None):
     app = Flask(__name__)
+
+    # Configure logging
+    if not app.debug:
+        gunicorn_logger = logging.getLogger('gunicorn.error')
+        app.logger.handlers = gunicorn_logger.handlers
+        app.logger.setLevel(gunicorn_logger.level)
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-luxfakia')
 
     # Database configuration
@@ -38,6 +46,10 @@ def create_app(test_config=None):
         return send_from_directory(os.path.join(app.root_path, 'static'),
                                    'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
+    @app.route('/health')
+    def health_check():
+        return jsonify({'status': 'healthy', 'message': 'Application is running'}), 200
+
     # Register Blueprints
     from routes import main_bp
     from admin_routes import admin_bp
@@ -65,7 +77,12 @@ def create_app(test_config=None):
         )
 
     with app.app_context():
-        db.create_all()
+        try:
+            db.create_all()
+        except Exception as e:
+            app.logger.error(f"Database connection failed: {e}")
+            print(f"CRITICAL ERROR: Database connection failed: {e}", file=sys.stderr)
+            # We do NOT re-raise, so the app can start and serve /health
 
     return app
 
