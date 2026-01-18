@@ -1,5 +1,6 @@
 import os
-from flask import Flask, session, request
+import sys
+from flask import Flask, session, request, jsonify
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from models import db, User, Category
@@ -11,8 +12,15 @@ def create_app(test_config=None):
 
     # Database configuration
     database_url = os.environ.get('DATABASE_URL')
-    if database_url and database_url.startswith("postgres://"):
-        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    if database_url:
+        # Log that we found a DB URL (masking credentials)
+        masked_url = database_url.split('@')[-1] if '@' in database_url else '***'
+        print(f"Using configured Database: ...@{masked_url}", file=sys.stderr)
+
+        if database_url.startswith("postgres://"):
+            database_url = database_url.replace("postgres://", "postgresql://", 1)
+    else:
+        print("WARNING: No DATABASE_URL found. Using local SQLite. Data will be lost on restart in production environments like Railway.", file=sys.stderr)
 
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///luxfakia.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -33,6 +41,17 @@ def create_app(test_config=None):
     def load_user(user_id):
         return User.query.get(int(user_id))
 
+    # Health Check Route
+    @app.route('/health')
+    def health_check():
+        try:
+            # Simple query to verify DB connection
+            db.session.execute(db.text('SELECT 1'))
+            return jsonify({'status': 'healthy', 'database': 'connected'}), 200
+        except Exception as e:
+            print(f"Health check failed: {e}", file=sys.stderr)
+            return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
+
     # Register Blueprints
     from routes import main_bp
     from admin_routes import admin_bp
@@ -43,8 +62,6 @@ def create_app(test_config=None):
     def inject_global_context():
         lang = session.get('lang', 'fr')
         def get_text(key):
-            # Fallback to key if translation missing, or fallback to FR/EN if needed?
-            # Ideally fallback to English or the key itself.
             return translations.get(lang, {}).get(key, key)
 
         try:
@@ -60,7 +77,12 @@ def create_app(test_config=None):
         )
 
     with app.app_context():
-        db.create_all()
+        try:
+            db.create_all()
+            print("Database tables verified.", file=sys.stderr)
+        except Exception as e:
+            print(f"CRITICAL: Database connection failed during startup: {e}", file=sys.stderr)
+            # We don't exit here so the app can at least start and serve /health with error
 
     return app
 
