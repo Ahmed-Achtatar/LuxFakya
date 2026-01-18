@@ -1,5 +1,5 @@
 import os
-from flask import Flask, session, request
+from flask import Flask, session, request, send_from_directory
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from models import db, User, Category
@@ -32,6 +32,11 @@ def create_app(test_config=None):
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
+
+    @app.route('/favicon.ico')
+    def favicon():
+        return send_from_directory(os.path.join(app.root_path, 'static'),
+                                   'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
     # Register Blueprints
     from routes import main_bp
