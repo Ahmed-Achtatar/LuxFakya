@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for, flash
+from flask import Blueprint, render_template, request, session, redirect, url_for, flash, current_app
 from models import Product, db, Order, OrderItem
 
 main_bp = Blueprint('main', __name__)
@@ -120,6 +120,7 @@ def add_to_cart(product_id):
         cart[pid] = quantity
 
     session.modified = True
+    current_app.logger.info(f"Added product {product_id} (qty: {quantity}) to cart")
     flash(f'Added {quantity} item(s) to cart', 'success')
     return redirect(request.referrer or url_for('main.shop'))
 
@@ -210,6 +211,8 @@ def checkout():
             db.session.add(item)
 
         db.session.commit()
+
+        current_app.logger.info(f"Order created: {new_order.id} for {name} ({total_price})")
 
         # Clear cart
         session.pop('cart', None)
