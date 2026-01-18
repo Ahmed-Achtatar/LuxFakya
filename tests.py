@@ -30,6 +30,11 @@ class LuxFakiaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'LuxFakia', response.data)
 
+    def test_favicon(self):
+        response = self.client.get('/favicon.ico')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, 'image/vnd.microsoft.icon')
+
     def test_shop(self):
         response = self.client.get('/shop')
         self.assertEqual(response.status_code, 200)
