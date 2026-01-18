@@ -19,25 +19,26 @@ This guide outlines the steps to deploy the application to Railway.app.
     *   Select your repository.
 
 3.  **Add a PostgreSQL Database**:
-    *   **CRITICAL STEP**: By default, the app uses SQLite which loses data on every restart in Railway. You **MUST** add a PostgreSQL service.
-    *   In the project view, click "New" -> "Database" -> "PostgreSQL".
-    *   Railway will automatically link this database to your application by setting the `DATABASE_URL` environment variable.
+    *   In the project view, right-click (or click "New") to add a service.
+    *   Select "Database" -> "PostgreSQL".
+    *   This will automatically create a `DATABASE_URL` environment variable available to your application service.
 
 4.  **Configure Environment Variables**:
-    *   Click on your application service.
+    *   Click on your application service (the GitHub repo).
     *   Go to the "Variables" tab.
-    *   Add `SECRET_KEY` with a strong random string (e.g., generated via `openssl rand -hex 32`).
+    *   Add `SECRET_KEY` with a strong random string.
+    *   (Optional) If you have other variables (e.g., mail settings), add them here.
 
 5.  **Verify Deployment**:
-    *   Watch the "Deployments" logs.
-    *   Once deployed, a public URL will be generated (enable it in "Settings" -> "Networking").
-    *   Visit `/health` on your deployed URL (e.g., `https://your-app.up.railway.app/health`) to verify the database connection.
+    *   Railway will automatically detect the `Procfile` and `requirements.txt`.
+    *   Watch the "Deployments" logs to ensure the build and start up are successful.
+    *   Once deployed, a public URL will be generated (you might need to enable it in the "Settings" -> "Networking" tab).
 
-## Database Initialization (Seeding)
+## Database Initialization
 
-After the deployment is successful (green checkmark), your database is empty. You need to seed it.
+After the first deployment, you need to initialize the database tables and seed initial data.
 
-**Method A: Using Railway CLI (Recommended)**
+**Using Railway CLI:**
 
 1.  Install Railway CLI: `npm i -g @railway/cli`
 2.  Login: `railway login`
@@ -46,37 +47,17 @@ After the deployment is successful (green checkmark), your database is empty. Yo
     ```bash
     railway run python seed.py
     ```
+    *Note: `seed.py` uses `app.app_context()` so it will use the `DATABASE_URL` from the environment.*
 
-**Method B: Using the "Start Command" Trick**
+**Alternatively (if CLI is not an option):**
 
-If you cannot use the CLI:
-
-1.  Go to your App Service "Settings".
-2.  Change "Start Command" to:
-    ```bash
-    python seed.py && gunicorn wsgi:app
-    ```
-3.  Redeploy. The app will seed the database on startup.
-4.  **Important**: Once verified that products appear, change the "Start Command" back to empty (or `gunicorn wsgi:app`) to avoid re-seeding on every restart (though the script is safe, it resets data).
+You can modify the `Start Command` in the "Settings" tab of your service temporarily to:
+```bash
+python seed.py && gunicorn wsgi:app
+```
+Deploy once, then change it back to just `gunicorn wsgi:app` (or leave it empty to default to Procfile). Note that `seed.py` might reset data if not careful, so check the script logic.
 
 ## Troubleshooting
 
-### "The website opens but there are no products"
-*   **Cause**: The database has not been seeded, or you are using SQLite (no Postgres service).
-*   **Fix**:
-    1.  Ensure you have a PostgreSQL service added in your Railway project.
-    2.  Check the "Variables" tab of your app service. Do you see `DATABASE_URL`?
-    3.  Run the seed script (see above).
-    4.  Check the logs. If you see "WARNING: No DATABASE_URL found", you missed Step 3.
-
-### "Application Error" or 500
-*   **Cause**: Database connection failed or code error.
-*   **Fix**:
-    1.  Click on the "Deployments" tab and "View Logs".
-    2.  Look for "CRITICAL: Database connection failed".
-    3.  If you see connection errors, ensure the Postgres service is healthy.
-    4.  Visit `https://your-app-url/health` to see the error message.
-
-### "Deploy Failed"
-*   **Cause**: Build error.
-*   **Fix**: Check the "Build Logs". Ensure `requirements.txt` is present and valid.
+*   **Logs**: Check the "Deploy Logs" and "App Logs" in the Railway dashboard.
+*   **Database Connection**: Ensure the PostgreSQL service is in the same project and environment.
