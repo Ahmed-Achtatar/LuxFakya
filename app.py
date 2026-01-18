@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import traceback
 from flask import Flask, session, request, send_from_directory, jsonify
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
@@ -12,9 +13,22 @@ def create_app(test_config=None):
 
     # Configure logging
     if not app.debug:
+        # Check if gunicorn handlers are present
         gunicorn_logger = logging.getLogger('gunicorn.error')
-        app.logger.handlers = gunicorn_logger.handlers
-        app.logger.setLevel(gunicorn_logger.level)
+        if gunicorn_logger.handlers:
+            app.logger.handlers = gunicorn_logger.handlers
+            app.logger.setLevel(gunicorn_logger.level)
+        else:
+            # Fallback to stdout if not running under gunicorn or no handlers found
+            handler = logging.StreamHandler(sys.stdout)
+            handler.setLevel(logging.INFO)
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            handler.setFormatter(formatter)
+            app.logger.addHandler(handler)
+            app.logger.setLevel(logging.INFO)
+
+    app.logger.info(f"Application starting... Environment: {'Production' if not app.debug else 'Debug'}")
+
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-luxfakia')
 
     # Database configuration
@@ -48,7 +62,19 @@ def create_app(test_config=None):
 
     @app.route('/health')
     def health_check():
+        app.logger.info("Health check endpoint called")
         return jsonify({'status': 'healthy', 'message': 'Application is running'}), 200
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        app.logger.error(f"Server Error: {error}")
+        app.logger.error(f"Traceback: {traceback.format_exc()}")
+        return jsonify({'error': 'Internal Server Error', 'message': str(error)}), 500
+
+    @app.errorhandler(404)
+    def not_found_error(error):
+        app.logger.warning(f"Page not found: {request.url}")
+        return "Page Not Found", 404
 
     # Register Blueprints
     from routes import main_bp
