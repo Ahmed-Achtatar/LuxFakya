@@ -80,6 +80,17 @@ def create_app(test_config=None):
         try:
             db.create_all()
             print("Database tables verified.", file=sys.stderr)
+
+            # Check if database is empty (no categories)
+            if not app.config.get('TESTING') and Category.query.first() is None:
+                print("Database appears empty. Starting auto-seeding...", file=sys.stderr)
+                try:
+                    from seed import seed_data
+                    seed_data()
+                    print("Auto-seeding completed successfully.", file=sys.stderr)
+                except Exception as seed_error:
+                    print(f"ERROR: Auto-seeding failed: {seed_error}", file=sys.stderr)
+
         except Exception as e:
             print(f"CRITICAL: Database connection failed during startup: {e}", file=sys.stderr)
             # We don't exit here so the app can at least start and serve /health with error
