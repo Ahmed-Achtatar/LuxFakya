@@ -55,7 +55,7 @@ class LuxFakiaTestCase(unittest.TestCase):
     def test_admin_login(self):
         response = self.client.post('/admin/login', data={'username': 'admin', 'password': 'password'}, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Admin Dashboard', response.data)
+        self.assertIn(b'Tableau de bord', response.data)
 
     def test_add_to_cart_quantity(self):
         # Find the product id

@@ -99,6 +99,7 @@ def create_app(test_config=None):
 
         return dict(
             get_text=get_text,
+            translations=translations,
             current_lang=lang,
             text_dir='rtl' if lang == 'ar' else 'ltr',
             all_categories=categories

@@ -1,0 +1,51 @@
+[2026-01-19 16:58:40,705] INFO in app: Application starting... Environment: Production
+2026-01-19 16:58:40,705 - app - INFO - Application starting... Environment: Production
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+[2026-01-19 16:58:41,485] INFO in app: Application starting... Environment: Production
+2026-01-19 16:58:41,485 - app - INFO - Application starting... Environment: Production
+ * Debugger is active!
+ * Debugger PIN: 132-491-319
+127.0.0.1 - - [19/Jan/2026 16:59:06] "GET /admin/login HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 16:59:07] "GET /static/images/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 16:59:07] "GET /static/css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 16:59:45] "GET /admin/login HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 16:59:45] "GET /static/css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 16:59:45] "GET /static/images/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:00:26] "GET /admin/login HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:00:26] "GET /static/css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:00:26] "GET /static/images/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:19] "GET /admin/login HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:19] "GET /static/css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:19] "GET /static/images/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:20] "[32mPOST /admin/login HTTP/1.1[0m" 302 -
+/app/app.py:56: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  return User.query.get(int(user_id))
+127.0.0.1 - - [19/Jan/2026 17:01:20] "GET /admin/ HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:20] "GET /static/images/nuts.png HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:20] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [19/Jan/2026 17:01:20] "GET /static/images/dates.png HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:20] "GET /static/images/driedfood.png HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:20] "GET /static/images/gift.png HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:47] "GET /admin/login HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:47] "GET /static/css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:47] "GET /static/images/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:48] "[32mPOST /admin/login HTTP/1.1[0m" 302 -
+127.0.0.1 - - [19/Jan/2026 17:01:48] "GET /admin/ HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:48] "GET /static/images/nuts.png HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:48] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [19/Jan/2026 17:01:48] "GET /static/images/dates.png HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:48] "GET /static/images/driedfood.png HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:48] "GET /static/images/gift.png HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:48] "GET /admin/orders HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2026 17:01:48] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+ * Detected change in '/app/translations.py', reloading
+ * Restarting with stat
+[2026-01-19 17:05:06,400] INFO in app: Application starting... Environment: Production
+2026-01-19 17:05:06,400 - app - INFO - Application starting... Environment: Production
+ * Debugger is active!
+ * Debugger PIN: 132-491-319

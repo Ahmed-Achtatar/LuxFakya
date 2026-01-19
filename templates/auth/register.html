@@ -5,53 +5,53 @@
     <div class="col-md-8 col-lg-6">
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body p-5">
-                <h3 class="mb-4 text-center font-serif fw-bold">Create Account</h3>
+                <h3 class="mb-4 text-center font-serif fw-bold">{{ translations[current_lang]['register_title'] }}</h3>
                 <form method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="username" class="form-label">Username</label>
+                            <label for="username" class="form-label">{{ translations[current_lang]['username'] }}</label>
                             <input type="text" class="form-control" id="username" name="username" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="email" class="form-label">Email</label>
+                            <label for="email" class="form-label">{{ translations[current_lang]['email'] }}</label>
                             <input type="email" class="form-control" id="email" name="email" required>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="full_name" class="form-label">Full Name</label>
+                        <label for="full_name" class="form-label">{{ translations[current_lang]['lbl_full_name'] }}</label>
                         <input type="text" class="form-control" id="full_name" name="full_name" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="phone" class="form-label">Phone Number</label>
+                        <label for="phone" class="form-label">{{ translations[current_lang]['lbl_phone'] }}</label>
                         <input type="tel" class="form-control" id="phone" name="phone">
                     </div>
 
                     <div class="row">
                         <div class="col-md-8 mb-3">
-                            <label for="address" class="form-label">Address</label>
+                            <label for="address" class="form-label">{{ translations[current_lang]['address_label'] }}</label>
                             <input type="text" class="form-control" id="address" name="address">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="city" class="form-label">City</label>
+                            <label for="city" class="form-label">{{ translations[current_lang]['lbl_city'] }}</label>
                             <input type="text" class="form-control" id="city" name="city">
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label">{{ translations[current_lang]['password'] }}</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
 
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-gold btn-lg">Register</button>
+                        <button type="submit" class="btn btn-gold btn-lg">{{ translations[current_lang]['btn_register'] }}</button>
                     </div>
                 </form>
                 <div class="mt-4 text-center">
-                    <p class="text-muted">Already have an account? <a href="{{ url_for('auth.login') }}" class="text-gold text-decoration-none">Login here</a></p>
+                    <p class="text-muted">{{ translations[current_lang]['already_account'] }} <a href="{{ url_for('auth.login') }}" class="text-gold text-decoration-none">{{ translations[current_lang]['login_link'] }}</a></p>
                 </div>
             </div>
         </div>
