@@ -176,37 +176,6 @@
     </div>
 </div>
 
-<!-- Gift Ideas & Inspiration -->
-<div class="container my-5 py-5">
-    <div class="text-center mb-5">
-        <h2 class="font-serif fw-bold">{{ get_text('ideas_title') }}</h2>
-    </div>
-    <div class="row g-4">
-        <div class="col-md-6" data-aos="fade-right">
-            <div class="recipe-card h-100">
-                <img src="{{ url_for('static', filename='images/driedfood.png') }}" class="w-100 h-100" style="object-fit: cover; min-height: 400px;" alt="Gift 1">
-                <div class="recipe-overlay">
-                    <div class="recipe-meta">{{ get_text('gift1_meta') }}</div>
-                    <h3 class="font-serif fw-bold mb-3">{{ get_text('gift1_title') }}</h3>
-                    <a href="#" class="text-white text-decoration-none fw-bold">{{ get_text('shop_gifts') }} <i class="fas fa-arrow-right ms-2"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6" data-aos="fade-left">
-            <div class="recipe-card h-100">
-                <img src="{{ url_for('static', filename='images/dates.png') }}" class="w-100 h-100" style="object-fit: cover; min-height: 400px;" alt="Gift 2">
-                <div class="recipe-overlay">
-                    <div class="recipe-meta">{{ get_text('gift2_meta') }}</div>
-                    <h3 class="font-serif fw-bold mb-3">{{ get_text('gift2_title') }}</h3>
-                    <a href="#" class="text-white text-decoration-none fw-bold">{{ get_text('learn_more') }} <i class="fas fa-arrow-right ms-2"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="text-center mt-5">
-        <a href="{{ url_for('main.shop') }}" class="btn btn-outline-dark rounded-pill px-5 text-uppercase fw-bold" style="letter-spacing: 1px;">{{ get_text('explore_collection') }}</a>
-    </div>
-</div>
 
 <!-- Welcome Text -->
 <div class="container my-5 py-5">
