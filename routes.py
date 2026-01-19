@@ -28,7 +28,8 @@ def index():
                          new_arrivals=new_arrivals,
                          best_sellers=best_sellers,
                          popular_items=popular_items,
-                         featured_products=featured_collection)
+                         featured_products=featured_collection,
+                         all_products=all_products)
 
 @main_bp.route('/about')
 def about():
