@@ -12,12 +12,32 @@
 
                 <div class="mb-3">
                     <label for="name" class="form-label">Full Name</label>
-                    <input type="text" class="form-control form-control-lg" id="name" name="name" required placeholder="Enter your name">
+                    <input type="text" class="form-control form-control-lg" id="name" name="name" required placeholder="Enter your name"
+                           value="{{ current_user.full_name if current_user.is_authenticated and current_user.full_name else '' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email (Optional)</label>
+                    <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="Enter your email"
+                           value="{{ current_user.email if current_user.is_authenticated and current_user.email else '' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control form-control-lg" id="phone" name="phone" placeholder="Enter your phone number"
+                           value="{{ current_user.phone if current_user.is_authenticated and current_user.phone else '' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address (Optional)</label>
+                    <input type="text" class="form-control form-control-lg" id="address" name="address" placeholder="Enter your address"
+                           value="{{ current_user.address if current_user.is_authenticated and current_user.address else '' }}">
                 </div>
 
                 <div class="mb-4">
-                    <label for="phone" class="form-label">Phone Number (Optional)</label>
-                    <input type="tel" class="form-control form-control-lg" id="phone" name="phone" placeholder="Enter your phone number">
+                    <label for="city" class="form-label">City (Optional)</label>
+                    <input type="text" class="form-control form-control-lg" id="city" name="city" placeholder="Enter your city"
+                           value="{{ current_user.city if current_user.is_authenticated and current_user.city else '' }}">
                 </div>
 
                 <div class="d-grid gap-2">

@@ -13,7 +13,7 @@ class LuxFakiaTestCase(unittest.TestCase):
 
         with self.app.app_context():
             db.create_all()
-            u = User(username='admin')
+            u = User(username='admin', role='admin')
             u.set_password('password')
             db.session.add(u)
             p = Product(name='Test', price=10.0, category='Dates', image_url='', unit='kg')

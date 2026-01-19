@@ -8,7 +8,17 @@ db = SQLAlchemy()
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=True)
     password_hash = db.Column(db.String(256), nullable=False)
+    role = db.Column(db.String(20), default='customer') # 'admin' or 'customer'
+
+    # Profile Details
+    full_name = db.Column(db.String(150), nullable=True)
+    phone = db.Column(db.String(50), nullable=True)
+    address = db.Column(db.String(255), nullable=True)
+    city = db.Column(db.String(100), nullable=True)
+
+    orders = db.relationship('Order', backref='user', lazy=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -62,8 +72,14 @@ class Product(db.Model):
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+
     customer_name = db.Column(db.String(150), nullable=False)
+    customer_email = db.Column(db.String(150), nullable=True)
     customer_phone = db.Column(db.String(50), nullable=True)
+    customer_address = db.Column(db.String(255), nullable=True)
+    customer_city = db.Column(db.String(100), nullable=True)
+
     total_amount = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(50), default='Pending') # Pending, Completed, Cancelled
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

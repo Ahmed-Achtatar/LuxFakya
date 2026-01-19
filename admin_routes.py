@@ -12,10 +12,25 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@admin_bp.before_request
+def restrict_access():
+    if request.endpoint == 'admin.login':
+        return
+
+    if not current_user.is_authenticated:
+        return redirect(url_for('auth.login', next=request.url))
+
+    if getattr(current_user, 'role', 'customer') != 'admin':
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('main.index'))
+
 @admin_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('admin.dashboard'))
+        if getattr(current_user, 'role', 'customer') == 'admin':
+            return redirect(url_for('admin.dashboard'))
+        flash('You are already logged in as a customer.', 'info')
+        return redirect(url_for('main.index'))
 
     if request.method == 'POST':
         username = request.form.get('username')
@@ -23,12 +38,27 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and user.check_password(password):
-            login_user(user)
-            return redirect(url_for('admin.dashboard'))
+            if user.role != 'admin':
+                flash('Access denied. Not an admin account.', 'danger')
+            else:
+                login_user(user)
+                return redirect(url_for('admin.dashboard'))
         else:
             flash('Invalid username or password', 'danger')
 
     return render_template('admin/login.html')
+
+@admin_bp.route('/users')
+@login_required
+def list_users():
+    users = User.query.order_by(User.id.desc()).all()
+    return render_template('admin/users.html', users=users)
+
+@admin_bp.route('/users/<int:user_id>')
+@login_required
+def user_detail(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('admin/user_detail.html', user=user)
 
 @admin_bp.route('/logout')
 @login_required
