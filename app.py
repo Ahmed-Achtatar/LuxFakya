@@ -48,7 +48,7 @@ def create_app(test_config=None):
     db.init_app(app)
 
     login_manager = LoginManager()
-    login_manager.login_view = 'admin.login'
+    login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
 
     @login_manager.user_loader
@@ -79,8 +79,10 @@ def create_app(test_config=None):
     # Register Blueprints
     from routes import main_bp
     from admin_routes import admin_bp
+    from auth_routes import auth_bp
     app.register_blueprint(main_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(auth_bp)
 
     @app.context_processor
     def inject_global_context():

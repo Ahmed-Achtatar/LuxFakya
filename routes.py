@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash, current_app
+from flask_login import current_user
 from models import Product, db, Order, OrderItem
 
 main_bp = Blueprint('main', __name__)
@@ -167,6 +168,9 @@ def checkout():
     if request.method == 'POST':
         name = request.form.get('name')
         phone = request.form.get('phone')
+        email = request.form.get('email')
+        address = request.form.get('address')
+        city = request.form.get('city')
 
         cart = session['cart']
         total_price = 0
@@ -200,9 +204,16 @@ def checkout():
         new_order = Order(
             customer_name=name,
             customer_phone=phone,
+            customer_email=email,
+            customer_address=address,
+            customer_city=city,
             total_amount=round(total_price, 2),
             status='Pending'
         )
+
+        if current_user.is_authenticated:
+            new_order.user_id = current_user.id
+
         db.session.add(new_order)
         db.session.commit()
 

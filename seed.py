@@ -10,12 +10,25 @@ def seed():
         db.drop_all()
         db.create_all()
 
-        # Check if admin exists
-        if not User.query.filter_by(username='admin').first():
-            user = User(username='admin')
-            user.set_password('password123')
-            db.session.add(user)
-            print("Admin user created (admin/password123)")
+        # Admin User
+        admin = User(username='admin', email='admin@luxfakia.com', role='admin')
+        admin.set_password('password123')
+        db.session.add(admin)
+        print("Admin user created (admin/password123)")
+
+        # Test Customer User
+        customer = User(
+            username='customer',
+            email='customer@example.com',
+            role='customer',
+            full_name='John Doe',
+            phone='+212600000000',
+            address='123 Test Street, Gueliz',
+            city='Marrakesh'
+        )
+        customer.set_password('password123')
+        db.session.add(customer)
+        print("Customer user created (customer/password123)")
 
         # Seed Categories
         categories = ["Dates", "Nuts", "Dried Fruits", "Gift Boxes"]
