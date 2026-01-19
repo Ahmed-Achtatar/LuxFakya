@@ -78,9 +78,15 @@
                 </div>
                 <div class="mb-0">
                     <label class="small text-muted text-uppercase mb-1">Status</label>
-                    <div>
+                    <div class="d-flex align-items-center gap-2">
                         {% if order.status == 'Pending' %}
                         <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">{{ order.status }}</span>
+                        <form action="{{ url_for('admin.confirm_order', order_id=order.id) }}" method="POST">
+                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                             <button type="submit" class="btn btn-sm btn-success rounded-pill px-3" onclick="return confirm('Are you sure you want to confirm this order?');">
+                                <i class="fas fa-check me-1"></i> Confirm Purchase
+                             </button>
+                        </form>
                         {% elif order.status == 'Completed' %}
                         <span class="badge bg-success px-3 py-2 rounded-pill">{{ order.status }}</span>
                         {% else %}

@@ -1,6 +1,7 @@
 from app import create_app
-from models import db, User, Product, ProductPricing, Category
+from models import db, User, Product, ProductPricing, Category, HomeSection
 import os
+from datetime import datetime, timedelta
 
 app = create_app()
 
@@ -176,7 +177,26 @@ def seed():
             db.session.add(pr)
 
         db.session.commit()
-        print(f"Database reset and seeded with {Product.query.count()} products and {ProductPricing.query.count()} pricing tiers.")
+
+        # Seed HomeSection (Limited Offer)
+        # Default text updated to "Limited Offer" as requested
+        limited_offer = HomeSection(
+            section_name='limited_offer',
+            title_fr='Offre Limitée',
+            title_ar='عرض محدود',
+            title_en='Limited Offer',
+            text_fr='Préparez le mois sacré avec notre sélection premium de Dattes et Fakia. Commandez maintenant pour une livraison avant le Ramadan.',
+            text_ar='استعد للشهر الكريم مع تشكيلتنا الفاخرة من التمور والفاكية. اطلب الآن لضمان التوصيل قبل رمضان.',
+            text_en='Prepare for the holy month with our premium selection of Dates and Fakia. Order now for delivery before Ramadan.',
+            image_url='/static/images/dates.png',
+            end_date=datetime.now() + timedelta(days=12, hours=4, minutes=15),
+            is_active=True
+        )
+        db.session.add(limited_offer)
+        db.session.commit()
+        print("Seeded HomeSection (Limited Offer).")
+
+        print(f"Database reset and seeded with {Product.query.count()} products, {ProductPricing.query.count()} pricing tiers, and HomeSection.")
 
 if __name__ == '__main__':
     seed()

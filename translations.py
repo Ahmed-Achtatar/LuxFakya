@@ -114,6 +114,7 @@ translations = {
         'dashboard': 'Tableau de bord',
         'orders': 'Commandes',
         'users': 'Utilisateurs',
+        'settings': 'Paramètres',
         'view_site': 'Voir le site',
 
         # Admin Dashboard
@@ -290,6 +291,7 @@ translations = {
         'dashboard': 'الرئيسية',
         'orders': 'الطلبات',
         'users': 'المستخدمين',
+        'settings': 'إعدادات',
         'view_site': 'عرض الموقع',
 
         # Admin Dashboard
@@ -466,6 +468,7 @@ translations = {
         'dashboard': 'Dashboard',
         'orders': 'Orders',
         'users': 'Users',
+        'settings': 'Settings',
         'view_site': 'View Site',
 
         # Admin Dashboard

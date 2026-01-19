@@ -688,3 +688,11 @@ footer .social-icon {
 .cursor-pointer {
     cursor: pointer;
 }
+
+#menu-toggle {
+    transition: color 0.3s;
+}
+
+#menu-toggle:hover {
+    color: var(--dark-bg);
+}

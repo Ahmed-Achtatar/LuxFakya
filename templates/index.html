@@ -168,41 +168,48 @@
     </div>
 </div>
 
-<!-- Deals of the Month -->
+<!-- Deals of the Month (Limited Offer) -->
+{% if limited_offer and limited_offer.is_active %}
 <div class="countdown-section">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-6 text-center text-md-start mb-4 mb-md-0" data-aos="fade-right">
-                <h2 class="font-serif fw-bold mb-4">{{ get_text('deals_title') }}</h2>
-                <p class="text-muted mb-5" style="max-width: 500px;">{{ get_text('deals_text') }}</p>
+                {% set offer_title = limited_offer|attr('title_' + current_lang) or get_text('deals_title') %}
+                {% set offer_text = limited_offer|attr('text_' + current_lang) or get_text('deals_text') %}
 
-                <div class="d-flex justify-content-center justify-content-md-start mb-5 flex-wrap">
+                <h2 class="font-serif fw-bold mb-4">{{ offer_title }}</h2>
+                <p class="text-muted mb-5" style="max-width: 500px;">{{ offer_text }}</p>
+
+                {% if limited_offer.end_date %}
+                <div class="d-flex justify-content-center justify-content-md-start mb-5 flex-wrap" id="countdown-timer" data-end-date="{{ limited_offer.end_date.isoformat() }}">
                     <div class="countdown-box">
-                        <div class="countdown-number">12</div>
+                        <div class="countdown-number" id="days">00</div>
                         <div class="countdown-label">{{ get_text('days') }}</div>
                     </div>
                     <div class="countdown-box">
-                        <div class="countdown-number">04</div>
+                        <div class="countdown-number" id="hours">00</div>
                         <div class="countdown-label">{{ get_text('hours') }}</div>
                     </div>
                     <div class="countdown-box">
-                        <div class="countdown-number">15</div>
+                        <div class="countdown-number" id="minutes">00</div>
                         <div class="countdown-label">{{ get_text('minutes') }}</div>
                     </div>
                     <div class="countdown-box">
-                        <div class="countdown-number">30</div>
+                        <div class="countdown-number" id="seconds">00</div>
                         <div class="countdown-label">{{ get_text('seconds') }}</div>
                     </div>
                 </div>
+                {% endif %}
 
                 <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg px-5">{{ get_text('view_offers') }}</a>
             </div>
             <div class="col-md-6 text-center" data-aos="fade-left">
-                <img src="{{ url_for('static', filename='images/dates.png') }}" alt="Deals" class="img-fluid rounded-3 shadow">
+                <img src="{{ limited_offer.image_url or url_for('static', filename='images/dates.png') }}" alt="Deals" class="img-fluid rounded-3 shadow" style="max-height: 400px; object-fit: cover;">
             </div>
         </div>
     </div>
 </div>
+{% endif %}
 
 
 <!-- Welcome Text -->
@@ -307,6 +314,39 @@
 
         if (searchInput) {
             searchInput.addEventListener('input', filterProducts);
+        }
+
+        // Countdown Timer Logic
+        const countdownContainer = document.getElementById('countdown-timer');
+        if (countdownContainer) {
+            const endDateStr = countdownContainer.getAttribute('data-end-date');
+            if (endDateStr) {
+                const countDownDate = new Date(endDateStr).getTime();
+
+                const x = setInterval(function() {
+                    const now = new Date().getTime();
+                    const distance = countDownDate - now;
+
+                    if (distance < 0) {
+                        clearInterval(x);
+                        document.getElementById("days").innerText = "00";
+                        document.getElementById("hours").innerText = "00";
+                        document.getElementById("minutes").innerText = "00";
+                        document.getElementById("seconds").innerText = "00";
+                        return;
+                    }
+
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    document.getElementById("days").innerText = days < 10 ? "0" + days : days;
+                    document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
+                    document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
+                    document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
+                }, 1000);
+            }
         }
     });
 </script>

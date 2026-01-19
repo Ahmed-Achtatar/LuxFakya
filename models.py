@@ -93,3 +93,34 @@ class OrderItem(db.Model):
     quantity = db.Column(db.Float, nullable=False)
     unit = db.Column(db.String(50), nullable=False)
     price_at_purchase = db.Column(db.Float, nullable=False)
+
+class HomeSection(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    section_name = db.Column(db.String(50), unique=True, nullable=False) # e.g., 'limited_offer'
+
+    # Content stored for multiple languages
+    title_fr = db.Column(db.String(150), nullable=True)
+    title_ar = db.Column(db.String(150), nullable=True)
+    title_en = db.Column(db.String(150), nullable=True)
+
+    text_fr = db.Column(db.Text, nullable=True)
+    text_ar = db.Column(db.Text, nullable=True)
+    text_en = db.Column(db.Text, nullable=True)
+
+    image_url = db.Column(db.String(500), nullable=True)
+    end_date = db.Column(db.DateTime, nullable=True) # For countdown
+    is_active = db.Column(db.Boolean, default=True)
+
+    def to_dict(self):
+        return {
+            'section_name': self.section_name,
+            'title_fr': self.title_fr,
+            'title_ar': self.title_ar,
+            'title_en': self.title_en,
+            'text_fr': self.text_fr,
+            'text_ar': self.text_ar,
+            'text_en': self.text_en,
+            'image_url': self.image_url,
+            'end_date': self.end_date,
+            'is_active': self.is_active
+        }

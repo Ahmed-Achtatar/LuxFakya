@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from models import db, User, Product, ProductPricing, Order, OrderItem, Category
+from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection
 import os
 from werkzeug.utils import secure_filename
+from datetime import datetime
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -78,7 +79,7 @@ def dashboard():
     total_products = Product.query.count()
 
     # Calculate total revenue
-    total_revenue = db.session.query(db.func.sum(Order.total_amount)).scalar() or 0
+    total_revenue = db.session.query(db.func.sum(Order.total_amount)).filter(Order.status == 'Completed').scalar() or 0
 
     return render_template('admin/dashboard.html',
                            products=products,
@@ -99,6 +100,16 @@ def orders():
 def order_detail(order_id):
     order = Order.query.get_or_404(order_id)
     return render_template('admin/order_detail.html', order=order)
+
+@admin_bp.route('/orders/<int:order_id>/confirm', methods=['POST'])
+@login_required
+def confirm_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.status != 'Completed':
+        order.status = 'Completed'
+        db.session.commit()
+        flash('Order confirmed successfully.', 'success')
+    return redirect(url_for('admin.order_detail', order_id=order.id))
 
 @admin_bp.route('/categories')
 @login_required
@@ -278,3 +289,48 @@ def delete_product(product_id):
     db.session.commit()
     flash('Product deleted', 'success')
     return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/settings/home', methods=['GET', 'POST'])
+@login_required
+def home_settings():
+    section = HomeSection.query.filter_by(section_name='limited_offer').first()
+
+    # Create default if missing (safety check)
+    if not section:
+        section = HomeSection(section_name='limited_offer')
+        db.session.add(section)
+        db.session.commit()
+
+    if request.method == 'POST':
+        section.title_fr = request.form.get('title_fr')
+        section.title_ar = request.form.get('title_ar')
+        section.title_en = request.form.get('title_en')
+        section.text_fr = request.form.get('text_fr')
+        section.text_ar = request.form.get('text_ar')
+        section.text_en = request.form.get('text_en')
+
+        # Date handling
+        end_date_str = request.form.get('end_date')
+        if end_date_str:
+            try:
+                section.end_date = datetime.strptime(end_date_str, '%Y-%m-%dT%H:%M')
+            except ValueError:
+                pass # Keep old date or handle error
+
+        # Image handling
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                upload_dir = os.path.join('static', 'images')
+                if not os.path.exists(upload_dir):
+                    os.makedirs(upload_dir)
+                save_path = os.path.join(upload_dir, filename)
+                file.save(save_path)
+                section.image_url = f'/static/images/{filename}'
+
+        db.session.commit()
+        flash('Home settings updated successfully', 'success')
+        return redirect(url_for('admin.home_settings'))
+
+    return render_template('admin/home_settings.html', section=section)
