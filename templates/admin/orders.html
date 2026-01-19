@@ -1,6 +1,6 @@
 {% extends "admin/base.html" %}
 
-{% block title %}Manage Orders{% endblock %}
+{% block title %}{{ translations[current_lang]['manage_orders'] }}{% endblock %}
 
 {% block content %}
 <div class="row my-4">
@@ -9,12 +9,12 @@
             <table class="table table-hover align-middle bg-white rounded-3 overflow-hidden mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th scope="col" class="ps-4 py-3">Order ID</th>
-                        <th scope="col" class="py-3">Customer</th>
-                        <th scope="col" class="py-3">Date</th>
-                        <th scope="col" class="py-3">Total</th>
-                        <th scope="col" class="py-3">Status</th>
-                        <th scope="col" class="py-3 text-end pe-4">Actions</th>
+                        <th scope="col" class="ps-4 py-3">{{ translations[current_lang]['th_id'] }}</th>
+                        <th scope="col" class="py-3">{{ translations[current_lang]['th_customer'] }}</th>
+                        <th scope="col" class="py-3">{{ translations[current_lang]['th_date'] }}</th>
+                        <th scope="col" class="py-3">{{ translations[current_lang]['th_total'] }}</th>
+                        <th scope="col" class="py-3">{{ translations[current_lang]['th_status'] }}</th>
+                        <th scope="col" class="py-3 text-end pe-4">{{ translations[current_lang]['th_actions'] }}</th>
                     </tr>
                 </thead>
                 <tbody class="border-top-0">
@@ -29,20 +29,22 @@
                         <td class="fw-bold">{{ order.total_amount }} MAD</td>
                         <td>
                             {% if order.status == 'Pending' %}
-                            <span class="badge bg-warning text-dark">{{ order.status }}</span>
+                            <span class="badge bg-warning text-dark">{{ translations[current_lang]['pending'] }}</span>
                             {% elif order.status == 'Completed' %}
-                            <span class="badge bg-success">{{ order.status }}</span>
+                            <span class="badge bg-success">{{ translations[current_lang]['completed'] }}</span>
+                            {% elif order.status == 'Cancelled' %}
+                            <span class="badge bg-danger">{{ translations[current_lang]['cancelled'] }}</span>
                             {% else %}
                             <span class="badge bg-secondary">{{ order.status }}</span>
                             {% endif %}
                         </td>
                         <td class="text-end pe-4">
-                            <a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="btn btn-sm btn-primary rounded-pill px-3">View Details</a>
+                            <a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="btn btn-sm btn-primary rounded-pill px-3">{{ translations[current_lang]['btn_view'] }}</a>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">No orders found.</td>
+                        <td colspan="6" class="text-center py-5 text-muted">{{ translations[current_lang]['no_orders_found'] }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

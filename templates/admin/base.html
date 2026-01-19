@@ -32,27 +32,27 @@
         <div class="bg-dark border-end" id="sidebar-wrapper">
             <div class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom border-secondary">
                 <a href="{{ url_for('admin.dashboard') }}" class="text-white text-decoration-none">
-                   Admin Panel
+                   {{ translations[current_lang]['admin_panel'] }}
                 </a>
             </div>
             <div class="list-group list-group-flush my-3">
                 <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
-                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    <i class="fas fa-tachometer-alt me-2"></i>{{ translations[current_lang]['dashboard'] }}
                 </a>
                 <a href="{{ url_for('admin.orders') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint in ['admin.orders', 'admin.order_detail'] %}active{% endif %}">
-                    <i class="fas fa-shopping-cart me-2"></i>Orders
+                    <i class="fas fa-shopping-cart me-2"></i>{{ translations[current_lang]['orders'] }}
                 </a>
                 <a href="{{ url_for('admin.categories') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint in ['admin.categories', 'admin.add_category', 'admin.edit_category'] %}active{% endif %}">
-                    <i class="fas fa-tags me-2"></i>Categories
+                    <i class="fas fa-tags me-2"></i>{{ translations[current_lang]['categories'] }}
                 </a>
                 <a href="{{ url_for('admin.list_users') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint in ['admin.list_users', 'admin.user_detail'] %}active{% endif %}">
-                    <i class="fas fa-users me-2"></i>Users
+                    <i class="fas fa-users me-2"></i>{{ translations[current_lang]['users'] }}
                 </a>
                 <a href="{{ url_for('main.index') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
-                    <i class="fas fa-home me-2"></i>View Site
+                    <i class="fas fa-home me-2"></i>{{ translations[current_lang]['view_site'] }}
                 </a>
                 <a href="{{ url_for('auth.logout') }}" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold mt-5">
-                    <i class="fas fa-power-off me-2"></i>Logout
+                    <i class="fas fa-power-off me-2"></i>{{ translations[current_lang]['logout'] }}
                 </a>
             </div>
         </div>
@@ -64,7 +64,7 @@
                 <div class="d-flex align-items-center">
                     <i class="fas fa-align-left fs-4 me-3 text-gold cursor-pointer" id="menu-toggle"></i>
                     <h2 class="fs-4 m-0 fw-bold font-serif text-dark">
-                        {% block title %}Dashboard{% endblock %}
+                        {% block title %}{{ translations[current_lang]['dashboard'] }}{% endblock %}
                     </h2>
                 </div>
 
@@ -82,8 +82,8 @@
                                 <i class="fas fa-user-circle me-2"></i>{{ current_user.username }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{{ url_for('main.index') }}">View Site</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.index') }}">{{ translations[current_lang]['view_site'] }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">{{ translations[current_lang]['logout'] }}</a></li>
                             </ul>
                         </li>
                     </ul>

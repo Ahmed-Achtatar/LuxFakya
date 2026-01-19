@@ -1,6 +1,6 @@
 {% extends "admin/base.html" %}
 
-{% block title %}Manage Users{% endblock %}
+{% block title %}{{ translations[current_lang]['manage_users'] }}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -11,11 +11,11 @@
                     <table class="table table-hover align-middle mb-0 rounded-3 overflow-hidden">
                         <thead class="bg-light">
                             <tr>
-                                <th class="ps-4 py-3 border-bottom-0">ID</th>
-                                <th class="py-3 border-bottom-0">Username</th>
-                                <th class="py-3 border-bottom-0">Email</th>
-                                <th class="py-3 border-bottom-0">Role</th>
-                                <th class="py-3 text-end pe-4 border-bottom-0">Actions</th>
+                                <th class="ps-4 py-3 border-bottom-0">{{ translations[current_lang]['th_id'] }}</th>
+                                <th class="py-3 border-bottom-0">{{ translations[current_lang]['th_username'] }}</th>
+                                <th class="py-3 border-bottom-0">{{ translations[current_lang]['email'] }}</th>
+                                <th class="py-3 border-bottom-0">{{ translations[current_lang]['th_role'] }}</th>
+                                <th class="py-3 text-end pe-4 border-bottom-0">{{ translations[current_lang]['th_actions'] }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -26,18 +26,18 @@
                                 <td>{{ user.email }}</td>
                                 <td>
                                     {% if user.role == 'admin' %}
-                                    <span class="badge bg-danger">Admin</span>
+                                    <span class="badge bg-danger">{{ translations[current_lang]['role_admin'] }}</span>
                                     {% else %}
-                                    <span class="badge bg-info text-dark">Customer</span>
+                                    <span class="badge bg-info text-dark">{{ translations[current_lang]['role_customer'] }}</span>
                                     {% endif %}
                                 </td>
                                 <td class="text-end pe-4">
-                                    <a href="{{ url_for('admin.user_detail', user_id=user.id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">View Details</a>
+                                    <a href="{{ url_for('admin.user_detail', user_id=user.id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">{{ translations[current_lang]['btn_view'] }}</a>
                                 </td>
                             </tr>
                             {% else %}
                              <tr>
-                                <td colspan="5" class="text-center py-5 text-muted">No users found.</td>
+                                <td colspan="5" class="text-center py-5 text-muted">{{ translations[current_lang]['no_users_found'] }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
