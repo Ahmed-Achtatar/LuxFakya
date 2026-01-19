@@ -11,8 +11,9 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                     <div class="mb-3">
-                        <label class="form-label text-muted">Username</label>
-                        <input type="text" class="form-control" value="{{ current_user.username }}" disabled>
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" value="{{ current_user.username }}" required>
+                        <div class="form-text text-muted">You can change your login username here.</div>
                     </div>
 
                     <div class="mb-3">
@@ -40,7 +41,26 @@
                         <input type="text" class="form-control" id="city" name="city" value="{{ current_user.city or '' }}">
                     </div>
 
-                    <div class="d-grid">
+                    <hr class="my-4">
+                    <h5 class="mb-3 font-serif fw-bold">Change Password</h5>
+                    <p class="text-muted small">Leave blank if you don't want to change your password.</p>
+
+                    <div class="mb-3">
+                        <label for="current_password" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="current_password" name="current_password">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                    </div>
+
+                    <div class="d-grid mt-4">
                         <button type="submit" class="btn btn-gold">Update Profile</button>
                     </div>
                 </form>
