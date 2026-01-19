@@ -1,23 +1,24 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white">
-                <h4>{{ title }}</h4>
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white py-3 border-bottom-0">
+                <h5 class="mb-0 fw-bold">{{ title }}</h5>
             </div>
             <div class="card-body p-4">
                 <form method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Category Name</label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{ category.name if category else '' }}" required>
+                    <div class="mb-4">
+                        <label for="name" class="form-label text-uppercase small text-muted fw-bold">Category Name</label>
+                        <input type="text" class="form-control form-control-lg bg-light border-0" id="name" name="name" value="{{ category.name if category else '' }}" required placeholder="e.g. Spices">
                     </div>
-
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-gold">Save Category</button>
-                        <a href="{{ url_for('admin.categories') }}" class="btn btn-secondary">Cancel</a>
+                    <div class="d-flex justify-content-between align-items-center mt-5">
+                         <a href="{{ url_for('admin.categories') }}" class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+                        <button type="submit" class="btn btn-gold rounded-pill px-5">Save Category</button>
                     </div>
                 </form>
             </div>

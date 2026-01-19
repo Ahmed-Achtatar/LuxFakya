@@ -1,81 +1,54 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
+
+{% block title %}User Details{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h2 class="font-serif fw-bold">User Details: {{ user.username }}</h2>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{ url_for('admin.list_users') }}">Users</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ user.username }}</li>
-            </ol>
-        </nav>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-4 mb-4">
-        <div class="card shadow-sm border-0 rounded-4 h-100">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Profile Information</h5>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+             <div>
+                <span class="text-muted">Users / </span> <span class="fw-bold">{{ user.username }}</span>
             </div>
-            <div class="card-body">
-                <p><strong>Username:</strong> {{ user.username }}</p>
-                <p><strong>Email:</strong> {{ user.email or 'N/A' }}</p>
-                <p><strong>Full Name:</strong> {{ user.full_name or 'N/A' }}</p>
-                <p><strong>Phone:</strong> {{ user.phone or 'N/A' }}</p>
-                <p><strong>Address:</strong> {{ user.address or 'N/A' }}</p>
-                <p><strong>City:</strong> {{ user.city or 'N/A' }}</p>
-                <p><strong>Role:</strong> {{ user.role }}</p>
-            </div>
+            <a href="{{ url_for('admin.list_users') }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-2"></i>Back to Users</a>
         </div>
-    </div>
 
-    <div class="col-md-8 mb-4">
-        <div class="card shadow-sm border-0 rounded-4 h-100">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Order History ({{ user.orders|length }})</h5>
-            </div>
-            <div class="card-body p-0">
-                {% if user.orders %}
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th class="ps-4">Order ID</th>
-                                <th>Date</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                                <th class="text-end pe-4">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for order in user.orders|sort(attribute='created_at', reverse=True) %}
-                            <tr>
-                                <td class="ps-4">#{{ order.id }}</td>
-                                <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                                <td>{{ "%.2f"|format(order.total_amount) }} MAD</td>
-                                <td>
-                                    <span class="badge bg-{{ 'success' if order.status == 'Completed' else 'warning' if order.status == 'Pending' else 'danger' }}">
-                                        {{ order.status }}
-                                    </span>
-                                </td>
-                                <td class="text-end pe-4">
-                                    <a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="btn btn-sm btn-outline-dark">
-                                        View
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-5 text-center">
+                <div class="bg-light rounded-circle p-4 d-inline-block mb-3" style="width: 100px; height: 100px;">
+                     <i class="fas fa-user fa-3x text-secondary"></i>
                 </div>
+                <h3 class="fw-bold">{{ user.username }}</h3>
+                <p class="text-muted mb-4">{{ user.email }}</p>
+
+                {% if user.role == 'admin' %}
+                <span class="badge bg-danger mb-4 px-3 py-2 rounded-pill">Administrator</span>
                 {% else %}
-                <div class="p-4 text-center text-muted">
-                    No orders found for this user.
-                </div>
+                <span class="badge bg-info text-dark mb-4 px-3 py-2 rounded-pill">Customer</span>
                 {% endif %}
+
+                <hr class="my-4 opacity-25">
+
+                <div class="row text-start">
+                    <div class="col-md-6 mb-3">
+                        <label class="small text-muted text-uppercase fw-bold mb-1">Full Name</label>
+                        <p class="fs-5">{{ user.full_name or 'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="small text-muted text-uppercase fw-bold mb-1">Phone</label>
+                        <p class="fs-5">{{ user.phone or 'N/A' }}</p>
+                    </div>
+                     <div class="col-md-6 mb-3">
+                        <label class="small text-muted text-uppercase fw-bold mb-1">City</label>
+                        <p class="fs-5">{{ user.city or 'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="small text-muted text-uppercase fw-bold mb-1">Address</label>
+                        <p class="fs-5">{{ user.address or 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-light p-3 text-center border-top-0 rounded-bottom-4">
+                <small class="text-muted">User ID: {{ user.id }}</small>
             </div>
         </div>
     </div>

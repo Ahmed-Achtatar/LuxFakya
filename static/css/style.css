@@ -605,3 +605,86 @@ footer .social-icon {
         padding-top: 180px;
     }
 }
+
+/* Admin Dashboard Styles */
+#wrapper {
+    overflow-x: hidden;
+}
+
+#sidebar-wrapper {
+    min-height: 100vh;
+    margin-left: -15rem;
+    -webkit-transition: margin .25s ease-out;
+    -moz-transition: margin .25s ease-out;
+    -o-transition: margin .25s ease-out;
+    transition: margin .25s ease-out;
+}
+
+#sidebar-wrapper .sidebar-heading {
+    padding: 0.875rem 1.25rem;
+    font-size: 1.2rem;
+}
+
+#sidebar-wrapper .list-group {
+    width: 15rem;
+}
+
+#page-content-wrapper {
+    min-width: 100vw;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: 0;
+}
+
+@media (min-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: 0;
+    }
+
+    #page-content-wrapper {
+        min-width: 0;
+        width: 100%;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: -15rem;
+    }
+}
+
+.primary-text {
+    color: var(--primary-gold);
+}
+
+.second-text {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.list-group-item.active {
+    background-color: rgba(212, 175, 55, 0.1) !important;
+    border-right: 4px solid var(--primary-gold);
+    color: #fff !important;
+    border-top: none;
+    border-bottom: none;
+    border-left: none;
+}
+
+.list-group-item:hover {
+    color: #fff !important;
+}
+
+/* Admin Cards */
+.admin-stat-card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
