@@ -70,7 +70,23 @@ def logout():
 @login_required
 def dashboard():
     products = Product.query.all()
-    return render_template('admin/dashboard.html', products=products)
+
+    # Statistics
+    total_orders = Order.query.count()
+    pending_orders = Order.query.filter_by(status='Pending').count()
+    total_users = User.query.count()
+    total_products = Product.query.count()
+
+    # Calculate total revenue
+    total_revenue = db.session.query(db.func.sum(Order.total_amount)).scalar() or 0
+
+    return render_template('admin/dashboard.html',
+                           products=products,
+                           total_orders=total_orders,
+                           pending_orders=pending_orders,
+                           total_users=total_users,
+                           total_products=total_products,
+                           total_revenue=total_revenue)
 
 @admin_bp.route('/orders')
 @login_required

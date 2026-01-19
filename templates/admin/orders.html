@@ -1,51 +1,52 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
+
+{% block title %}Manage Orders{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="font-serif fw-bold">Orders</h2>
-        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
-    </div>
-
-    <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="ps-4 py-3">Order ID</th>
-                            <th class="py-3">Customer</th>
-                            <th class="py-3">Date</th>
-                            <th class="py-3">Total</th>
-                            <th class="py-3">Status</th>
-                            <th class="py-3 text-end pe-4">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for order in orders %}
-                        <tr>
-                            <td class="ps-4 fw-bold">#{{ order.id }}</td>
-                            <td>
-                                <div>{{ order.customer_name }}</div>
-                                <small class="text-muted">{{ order.customer_phone }}</small>
-                            </td>
-                            <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                            <td class="fw-bold">{{ order.total_amount }} MAD</td>
-                            <td>
-                                <span class="badge bg-warning text-dark">{{ order.status }}</span>
-                            </td>
-                            <td class="text-end pe-4">
-                                <a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="btn btn-sm btn-primary">View</a>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">No orders found.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+<div class="row my-4">
+    <div class="col">
+        <div class="bg-white rounded shadow-sm table-responsive">
+            <table class="table table-hover align-middle bg-white rounded-3 overflow-hidden mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th scope="col" class="ps-4 py-3">Order ID</th>
+                        <th scope="col" class="py-3">Customer</th>
+                        <th scope="col" class="py-3">Date</th>
+                        <th scope="col" class="py-3">Total</th>
+                        <th scope="col" class="py-3">Status</th>
+                        <th scope="col" class="py-3 text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="border-top-0">
+                    {% for order in orders %}
+                    <tr>
+                        <td class="ps-4 fw-bold">#{{ order.id }}</td>
+                        <td>
+                            <div class="fw-bold">{{ order.customer_name }}</div>
+                            <small class="text-muted"><i class="fas fa-phone-alt me-1"></i>{{ order.customer_phone }}</small>
+                        </td>
+                        <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td class="fw-bold">{{ order.total_amount }} MAD</td>
+                        <td>
+                            {% if order.status == 'Pending' %}
+                            <span class="badge bg-warning text-dark">{{ order.status }}</span>
+                            {% elif order.status == 'Completed' %}
+                            <span class="badge bg-success">{{ order.status }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ order.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="btn btn-sm btn-primary rounded-pill px-3">View Details</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">No orders found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
