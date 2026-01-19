@@ -158,5 +158,15 @@ class LuxFakiaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Jane Doe', response.data)
 
+    def test_homepage_structure(self):
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        # Check for new elements
+        self.assertIn(b'id="shop-filters"', response.data)
+        self.assertIn(b'id="product-grid"', response.data)
+        self.assertIn(b'id="show-more-btn"', response.data)
+        # Check that filters are hidden initially
+        self.assertIn(b'd-none mb-5', response.data)
+
 if __name__ == '__main__':
     unittest.main()

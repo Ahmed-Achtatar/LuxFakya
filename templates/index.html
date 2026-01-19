@@ -99,9 +99,30 @@
         <h2 class="font-serif fw-bold">{{ get_text('featured_title') }}</h2>
         <p class="text-muted">{{ get_text('featured_sub') }}</p>
     </div>
-    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
-        {% for product in featured_products %}
-        <div class="col" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+
+    <!-- Shop Filters (Hidden Initially) -->
+    <div id="shop-filters" class="d-none mb-5">
+        <div class="row g-3 align-items-center justify-content-center">
+            <div class="col-md-4">
+                 <input type="text" id="shop-search" class="form-control rounded-pill border-gold" placeholder="Search products...">
+            </div>
+            <div class="col-md-8 text-center text-md-start">
+                 <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+                     <button class="btn btn-outline-gold active filter-btn rounded-pill" data-filter="all">All</button>
+                     {% for category in all_categories %}
+                     <button class="btn btn-outline-gold filter-btn rounded-pill" data-filter="{{ category.name }}">{{ category.name }}</button>
+                     {% endfor %}
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3" id="product-grid">
+        {% for product in all_products %}
+        <div class="col product-item {% if loop.index > 4 %}d-none extra-product{% endif %}"
+             data-category="{{ product.category }}"
+             data-name="{{ product.name | lower }}"
+             data-aos="fade-up" data-aos-delay="{{ ((loop.index - 1) % 4) * 50 }}">
             <div class="card product-card h-100 shadow-sm">
                 <div class="product-image-container overflow-hidden">
                     <a href="{{ url_for('main.product_detail', product_id=product.id) }}">
@@ -137,6 +158,13 @@
             </div>
         </div>
         {% endfor %}
+    </div>
+
+    <!-- Show More Button -->
+    <div class="text-center mt-5" id="show-more-container">
+        <button id="show-more-btn" class="btn btn-gold rounded-pill px-5 py-3 fw-bold text-uppercase">
+            Show More <i class="fas fa-chevron-down ms-2"></i>
+        </button>
     </div>
 </div>
 
@@ -214,6 +242,72 @@
             // Let's rely on server rendering for initial state.
             // But for update...
         });
+
+        // Shop Functionality
+        const showMoreBtn = document.getElementById('show-more-btn');
+        const filtersSection = document.getElementById('shop-filters');
+        const extraProducts = document.querySelectorAll('.extra-product');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('shop-search');
+        const productItems = document.querySelectorAll('.product-item');
+
+        if (showMoreBtn) {
+            showMoreBtn.addEventListener('click', function() {
+                // Reveal filters
+                filtersSection.classList.remove('d-none');
+                filtersSection.classList.add('d-block');
+
+                // Reveal extra products
+                extraProducts.forEach(el => el.classList.remove('d-none'));
+
+                // Hide button
+                this.parentElement.style.display = 'none';
+
+                // Refresh AOS if available
+                if (typeof AOS !== 'undefined') {
+                    setTimeout(() => AOS.refresh(), 100);
+                }
+            });
+        }
+
+        function filterProducts() {
+            const activeBtn = document.querySelector('.filter-btn.active');
+            const category = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+
+            productItems.forEach(item => {
+                const itemCat = item.getAttribute('data-category');
+                const itemName = item.getAttribute('data-name');
+
+                const matchesCategory = category === 'all' || itemCat === category;
+                const matchesSearch = itemName.includes(searchTerm);
+
+                if (matchesCategory && matchesSearch) {
+                    item.classList.remove('d-none');
+                } else {
+                    item.classList.add('d-none');
+                }
+            });
+
+            // Refresh AOS after filtering
+            if (typeof AOS !== 'undefined') {
+                setTimeout(() => AOS.refresh(), 100);
+            }
+        }
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(b => b.classList.remove('active', 'btn-gold', 'text-white'));
+                filterBtns.forEach(b => b.classList.add('btn-outline-gold'));
+                this.classList.remove('btn-outline-gold');
+                this.classList.add('active', 'btn-gold', 'text-white');
+                filterProducts();
+            });
+        });
+
+        if (searchInput) {
+            searchInput.addEventListener('input', filterProducts);
+        }
     });
 </script>
 {% endblock %}
