@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash, current_app
 from flask_login import current_user
-from models import Product, db, Order, OrderItem
+from models import Product, db, Order, OrderItem, HomeSection
 
 main_bp = Blueprint('main', __name__)
 
@@ -14,6 +14,9 @@ def set_lang(lang_code):
 def index():
     # Fetch all products to distribute across sections
     all_products = Product.query.all()
+
+    # Fetch Limited Offer Section
+    limited_offer = HomeSection.query.filter_by(section_name='limited_offer').first()
 
     # Simulate different collections
     # In a real app, these would be filtered by date added, sales count, etc.
@@ -29,7 +32,8 @@ def index():
                          best_sellers=best_sellers,
                          popular_items=popular_items,
                          featured_products=featured_collection,
-                         all_products=all_products)
+                         all_products=all_products,
+                         limited_offer=limited_offer)
 
 @main_bp.route('/about')
 def about():
