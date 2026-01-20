@@ -60,3 +60,8 @@ Une fois que vous avez vérifié que tout fonctionne, vous pouvez utiliser votre
 
 4.  **Attendez la propagation :**
     Cela peut prendre de quelques minutes à 24 heures. Vercel affichera une coche verte ✅ à côté de votre domaine une fois que tout est prêt.
+
+## Est-ce que c'est payant ?
+Pour votre usage (boutique locale, < 100 clients/mois), **NON**, vous n'avez pas besoin de payer Vercel ou Supabase.
+*   Consultez le fichier `PRICING_GUIDE.md` pour tous les détails sur les quotas gratuits.
+*   Le seul frais sera votre nom de domaine (~100-150 DH/an) que vous payez à votre registrar (pas à Vercel).
