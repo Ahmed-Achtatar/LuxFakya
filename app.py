@@ -39,6 +39,13 @@ def create_app(test_config=None):
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///luxfakia.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+    # Vercel optimization: Use NullPool to avoid connection issues in serverless environment
+    if os.environ.get('VERCEL'):
+        from sqlalchemy.pool import NullPool
+        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+            'poolclass': NullPool
+        }
+
     if test_config:
         app.config.update(test_config)
 

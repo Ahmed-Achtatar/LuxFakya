@@ -11,10 +11,11 @@ Comme Vercel ne permet pas de stocker des fichiers (comme votre base de données
     *   **Name:** `luxfakia-db`
     *   **Password:** Générez un mot de passe fort et **copiez-le** (vous en aurez besoin).
     *   **Region:** Choisissez une région proche (ex: London ou Frankfurt).
-4.  Une fois le projet créé (cela prend quelques minutes), allez dans **Project Settings** (l'icône d'engrenage) -> **Database**.
-5.  Cherchez la section **Connection String** -> **URI**.
-6.  Copiez la chaîne de connexion. Elle ressemblera à ceci :
-    `postgresql://postgres:[VOTRE-MOT-DE-PASSE]@db.votre-projet.supabase.co:5432/postgres`
+4.  Une fois le projet créé (cela prend quelques minutes), cliquez sur le bouton **Connect** en haut à droite.
+5.  Sélectionnez l'onglet **Transaction Pooler** (ou assurez-vous de choisir le mode "Transaction" et le port **6543**).
+    *   **Important pour Vercel :** Vercel ne supporte pas la connexion directe (IPv6). Vous **devez** utiliser le Transaction Pooler (Port 6543) qui est compatible IPv4.
+6.  Copiez la chaîne de connexion (URI). Elle ressemblera à ceci (notez le port **6543** et le domaine `pooler`) :
+    `postgresql://postgres.[REFERENCE-PROJET]:[VOTRE-MOT-DE-PASSE]@aws-0-[REGION].pooler.supabase.com:6543/postgres`
     *   *Remplacer `[VOTRE-MOT-DE-PASSE]` par le vrai mot de passe.*
 
 ## Étape 2 : Déployer sur Vercel
@@ -26,7 +27,7 @@ Comme Vercel ne permet pas de stocker des fichiers (comme votre base de données
     *   **Root Directory:** `./` (par défaut).
     *   **Environment Variables:** Cliquez sur cette section pour l'ouvrir.
         *   **Name:** `DATABASE_URL`
-        *   **Value:** Collez l'URI de Supabase copié à l'étape 1.
+        *   **Value:** Collez l'URI du **Transaction Pooler** (port 6543) copié à l'étape 1.
         *   *(Optionnel)* Ajoutez `SECRET_KEY` avec une valeur aléatoire longue pour la sécurité.
 5.  Cliquez sur **Deploy**.
 
