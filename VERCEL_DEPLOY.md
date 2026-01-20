@@ -39,8 +39,24 @@ Comme Vercel ne permet pas de stocker des fichiers (comme votre base de données
 4.  La base de données sera vide au début. L'application est configurée pour créer les tables automatiquement.
 
 ## Étape 4 : (Plus Tard) Connecter votre Nom de Domaine
-Une fois que vous avez vérifié que tout fonctionne :
-1.  Achetez votre nom de domaine (ex: `luxfakia.ma`).
-2.  Dans Vercel, allez dans **Settings** -> **Domains**.
-3.  Ajoutez votre domaine.
-4.  Vercel vous donnera les instructions DNS (des records `A` ou `CNAME`) à entrer là où vous avez acheté votre domaine.
+Une fois que vous avez vérifié que tout fonctionne, vous pouvez utiliser votre propre nom de domaine (comme `luxfakia.ma`).
+
+1.  **Achetez votre domaine** chez un registrar (GoDaddy, Namecheap, hostinger, etc.).
+2.  **Ajoutez le domaine sur Vercel :**
+    *   Allez sur votre projet dans Vercel.
+    *   Allez dans **Settings** -> **Domains**.
+    *   Entrez votre nom de domaine (ex: `luxfakia.ma`) et cliquez sur **Add**.
+    *   Choisissez "Add `luxfakia.ma` and `www.luxfakia.ma`" (recommandé).
+
+3.  **Configurez les DNS chez votre registrar :**
+    Connectez-vous au site où vous avez acheté votre domaine et cherchez la gestion des **DNS** ou **Zone DNS**. Ajoutez les enregistrements suivants :
+
+    | Type  | Nom (Host) | Valeur (Target)       |
+    | :---: | :--------: | :-------------------- |
+    | **A** | `@`        | `76.76.21.21`         |
+    | **CNAME**| `www`   | `cname.vercel-dns.com`|
+
+    *Note : Supprimez les anciens enregistrements de type A ou CNAME s'ils existent déjà pour éviter les conflits.*
+
+4.  **Attendez la propagation :**
+    Cela peut prendre de quelques minutes à 24 heures. Vercel affichera une coche verte ✅ à côté de votre domaine une fois que tout est prêt.
