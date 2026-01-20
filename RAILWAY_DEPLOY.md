@@ -18,44 +18,34 @@ This guide outlines the steps to deploy the application to Railway.app.
     *   Select "Deploy from GitHub repo".
     *   Select your repository.
 
-3.  **Add a PostgreSQL Database**:
-    *   In the project view, right-click (or click "New") to add a service.
-    *   Select "Database" -> "PostgreSQL".
-    *   This will automatically create a `DATABASE_URL` environment variable available to your application service.
+3.  **Ajouter la Base de Données (PostgreSQL)** :
+    *   Dans votre projet Railway, cliquez sur le bouton **+ New** (ou faites un clic droit sur la zone vide).
+    *   Sélectionnez **Database** -> **PostgreSQL**.
+    *   Une fois la base créée, Railway ajoute automatiquement une variable `DATABASE_URL` aux services qui en ont besoin (ou vous devrez lier les services).
+    *   *Astuce :* Vérifiez dans l'onglet "Variables" de votre site web que `DATABASE_URL` est bien présent et rempli (`postgresql://...`).
 
-4.  **Configure Environment Variables**:
-    *   Click on your application service (the GitHub repo).
-    *   Go to the "Variables" tab.
-    *   Add `SECRET_KEY` with a strong random string.
-    *   (Optional) If you have other variables (e.g., mail settings), add them here.
+4.  **Configurer les Variables** :
+    *   Cliquez sur votre service web (celui avec le logo GitHub).
+    *   Allez dans l'onglet **Variables**.
+    *   Ajoutez `SECRET_KEY` avec une longue chaîne aléatoire.
 
-5.  **Verify Deployment**:
-    *   Railway will automatically detect the `Procfile` and `requirements.txt`.
-    *   Watch the "Deployments" logs to ensure the build and start up are successful.
-    *   Once deployed, a public URL will be generated (you might need to enable it in the "Settings" -> "Networking" tab).
+5.  **Configurer le Nom de Domaine (Custom Domain)** :
+    *   Allez dans l'onglet **Settings** de votre service web.
+    *   Descendez à la section **Networking** -> **Public Networking**.
+    *   Cliquez sur **Custom Domain**.
+    *   Entrez votre domaine (ex: `luxfakia.ma`).
+    *   Railway va vous donner les enregistrements DNS à configurer chez votre registrar (là où vous avez acheté le domaine) :
+        *   **Type :** `CNAME`
+        *   **Nom (Host) :** `www` (ou `@` si supporté par votre registrar via CNAME flattening/Alias)
+        *   **Valeur :** `votre-projet.up.railway.app` (l'adresse fournie par Railway).
+    *   *Note :* La propagation peut prendre quelques heures.
 
-## Database Initialization
+## Initialisation de la Base de Données
 
-After the first deployment, you need to initialize the database tables and seed initial data.
+Pas besoin de commande compliquée !
+L'application est configurée pour **détecter automatiquement** si la base est vide au démarrage. Elle créera les tables et ajoutera les données par défaut (Admin, Catégories, Produits) toute seule lors du premier déploiement.
 
-**Using Railway CLI:**
-
-1.  Install Railway CLI: `npm i -g @railway/cli`
-2.  Login: `railway login`
-3.  Link your project: `railway link`
-4.  Run the seed script:
-    ```bash
-    railway run python seed.py
-    ```
-    *Note: `seed.py` uses `app.app_context()` so it will use the `DATABASE_URL` from the environment.*
-
-**Alternatively (if CLI is not an option):**
-
-You can modify the `Start Command` in the "Settings" tab of your service temporarily to:
-```bash
-python seed.py && gunicorn wsgi:app
-```
-Deploy once, then change it back to just `gunicorn wsgi:app` (or leave it empty to default to Procfile). Note that `seed.py` might reset data if not careful, so check the script logic.
+Vous n'avez rien à faire d'autre que d'attendre que le déploiement soit "Active".
 
 ## Troubleshooting
 
