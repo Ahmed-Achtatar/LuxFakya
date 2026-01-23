@@ -8,6 +8,10 @@
     --text-color: #333;
 }
 
+html, body {
+    overflow-x: hidden;
+}
+
 body {
     font-family: 'Lato', sans-serif;
     background-color: var(--body-bg);
