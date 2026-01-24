@@ -178,6 +178,8 @@ def add_product():
         price = request.form.get('price')
         unit = request.form.get('unit', 'pcs')
         category_id = request.form.get('category')
+        is_hidden = True if request.form.get('is_hidden') else False
+        is_out_of_stock = True if request.form.get('is_out_of_stock') else False
 
         # Image handling
         image_url = ''
@@ -205,7 +207,9 @@ def add_product():
             price=float(price),
             unit=unit,
             category_id=int(category_id),
-            image_url=image_url
+            image_url=image_url,
+            is_hidden=is_hidden,
+            is_out_of_stock=is_out_of_stock
         )
 
         db.session.add(new_product)
@@ -243,6 +247,8 @@ def edit_product(product_id):
         product.price = float(request.form.get('price'))
         product.unit = request.form.get('unit', 'pcs')
         product.category_id = int(request.form.get('category'))
+        product.is_hidden = True if request.form.get('is_hidden') else False
+        product.is_out_of_stock = True if request.form.get('is_out_of_stock') else False
 
         if 'image' in request.files:
             file = request.files['image']
@@ -284,6 +290,26 @@ def delete_product(product_id):
     db.session.delete(product)
     db.session.commit()
     flash('Product deleted', 'success')
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/product/<int:product_id>/toggle_hidden', methods=['POST'])
+@login_required
+def toggle_hidden(product_id):
+    product = Product.query.get_or_404(product_id)
+    product.is_hidden = not product.is_hidden
+    db.session.commit()
+    status = 'hidden' if product.is_hidden else 'visible'
+    flash(f'Product {product.name} is now {status}.', 'success')
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/product/<int:product_id>/toggle_stock', methods=['POST'])
+@login_required
+def toggle_stock(product_id):
+    product = Product.query.get_or_404(product_id)
+    product.is_out_of_stock = not product.is_out_of_stock
+    db.session.commit()
+    status = 'out of stock' if product.is_out_of_stock else 'in stock'
+    flash(f'Product {product.name} is now {status}.', 'success')
     return redirect(url_for('admin.dashboard'))
 
 @admin_bp.route('/settings/home', methods=['GET', 'POST'])

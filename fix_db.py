@@ -34,6 +34,22 @@ def fix_database():
         else:
             print("Column 'unit' already exists.")
 
+        if 'is_hidden' not in columns:
+            print("Column 'is_hidden' missing. Adding it...")
+            cursor.execute("ALTER TABLE product ADD COLUMN is_hidden BOOLEAN DEFAULT 0 NOT NULL")
+            conn.commit()
+            print("Column 'is_hidden' added successfully.")
+        else:
+            print("Column 'is_hidden' already exists.")
+
+        if 'is_out_of_stock' not in columns:
+            print("Column 'is_out_of_stock' missing. Adding it...")
+            cursor.execute("ALTER TABLE product ADD COLUMN is_out_of_stock BOOLEAN DEFAULT 0 NOT NULL")
+            conn.commit()
+            print("Column 'is_out_of_stock' added successfully.")
+        else:
+            print("Column 'is_out_of_stock' already exists.")
+
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:

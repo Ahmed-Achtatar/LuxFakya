@@ -13,7 +13,7 @@ def set_lang(lang_code):
 @main_bp.route('/')
 def index():
     # Fetch all products to distribute across sections
-    all_products = Product.query.all()
+    all_products = Product.query.filter_by(is_hidden=False).all()
 
     # Fetch Limited Offer Section
     limited_offer = HomeSection.query.filter_by(section_name='limited_offer').first()
@@ -41,12 +41,15 @@ def about():
 
 @main_bp.route('/shop')
 def shop():
-    category_name = request.args.get('category')
+category_name = request.args.get('category')
     if category_name:
-        # Join with Category to filter by name
-        products = Product.query.join(Category).filter(Category.name == category_name).all()
+        # Combine the JOIN strategy (from Current) with the hidden check (from Incoming)
+        products = Product.query.join(Category).filter(
+            Category.name == category_name,
+            Product.is_hidden == False
+        ).all()
     else:
-        products = Product.query.all()
+        products = Product.query.filter_by(is_hidden=False).all()
 
     # Get all categories
     categories = Category.query.all()
@@ -106,6 +109,11 @@ def cart():
 
 @main_bp.route('/cart/add/<int:product_id>', methods=['GET', 'POST'])
 def add_to_cart(product_id):
+    product = Product.query.get_or_404(product_id)
+    if product.is_out_of_stock:
+        flash('This product is out of stock.', 'danger')
+        return redirect(request.referrer or url_for('main.shop'))
+
     if 'cart' not in session:
         session['cart'] = {}
 

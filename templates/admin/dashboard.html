@@ -72,6 +72,21 @@
                         <td><span class="badge bg-light text-dark border">{{ product.category.name }}</span></td>
                         <td class="fw-bold text-gold">{{ product.price }} MAD</td>
                         <td class="text-end pe-4">
+                            <!-- Toggle Visibility -->
+                            <form action="{{ url_for('admin.toggle_hidden', product_id=product.id) }}" method="POST" style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm {% if product.is_hidden %}btn-secondary{% else %}btn-outline-secondary{% endif %} me-1" title="{% if product.is_hidden %}Show{% else %}Hide{% endif %}">
+                                    <i class="fas {% if product.is_hidden %}fa-eye-slash{% else %}fa-eye{% endif %}"></i>
+                                </button>
+                            </form>
+                            <!-- Toggle Stock -->
+                            <form action="{{ url_for('admin.toggle_stock', product_id=product.id) }}" method="POST" style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm {% if product.is_out_of_stock %}btn-danger{% else %}btn-outline-success{% endif %} me-1" title="{% if product.is_out_of_stock %}Mark In Stock{% else %}Mark Out of Stock{% endif %}">
+                                    <i class="fas {% if product.is_out_of_stock %}fa-times-circle{% else %}fa-check-circle{% endif %}"></i>
+                                </button>
+                            </form>
+
                             <a href="{{ url_for('admin.edit_product', product_id=product.id) }}" class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-edit"></i></a>
                             <form action="{{ url_for('admin.delete_product', product_id=product.id) }}" method="POST" onsubmit="return confirm('{{ translations[current_lang]['confirm_delete'] }}');" style="display:inline;">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

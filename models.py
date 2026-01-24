@@ -77,6 +77,8 @@ class Product(db.Model):
     category = db.relationship('Category', backref=db.backref('products', lazy=True))
 
     image_url = db.Column(db.String(500), nullable=True)
+    is_hidden = db.Column(db.Boolean, default=False)
+    is_out_of_stock = db.Column(db.Boolean, default=False)
     pricings = db.relationship('ProductPricing', backref='product', cascade="all, delete-orphan", lazy=True, order_by='ProductPricing.quantity')
 
     def to_dict(self):
@@ -88,6 +90,8 @@ class Product(db.Model):
             'unit': self.unit,
             'category': self.category.name if self.category else None,
             'image_url': self.image_url,
+            'is_hidden': self.is_hidden,
+            'is_out_of_stock': self.is_out_of_stock,
             'pricings': [p.to_dict() for p in self.pricings]
         }
 
