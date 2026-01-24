@@ -1,65 +1,9 @@
 import sqlite3
 import os
-import sys
 
-# Define expected schemas (CREATE TABLE statements)
-SCHEMAS = {
-    'product': """
-CREATE TABLE product (
-	id INTEGER NOT NULL,
-	name VARCHAR(150) NOT NULL,
-	description TEXT,
-	price FLOAT NOT NULL,
-	unit VARCHAR(50) DEFAULT 'pcs' NOT NULL,
-	category_id INTEGER NOT NULL,
-	image_url VARCHAR(500),
-	is_hidden BOOLEAN DEFAULT 0,
-	is_out_of_stock BOOLEAN DEFAULT 0,
-	PRIMARY KEY (id),
-	FOREIGN KEY(category_id) REFERENCES category (id)
-)
-""",
-    'product_pricing': """
-CREATE TABLE product_pricing (
-	id INTEGER NOT NULL,
-	product_id INTEGER NOT NULL,
-	quantity FLOAT NOT NULL,
-	price FLOAT NOT NULL,
-	PRIMARY KEY (id),
-	FOREIGN KEY(product_id) REFERENCES product (id)
-)
-""",
-    'order': """
-CREATE TABLE "order" (
-	id INTEGER NOT NULL,
-	user_id INTEGER,
-	customer_name VARCHAR(150) NOT NULL,
-	customer_email VARCHAR(150),
-	customer_phone VARCHAR(50),
-	customer_address VARCHAR(255),
-	customer_city VARCHAR(100),
-	total_amount FLOAT NOT NULL,
-	status VARCHAR(50) DEFAULT 'Pending',
-	created_at DATETIME,
-	PRIMARY KEY (id),
-	FOREIGN KEY(user_id) REFERENCES user (id)
-)
-""",
-    'order_item': """
-CREATE TABLE order_item (
-	id INTEGER NOT NULL,
-	order_id INTEGER NOT NULL,
-	product_id INTEGER,
-	product_name VARCHAR(150) NOT NULL,
-	quantity FLOAT NOT NULL,
-	unit VARCHAR(50) NOT NULL,
-	price_at_purchase FLOAT NOT NULL,
-	PRIMARY KEY (id),
-	FOREIGN KEY(order_id) REFERENCES "order" (id),
-	FOREIGN KEY(product_id) REFERENCES product (id) ON DELETE SET NULL
-)
-"""
-}
+def fix_database():
+    # Database path
+    db_path = 'instance/luxfakia.db'
 
 # Define columns that might be missing and need adding
 # Note: FALSE is compatible with both SQLite (as 0) and PostgreSQL (as boolean)
@@ -153,31 +97,35 @@ def rebuild_table_sqlite(conn, cursor, table_name, create_sql):
     try:
         safe_table_name = f'"{table_name}"' if table_name == 'order' else table_name
 
-        cursor.execute(f"PRAGMA table_info({safe_table_name})")
+        # Get columns
+        cursor.execute("PRAGMA table_info(product)")
         columns = [col[1] for col in cursor.fetchall()]
-        columns_str = ", ".join(columns)
 
-        print(f"  - Disabling foreign keys")
-        cursor.execute("PRAGMA foreign_keys=OFF")
+        if 'unit' not in columns:
+            print("Column 'unit' missing. Adding it...")
+            # SQLite supports ADD COLUMN.
+            # We set a default value 'pcs' because existing rows need a value.
+            cursor.execute("ALTER TABLE product ADD COLUMN unit VARCHAR(50) DEFAULT 'pcs' NOT NULL")
+            conn.commit()
+            print("Column 'unit' added successfully.")
+        else:
+            print("Column 'unit' already exists.")
 
-        print(f"  - Renaming old table to {table_name}_old")
-        cursor.execute(f"ALTER TABLE {safe_table_name} RENAME TO {table_name}_old")
+        if 'is_hidden' not in columns:
+            print("Column 'is_hidden' missing. Adding it...")
+            cursor.execute("ALTER TABLE product ADD COLUMN is_hidden BOOLEAN DEFAULT 0 NOT NULL")
+            conn.commit()
+            print("Column 'is_hidden' added successfully.")
+        else:
+            print("Column 'is_hidden' already exists.")
 
-        print(f"  - Creating new table {table_name}")
-        cursor.execute(create_sql)
-
-        print(f"  - Copying data")
-        cursor.execute(f"INSERT INTO {safe_table_name} ({columns_str}) SELECT {columns_str} FROM {table_name}_old")
-
-        print(f"  - Dropping old table")
-        cursor.execute(f"DROP TABLE {table_name}_old")
-
-        conn.commit()
-
-        print(f"  - Re-enabling foreign keys")
-        cursor.execute("PRAGMA foreign_keys=ON")
-
-        print(f"Table '{table_name}' rebuilt successfully.")
+        if 'is_out_of_stock' not in columns:
+            print("Column 'is_out_of_stock' missing. Adding it...")
+            cursor.execute("ALTER TABLE product ADD COLUMN is_out_of_stock BOOLEAN DEFAULT 0 NOT NULL")
+            conn.commit()
+            print("Column 'is_out_of_stock' added successfully.")
+        else:
+            print("Column 'is_out_of_stock' already exists.")
 
     except Exception as e:
         print(f"Error rebuilding table {table_name}: {e}")
@@ -326,4 +274,4 @@ def main():
         fix_sqlite(get_default_sqlite_path())
 
 if __name__ == '__main__':
-    main()
+    fix_database()
