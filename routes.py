@@ -41,7 +41,7 @@ def about():
 
 @main_bp.route('/shop')
 def shop():
-category_name = request.args.get('category')
+    category_name = request.args.get('category')
     if category_name:
         # Combine the JOIN strategy (from Current) with the hidden check (from Incoming)
         products = Product.query.join(Category).filter(
