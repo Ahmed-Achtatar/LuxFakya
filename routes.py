@@ -13,7 +13,7 @@ def set_lang(lang_code):
 @main_bp.route('/')
 def index():
     # Fetch all products to distribute across sections
-    all_products = Product.query.all()
+    all_products = Product.query.filter_by(is_hidden=False).all()
 
     # Fetch Limited Offer Section
     limited_offer = HomeSection.query.filter_by(section_name='limited_offer').first()
@@ -43,9 +43,9 @@ def about():
 def shop():
     category = request.args.get('category')
     if category:
-        products = Product.query.filter_by(category=category).all()
+        products = Product.query.filter_by(category=category, is_hidden=False).all()
     else:
-        products = Product.query.all()
+        products = Product.query.filter_by(is_hidden=False).all()
 
     categories = db.session.query(Product.category).distinct().all()
     categories = [c[0] for c in categories]
@@ -105,6 +105,11 @@ def cart():
 
 @main_bp.route('/cart/add/<int:product_id>', methods=['GET', 'POST'])
 def add_to_cart(product_id):
+    product = Product.query.get_or_404(product_id)
+    if product.is_out_of_stock:
+        flash('This product is out of stock.', 'danger')
+        return redirect(request.referrer or url_for('main.shop'))
+
     if 'cart' not in session:
         session['cart'] = {}
 
