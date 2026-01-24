@@ -124,10 +124,15 @@
              data-name="{{ product.name | lower }}"
              data-aos="fade-up" data-aos-delay="{{ ((loop.index - 1) % 4) * 50 }}">
             <div class="card product-card h-100 shadow-sm">
-                <div class="product-image-container overflow-hidden">
+                <div class="product-image-container overflow-hidden position-relative">
                     <a href="{{ url_for('main.product_detail', product_id=product.id) }}">
                         <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
                     </a>
+                    {% if product.is_out_of_stock %}
+                    <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-50">
+                         <span class="badge bg-danger fs-6 shadow">Out of Stock</span>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="card-body text-center p-3 d-flex flex-column">
                     <h6 class="card-title font-serif fw-bold mb-1 text-truncate">
@@ -136,23 +141,29 @@
                     <p class="product-price-range mb-2 text-gold fw-bold small">{{ product.price }} {{ get_text('currency') }} {{ get_text('unit_separator') }} {{ product.unit }}</p>
 
                     <div class="mt-auto">
-                        <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST" class="d-flex flex-column gap-2">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                            <select name="quantity" class="form-select form-select-sm rounded-pill shadow-sm quantity-selector text-center" style="font-size: 0.8rem;" aria-label="Select quantity" onchange="updateProductPrice(this)" data-unit="{{ product.unit }}">
-                                {% if product.pricings %}
-                                    {% for pricing in product.pricings %}
-                                    <option value="{{ pricing.quantity }}" data-price="{{ pricing.price }}" {% if loop.first %}selected{% endif %}>{{ pricing.quantity }} {{ product.unit }}</option>
-                                    {% endfor %}
-                                {% else %}
-                                    <option value="1" data-price="{{ product.price }}" selected>1 {{ product.unit }}</option>
-                                    <option value="2" data-price="{{ product.price * 2 }}">2 {{ product.unit }}</option>
-                                    <option value="3" data-price="{{ product.price * 3 }}">3 {{ product.unit }}</option>
-                                {% endif %}
-                            </select>
-                            <button type="submit" class="btn btn-gold btn-sm rounded-pill w-100 fw-bold">
-                                {{ get_text('add_btn') }}
+                        {% if product.is_out_of_stock %}
+                            <button class="btn btn-secondary btn-sm rounded-pill w-100 fw-bold" disabled>
+                                Out of Stock
                             </button>
-                        </form>
+                        {% else %}
+                            <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST" class="d-flex flex-column gap-2">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <select name="quantity" class="form-select form-select-sm rounded-pill shadow-sm quantity-selector text-center" style="font-size: 0.8rem;" aria-label="Select quantity" onchange="updateProductPrice(this)" data-unit="{{ product.unit }}">
+                                    {% if product.pricings %}
+                                        {% for pricing in product.pricings %}
+                                        <option value="{{ pricing.quantity }}" data-price="{{ pricing.price }}" {% if loop.first %}selected{% endif %}>{{ pricing.quantity }} {{ product.unit }}</option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <option value="1" data-price="{{ product.price }}" selected>1 {{ product.unit }}</option>
+                                        <option value="2" data-price="{{ product.price * 2 }}">2 {{ product.unit }}</option>
+                                        <option value="3" data-price="{{ product.price * 3 }}">3 {{ product.unit }}</option>
+                                    {% endif %}
+                                </select>
+                                <button type="submit" class="btn btn-gold btn-sm rounded-pill w-100 fw-bold">
+                                    {{ get_text('add_btn') }}
+                                </button>
+                            </form>
+                        {% endif %}
                     </div>
                 </div>
             </div>

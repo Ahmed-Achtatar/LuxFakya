@@ -42,6 +42,17 @@
                         </div>
 
                         <div class="col-md-12 mb-3">
+                            <div class="form-check form-switch form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="is_hidden" name="is_hidden">
+                                <label class="form-check-label" for="is_hidden">Hide from Shop</label>
+                            </div>
+                            <div class="form-check form-switch form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="is_out_of_stock" name="is_out_of_stock">
+                                <label class="form-check-label" for="is_out_of_stock">Out of Stock</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
                             <label for="description" class="form-label text-uppercase small text-muted fw-bold">{{ translations[current_lang]['lbl_desc'] }}</label>
                             <textarea class="form-control bg-light border-0" id="description" name="description" rows="4"></textarea>
                         </div>
