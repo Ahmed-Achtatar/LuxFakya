@@ -4,24 +4,17 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
+import sqlite3
 
 db = SQLAlchemy()
 
 # Enable Foreign Keys for SQLite
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
-    if hasattr(dbapi_connection, 'cursor'):
-        # Minimal check, or check module name.
-        # Standard way:
+    if isinstance(dbapi_connection, sqlite3.Connection):
         cursor = dbapi_connection.cursor()
-        try:
-             cursor.execute("PRAGMA foreign_keys=ON")
-        except:
-             # If not SQLite, this might fail or do nothing.
-             # Postgres doesn't have PRAGMA foreign_keys.
-             pass
-        finally:
-             cursor.close()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
