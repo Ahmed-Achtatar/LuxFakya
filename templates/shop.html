@@ -10,8 +10,8 @@
                     <i class="fas fa-circle me-2 small {% if not current_category %}text-gold{% else %}text-light{% endif %}"></i> All Products
                 </a>
                 {% for cat in categories %}
-                <a href="{{ url_for('main.shop', category=cat) }}" class="list-group-item list-group-item-action border-0 px-0 {% if current_category == cat %}text-gold fw-bold{% else %}text-muted{% endif %}">
-                    <i class="fas fa-circle me-2 small {% if current_category == cat %}text-gold{% else %}text-light{% endif %}"></i> {{ cat }}
+                <a href="{{ url_for('main.shop', category=cat.name) }}" class="list-group-item list-group-item-action border-0 px-0 {% if current_category == cat.name %}text-gold fw-bold{% else %}text-muted{% endif %}">
+                    <i class="fas fa-circle me-2 small {% if current_category == cat.name %}text-gold{% else %}text-light{% endif %}"></i> {{ cat.name }}
                 </a>
                 {% endfor %}
             </div>

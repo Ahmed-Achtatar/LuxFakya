@@ -1,20 +1,5 @@
-[2026-01-23 08:44:07,736] INFO in app: Application starting... Environment: Production
-2026-01-23 08:44:07,736 - app - INFO - Application starting... Environment: Production
- * Serving Flask app 'app'
- * Debug mode: on
-[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-[33mPress CTRL+C to quit[0m
- * Restarting with stat
-[2026-01-23 08:44:08,695] INFO in app: Application starting... Environment: Production
-2026-01-23 08:44:08,695 - app - INFO - Application starting... Environment: Production
- * Debugger is active!
- * Debugger PIN: 410-907-091
-127.0.0.1 - - [23/Jan/2026 08:45:25] "GET / HTTP/1.1" 200 -
-127.0.0.1 - - [23/Jan/2026 08:45:25] "GET /static/images/dates.png HTTP/1.1" 200 -
-127.0.0.1 - - [23/Jan/2026 08:45:25] "GET /static/images/nuts.png HTTP/1.1" 200 -
-127.0.0.1 - - [23/Jan/2026 08:45:25] "GET /static/css/style.css HTTP/1.1" 200 -
-127.0.0.1 - - [23/Jan/2026 08:45:25] "GET /static/images/driedfood.png HTTP/1.1" 200 -
-127.0.0.1 - - [23/Jan/2026 08:45:25] "GET /static/images/gift.png HTTP/1.1" 200 -
-127.0.0.1 - - [23/Jan/2026 08:45:25] "GET /static/images/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [23/Jan/2026 08:45:25] "GET /static/images/slide1.png HTTP/1.1" 200 -
+[2026-01-24 13:42:41 +0000] [5704] [INFO] Starting gunicorn 24.1.1
+[2026-01-24 13:42:41 +0000] [5704] [INFO] Listening at: http://0.0.0.0:5000 (5704)
+[2026-01-24 13:42:41 +0000] [5704] [INFO] Using worker: sync
+[2026-01-24 13:42:41 +0000] [5830] [INFO] Booting worker with pid: 5830
+[2026-01-24 13:42:41 +0000] [5830] [INFO] Application starting... Environment: Production

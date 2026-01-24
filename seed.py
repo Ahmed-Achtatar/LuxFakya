@@ -1,5 +1,5 @@
 from app import create_app
-from models import db, User
+from models import db, User, Category
 
 app = create_app()
 
@@ -22,6 +22,21 @@ def seed():
             print("Password: password123")
         else:
             print("Admin user already exists. Skipping creation.")
+
+        # Seed Categories
+        default_categories = ['Dates', 'Nuts', 'Dried Fruits', 'Gift Boxes']
+        print("Seeding categories...")
+        for cat_name in default_categories:
+            category = Category.query.filter_by(name=cat_name).first()
+            if not category:
+                print(f"Creating category: {cat_name}")
+                category = Category(name=cat_name)
+                db.session.add(category)
+            else:
+                print(f"Category exists: {cat_name}")
+
+        db.session.commit()
+        print("Seeding complete.")
 
 if __name__ == '__main__':
     seed()
