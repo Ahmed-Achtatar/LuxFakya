@@ -120,7 +120,7 @@
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3" id="product-grid">
         {% for product in all_products %}
         <div class="col product-item {% if loop.index > 4 %}d-none extra-product{% endif %}"
-             data-category="{{ product.category }}"
+             data-category="{{ product.category.name }}"
              data-name="{{ product.name | lower }}"
              data-aos="fade-up" data-aos-delay="{{ ((loop.index - 1) % 4) * 50 }}">
             <div class="card product-card h-100 shadow-sm">

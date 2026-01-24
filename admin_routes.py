@@ -146,11 +146,7 @@ def edit_category(id):
                 return render_template('admin/category_form.html', title='Edit Category', category=category)
 
             category.name = new_name
-            # Update associated products
-            products = Product.query.filter_by(category=old_name).all()
-            for p in products:
-                p.category = new_name
-
+            # No need to manually update products as we use ForeignKey now
             db.session.commit()
             flash('Category updated successfully', 'success')
             return redirect(url_for('admin.categories'))
@@ -164,7 +160,7 @@ def edit_category(id):
 def delete_category(id):
     category = Category.query.get_or_404(id)
     # Check if products exist in this category
-    if Product.query.filter_by(category=category.name).first():
+    if Product.query.filter_by(category_id=category.id).first():
         flash('Cannot delete category with associated products. Please reassign products first.', 'danger')
     else:
         db.session.delete(category)
@@ -181,7 +177,7 @@ def add_product():
         description = request.form.get('description')
         price = request.form.get('price')
         unit = request.form.get('unit', 'pcs')
-        category = request.form.get('category')
+        category_id = request.form.get('category')
         is_hidden = True if request.form.get('is_hidden') else False
         is_out_of_stock = True if request.form.get('is_out_of_stock') else False
 
@@ -210,7 +206,7 @@ def add_product():
             description=description,
             price=float(price),
             unit=unit,
-            category=category,
+            category_id=int(category_id),
             image_url=image_url,
             is_hidden=is_hidden,
             is_out_of_stock=is_out_of_stock
@@ -250,7 +246,7 @@ def edit_product(product_id):
         product.description = request.form.get('description')
         product.price = float(request.form.get('price'))
         product.unit = request.form.get('unit', 'pcs')
-        product.category = request.form.get('category')
+        product.category_id = int(request.form.get('category'))
         product.is_hidden = True if request.form.get('is_hidden') else False
         product.is_out_of_stock = True if request.form.get('is_out_of_stock') else False
 

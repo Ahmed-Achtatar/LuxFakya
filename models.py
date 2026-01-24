@@ -2,8 +2,26 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
 
 db = SQLAlchemy()
+
+# Enable Foreign Keys for SQLite
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    if hasattr(dbapi_connection, 'cursor'):
+        # Minimal check, or check module name.
+        # Standard way:
+        cursor = dbapi_connection.cursor()
+        try:
+             cursor.execute("PRAGMA foreign_keys=ON")
+        except:
+             # If not SQLite, this might fail or do nothing.
+             # Postgres doesn't have PRAGMA foreign_keys.
+             pass
+        finally:
+             cursor.close()
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -54,7 +72,10 @@ class Product(db.Model):
     description = db.Column(db.Text, nullable=True)
     price = db.Column(db.Float, nullable=False)
     unit = db.Column(db.String(50), nullable=False, default='pcs')
-    category = db.Column(db.String(100), nullable=False)
+
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    category = db.relationship('Category', backref=db.backref('products', lazy=True))
+
     image_url = db.Column(db.String(500), nullable=True)
     is_hidden = db.Column(db.Boolean, default=False)
     is_out_of_stock = db.Column(db.Boolean, default=False)
@@ -67,7 +88,7 @@ class Product(db.Model):
             'description': self.description,
             'price': self.price,
             'unit': self.unit,
-            'category': self.category,
+            'category': self.category.name if self.category else None,
             'image_url': self.image_url,
             'is_hidden': self.is_hidden,
             'is_out_of_stock': self.is_out_of_stock,
@@ -92,7 +113,9 @@ class Order(db.Model):
 class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
-    product_id = db.Column(db.Integer, nullable=True)
+
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id', ondelete='SET NULL'), nullable=True)
+
     product_name = db.Column(db.String(150), nullable=False)
     quantity = db.Column(db.Float, nullable=False)
     unit = db.Column(db.String(50), nullable=False)

@@ -23,7 +23,7 @@
                             <label for="category" class="form-label text-uppercase small text-muted fw-bold">{{ translations[current_lang]['lbl_category'] }}</label>
                             <select class="form-select form-select-lg bg-light border-0" id="category" name="category" required>
                                 {% for category in categories %}
-                                <option value="{{ category.name }}">{{ category.name }}</option>
+                                <option value="{{ category.id }}">{{ category.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
