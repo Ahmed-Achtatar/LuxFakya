@@ -22,6 +22,8 @@ This guide outlines the steps to deploy the application to Railway.app.
     *   In the project view, click "New" -> "Database" -> "PostgreSQL".
     *   Railway will automatically link this database to your application (providing the `DATABASE_URL` variable).
 
+    *Note: The application automatically creates tables on startup, but it might not apply all Foreign Key constraints if tables were created by an older version. See "Fixing Database Schema" below if you encounter integrity errors.*
+
 4.  **Configure Environment Variables**:
     *   Click on your application service (the GitHub repo card).
     *   Go to the "Variables" tab.
@@ -65,3 +67,19 @@ The application starts with an empty database. You need to create the initial Ad
 1.  Log in at `/login` with the admin credentials.
 2.  **Change your password immediately.**
 3.  Go to the Admin Dashboard to add Categories and Products.
+
+## Fixing Database Schema
+
+If you encounter errors related to missing columns (e.g., `unit`, `is_hidden`) or missing Foreign Key constraints, you can run the `fix_db.py` script. This script supports both SQLite and PostgreSQL.
+
+**Using Railway CLI:**
+```bash
+railway run python fix_db.py
+```
+
+**Using Railway Console (Service Command):**
+1.  Go to your project settings.
+2.  Change the "Service Command" to: `python fix_db.py && gunicorn wsgi:app`
+3.  Redeploy.
+4.  Check logs for "PostgreSQL update complete" (or SQLite).
+5.  **Revert** the command to `gunicorn wsgi:app` and redeploy.

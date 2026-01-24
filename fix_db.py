@@ -62,36 +62,46 @@ CREATE TABLE order_item (
 }
 
 # Define columns that might be missing and need adding
+# Note: FALSE is compatible with both SQLite (as 0) and PostgreSQL (as boolean)
 MISSING_COLUMNS = {
     'product': [
         ('unit', "VARCHAR(50) DEFAULT 'pcs' NOT NULL"),
-        ('is_hidden', "BOOLEAN DEFAULT 0 NOT NULL"),
-        ('is_out_of_stock', "BOOLEAN DEFAULT 0 NOT NULL")
+        ('is_hidden', "BOOLEAN DEFAULT FALSE NOT NULL"),
+        ('is_out_of_stock', "BOOLEAN DEFAULT FALSE NOT NULL")
     ]
 }
 
-def get_db_path():
-    if len(sys.argv) > 1:
-        return sys.argv[1]
-
+def get_default_sqlite_path():
     # Check instance folder first
     if os.path.exists('instance/luxfakia.db'):
         return 'instance/luxfakia.db'
     if os.path.exists('luxfakia.db'):
         return 'luxfakia.db'
-
     return 'instance/luxfakia.db'
 
-def check_and_add_columns(conn, cursor):
-    print("Checking for missing columns...")
+def fix_sqlite(db_path):
+    print(f"Targeting SQLite database: {db_path}")
+    if not os.path.exists(db_path):
+        print("Database file not found.")
+        return
+
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    check_and_add_columns_sqlite(conn, cursor)
+    ensure_foreign_keys_sqlite(conn, cursor)
+
+    conn.close()
+    print("SQLite update complete.")
+
+def check_and_add_columns_sqlite(conn, cursor):
+    print("Checking for missing columns (SQLite)...")
     for table, columns in MISSING_COLUMNS.items():
-        # Check if table exists
         cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table}'")
         if not cursor.fetchone():
             print(f"Table '{table}' does not exist. Skipping column checks.")
             continue
 
-        # Quote table name for PRAGMA
         safe_table = f'"{table}"' if table == 'order' else table
         cursor.execute(f"PRAGMA table_info({safe_table})")
         existing_cols = [col[1] for col in cursor.fetchall()]
@@ -108,9 +118,8 @@ def check_and_add_columns(conn, cursor):
                 print(f"Column '{col_name}' already exists in '{table}'.")
     conn.commit()
 
-def ensure_foreign_keys(conn, cursor):
-    print("\nChecking foreign keys...")
-
+def ensure_foreign_keys_sqlite(conn, cursor):
+    print("\nChecking foreign keys (SQLite)...")
     tables_to_check = ['product', 'order', 'product_pricing', 'order_item']
 
     for table_name in tables_to_check:
@@ -136,11 +145,11 @@ def ensure_foreign_keys(conn, cursor):
 
         if needs_rebuild:
             print(f"Foreign keys missing or incomplete for '{table_name}'. Rebuilding table...")
-            rebuild_table(conn, cursor, table_name, SCHEMAS[table_name])
+            rebuild_table_sqlite(conn, cursor, table_name, SCHEMAS[table_name])
         else:
             print(f"Table '{table_name}' seems to have foreign keys ({len(fks)} found). Skipping rebuild.")
 
-def rebuild_table(conn, cursor, table_name, create_sql):
+def rebuild_table_sqlite(conn, cursor, table_name, create_sql):
     try:
         safe_table_name = f'"{table_name}"' if table_name == 'order' else table_name
 
@@ -175,22 +184,146 @@ def rebuild_table(conn, cursor, table_name, create_sql):
         conn.rollback()
         print("CRITICAL: Manual intervention might be required.")
 
-def main():
-    db_path = get_db_path()
-    print(f"Targeting database: {db_path}")
+def fix_postgres(db_url):
+    print("Detected PostgreSQL database.")
 
-    if not os.path.exists(db_path):
-        print("Database file not found.")
+    try:
+        import psycopg2
+    except ImportError:
+        print("Error: psycopg2 module not found. Please install requirements.txt.")
         return
 
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+    # Fix postgres:// schema if necessary (common in some providers)
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
 
-    check_and_add_columns(conn, cursor)
-    ensure_foreign_keys(conn, cursor)
+    try:
+        conn = psycopg2.connect(db_url)
+        conn.autocommit = True
+        cursor = conn.cursor()
 
-    conn.close()
-    print("Database update complete.")
+        check_and_add_columns_postgres(conn, cursor)
+        ensure_foreign_keys_postgres(conn, cursor)
+
+        conn.close()
+        print("PostgreSQL update complete.")
+    except Exception as e:
+        print(f"PostgreSQL connection error: {e}")
+
+def check_and_add_columns_postgres(conn, cursor):
+    print("Checking for missing columns (PostgreSQL)...")
+
+    for table, columns in MISSING_COLUMNS.items():
+        # Check if table exists
+        cursor.execute("SELECT to_regclass(%s)", (table,))
+        if not cursor.fetchone()[0]:
+             print(f"Table '{table}' does not exist. Skipping.")
+             continue
+
+        # Get existing columns
+        cursor.execute("""
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = %s
+        """, (table,))
+        existing_cols = [row[0] for row in cursor.fetchall()]
+
+        for col_name, col_def in columns:
+            if col_name not in existing_cols:
+                print(f"Column '{col_name}' missing in '{table}'. Adding it...")
+                # Extract type and constraints from col_def (simplified)
+                # "VARCHAR(50) DEFAULT 'pcs' NOT NULL"
+                # PostgreSQL syntax is similar but strict
+                try:
+                    cursor.execute(f"ALTER TABLE {table} ADD COLUMN {col_name} {col_def}")
+                    print(f"Column '{col_name}' added successfully.")
+                except Exception as e:
+                     print(f"Error adding column {col_name}: {e}")
+            else:
+                 print(f"Column '{col_name}' already exists.")
+
+def ensure_foreign_keys_postgres(conn, cursor):
+    print("\nChecking foreign keys (PostgreSQL)...")
+
+    # Map table to expected FK definitions (target_table, column)
+    # This is a bit manual but safer than parsing SCHEMAS
+    expected_fks = {
+        'product': [('category_id', 'category', 'id')],
+        'product_pricing': [('product_id', 'product', 'id')],
+        'order': [('user_id', 'user', 'id')],
+        'order_item': [
+             ('order_id', '"order"', 'id'),
+             ('product_id', 'product', 'id')
+        ]
+    }
+
+    for table, fks in expected_fks.items():
+        # Check if table exists
+        cursor.execute("SELECT to_regclass(%s)", (table if table != 'order' else '"order"',))
+        if not cursor.fetchone()[0]:
+             continue
+
+        print(f"Checking table '{table}'...")
+
+        # Get existing constraints
+        cursor.execute("""
+            SELECT kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name
+            FROM information_schema.table_constraints AS tc
+            JOIN information_schema.key_column_usage AS kcu
+              ON tc.constraint_name = kcu.constraint_name
+              AND tc.table_schema = kcu.table_schema
+            JOIN information_schema.constraint_column_usage AS ccu
+              ON ccu.constraint_name = tc.constraint_name
+              AND ccu.table_schema = tc.table_schema
+            WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_name = %s;
+        """, (table,))
+
+        existing_constraints = cursor.fetchall() # list of (col, fk_table, fk_col)
+
+        for col, target_table, target_col in fks:
+            # Handle "order" quoting in logic
+            target_table_clean = target_table.replace('"', '')
+
+            found = False
+            for ex_col, ex_table, ex_target_col in existing_constraints:
+                if ex_col == col and ex_table == target_table_clean and ex_target_col == target_col:
+                    found = True
+                    break
+
+            if not found:
+                print(f"Missing FK on {table}.{col} -> {target_table}.{target_col}. Adding...")
+                constraint_name = f"fk_{table}_{col}"
+                safe_table = f'"{table}"' if table == 'order' else table
+
+                alter_sql = f"""
+                    ALTER TABLE {safe_table}
+                    ADD CONSTRAINT {constraint_name}
+                    FOREIGN KEY ({col}) REFERENCES {target_table} ({target_col})
+                """
+
+                if table == 'order_item' and col == 'product_id':
+                    alter_sql += " ON DELETE SET NULL"
+
+                try:
+                    cursor.execute(alter_sql)
+                    print(f"Constraint {constraint_name} added.")
+                except Exception as e:
+                    print(f"Error adding constraint: {e}")
+            else:
+                print(f"FK on {table}.{col} exists.")
+
+def main():
+    db_url = os.environ.get('DATABASE_URL')
+    arg_path = sys.argv[1] if len(sys.argv) > 1 else None
+
+    if arg_path:
+        # Explicit path provided, force SQLite
+        fix_sqlite(arg_path)
+    elif db_url and 'postgres' in db_url:
+        fix_postgres(db_url)
+    else:
+        # Default to SQLite
+        fix_sqlite(get_default_sqlite_path())
 
 if __name__ == '__main__':
     main()
