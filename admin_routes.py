@@ -1,9 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection
 import os
+import uuid
 from werkzeug.utils import secure_filename
 from datetime import datetime
+from PIL import Image
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -12,6 +14,31 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def optimize_and_save_image(file):
+    filename = secure_filename(file.filename)
+    unique_filename = f"{uuid.uuid4().hex}_{filename}"
+    upload_dir = os.path.join('static', 'images')
+    if not os.path.exists(upload_dir):
+        os.makedirs(upload_dir)
+
+    save_path = os.path.join(upload_dir, unique_filename)
+
+    try:
+        img = Image.open(file)
+        max_width = 1024
+        if img.width > max_width:
+             ratio = max_width / float(img.width)
+             new_height = int(float(img.height) * ratio)
+             img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
+
+        img.save(save_path, optimize=True, quality=85)
+    except Exception as e:
+        current_app.logger.error(f"Optimization error: {e}")
+        file.seek(0)
+        file.save(save_path)
+
+    return f'/static/images/{unique_filename}'
 
 @admin_bp.before_request
 def restrict_access():
@@ -122,10 +149,17 @@ def categories():
 def add_category():
     if request.method == 'POST':
         name = request.form.get('name')
+        image_url = None
+
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and allowed_file(file.filename):
+                image_url = optimize_and_save_image(file)
+
         if Category.query.filter_by(name=name).first():
             flash('Category already exists', 'danger')
         else:
-            category = Category(name=name)
+            category = Category(name=name, image_url=image_url)
             db.session.add(category)
             db.session.commit()
             flash('Category added successfully', 'success')
@@ -137,21 +171,22 @@ def add_category():
 def edit_category(id):
     category = Category.query.get_or_404(id)
     if request.method == 'POST':
-        old_name = category.name
         new_name = request.form.get('name')
 
-        if new_name != old_name:
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and allowed_file(file.filename):
+                category.image_url = optimize_and_save_image(file)
+
+        if new_name != category.name:
             if Category.query.filter_by(name=new_name).first():
                 flash('Category with this name already exists', 'danger')
                 return render_template('admin/category_form.html', title='Edit Category', category=category)
-
             category.name = new_name
-            # No need to manually update products as we use ForeignKey now
-            db.session.commit()
-            flash('Category updated successfully', 'success')
-            return redirect(url_for('admin.categories'))
-        else:
-             return redirect(url_for('admin.categories'))
+
+        db.session.commit()
+        flash('Category updated successfully', 'success')
+        return redirect(url_for('admin.categories'))
 
     return render_template('admin/category_form.html', title='Edit Category', category=category)
 
@@ -186,16 +221,7 @@ def add_product():
         if 'image' in request.files:
             file = request.files['image']
             if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                # Ensure static/images exists
-                upload_dir = os.path.join('static', 'images')
-                if not os.path.exists(upload_dir):
-                    os.makedirs(upload_dir)
-
-                save_path = os.path.join(upload_dir, filename)
-                # In a real app, use absolute path from app.config
-                file.save(save_path)
-                image_url = f'/static/images/{filename}'
+                image_url = optimize_and_save_image(file)
 
         # Use a placeholder if no image
         if not image_url:
@@ -253,13 +279,7 @@ def edit_product(product_id):
         if 'image' in request.files:
             file = request.files['image']
             if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                upload_dir = os.path.join('static', 'images')
-                if not os.path.exists(upload_dir):
-                    os.makedirs(upload_dir)
-                save_path = os.path.join(upload_dir, filename)
-                file.save(save_path)
-                product.image_url = f'/static/images/{filename}'
+                product.image_url = optimize_and_save_image(file)
 
         # Handle Pricing
         # Remove existing pricings
@@ -343,13 +363,7 @@ def home_settings():
         if 'image' in request.files:
             file = request.files['image']
             if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                upload_dir = os.path.join('static', 'images')
-                if not os.path.exists(upload_dir):
-                    os.makedirs(upload_dir)
-                save_path = os.path.join(upload_dir, filename)
-                file.save(save_path)
-                section.image_url = f'/static/images/{filename}'
+                section.image_url = optimize_and_save_image(file)
 
         db.session.commit()
         flash('Home settings updated successfully', 'success')

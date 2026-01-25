@@ -1,5 +1,8 @@
-[2026-01-24 13:42:41 +0000] [5704] [INFO] Starting gunicorn 24.1.1
-[2026-01-24 13:42:41 +0000] [5704] [INFO] Listening at: http://0.0.0.0:5000 (5704)
-[2026-01-24 13:42:41 +0000] [5704] [INFO] Using worker: sync
-[2026-01-24 13:42:41 +0000] [5830] [INFO] Booting worker with pid: 5830
-[2026-01-24 13:42:41 +0000] [5830] [INFO] Application starting... Environment: Production
+[2026-01-25 05:15:04 +0000] [5552] [INFO] Starting gunicorn 24.1.1
+[2026-01-25 05:15:04 +0000] [5552] [INFO] Listening at: http://0.0.0.0:5000 (5552)
+[2026-01-25 05:15:04 +0000] [5552] [INFO] Using worker: sync
+[2026-01-25 05:15:04 +0000] [5669] [INFO] Booting worker with pid: 5669
+[2026-01-25 05:15:04 +0000] [5669] [INFO] Application starting... Environment: Production
+[2026-01-25 05:16:10 +0000] [5552] [INFO] Handling signal: term
+[2026-01-25 05:16:10 +0000] [5669] [INFO] Worker exiting (pid: 5669)
+[2026-01-25 05:16:10 +0000] [5552] [INFO] Shutting down: Master

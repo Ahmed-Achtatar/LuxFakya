@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import sys
 
 def fix_database():
     # Database path
@@ -12,6 +13,9 @@ MISSING_COLUMNS = {
         ('unit', "VARCHAR(50) DEFAULT 'pcs' NOT NULL"),
         ('is_hidden', "BOOLEAN DEFAULT FALSE NOT NULL"),
         ('is_out_of_stock', "BOOLEAN DEFAULT FALSE NOT NULL")
+    ],
+    'category': [
+        ('image_url', "VARCHAR(500)")
     ]
 }
 
@@ -274,4 +278,4 @@ def main():
         fix_sqlite(get_default_sqlite_path())
 
 if __name__ == '__main__':
-    fix_database()
+    main()

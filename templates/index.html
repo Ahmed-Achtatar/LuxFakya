@@ -50,46 +50,30 @@
 <!-- Categories Section -->
 <div class="container floating-categories">
     <div class="row row-cols-2 row-cols-md-4 g-4 justify-content-center">
-        <div class="col" data-aos="fade-up" data-aos-delay="100">
-            <a href="{{ url_for('main.shop', category='Dates') }}" class="text-decoration-none">
+        {% for category in all_categories %}
+        <div class="col" data-aos="fade-up" data-aos-delay="{{ 100 + (loop.index0 * 50) }}">
+            <a href="{{ url_for('main.shop', category=category.name) }}" class="text-decoration-none">
                 <div class="category-item">
-                    <div class="category-img-wrapper">
-                        <img src="{{ url_for('static', filename='images/dates.png') }}" alt="Dates">
+                    <div class="category-img-wrapper overflow-hidden position-relative">
+                        {% if category.image_url %}
+                            <img src="{{ category.image_url }}" alt="{{ category.name }}" class="w-100 h-100 object-fit-cover">
+                        {% elif category.name == 'Dates' %}
+                            <img src="{{ url_for('static', filename='images/dates.png') }}" alt="{{ category.name }}">
+                        {% elif category.name == 'Nuts' %}
+                            <img src="{{ url_for('static', filename='images/nuts.png') }}" alt="{{ category.name }}">
+                        {% elif category.name == 'Dried Fruits' %}
+                            <img src="{{ url_for('static', filename='images/driedfood.png') }}" alt="{{ category.name }}">
+                        {% elif category.name == 'Gift Boxes' %}
+                            <img src="{{ url_for('static', filename='images/gift.png') }}" alt="{{ category.name }}">
+                        {% else %}
+                             <img src="https://via.placeholder.com/300x300?text={{ category.name }}" alt="{{ category.name }}" class="w-100 h-100 object-fit-cover">
+                        {% endif %}
                     </div>
-                    <h6 class="category-title">{{ get_text('cat_dates') }}</h6>
+                    <h6 class="category-title">{{ category.name }}</h6>
                 </div>
             </a>
         </div>
-        <div class="col" data-aos="fade-up" data-aos-delay="150">
-            <a href="{{ url_for('main.shop', category='Nuts') }}" class="text-decoration-none">
-                <div class="category-item">
-                    <div class="category-img-wrapper">
-                        <img src="{{ url_for('static', filename='images/nuts.png') }}" alt="Nuts">
-                    </div>
-                    <h6 class="category-title">{{ get_text('cat_nuts') }}</h6>
-                </div>
-            </a>
-        </div>
-        <div class="col" data-aos="fade-up" data-aos-delay="200">
-            <a href="{{ url_for('main.shop', category='Dried Fruits') }}" class="text-decoration-none">
-                <div class="category-item">
-                    <div class="category-img-wrapper">
-                        <img src="{{ url_for('static', filename='images/driedfood.png') }}" alt="Dried Fruits">
-                    </div>
-                    <h6 class="category-title">{{ get_text('cat_dried') }}</h6>
-                </div>
-            </a>
-        </div>
-        <div class="col" data-aos="fade-up" data-aos-delay="250">
-            <a href="{{ url_for('main.shop', category='Gift Boxes') }}" class="text-decoration-none">
-                <div class="category-item">
-                    <div class="category-img-wrapper">
-                        <img src="{{ url_for('static', filename='images/gift.png') }}" alt="Gift Boxes">
-                    </div>
-                    <h6 class="category-title">{{ get_text('cat_gifts') }}</h6>
-                </div>
-            </a>
-        </div>
+        {% endfor %}
     </div>
 </div>
 
