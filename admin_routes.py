@@ -97,7 +97,33 @@ def logout():
 @admin_bp.route('/')
 @login_required
 def dashboard():
-    products = Product.query.all()
+    # Filter Parameters
+    search = request.args.get('search', '').strip()
+    category_id = request.args.get('category')
+    sort_by = request.args.get('sort', 'newest')
+
+    query = Product.query
+
+    if search:
+        query = query.filter(Product.name.ilike(f'%{search}%'))
+
+    if category_id and category_id.isdigit():
+         query = query.filter(Product.category_id == int(category_id))
+
+    # Sorting
+    if sort_by == 'name_asc':
+        query = query.order_by(Product.name.asc())
+    elif sort_by == 'name_desc':
+        query = query.order_by(Product.name.desc())
+    elif sort_by == 'price_asc':
+        query = query.order_by(Product.price.asc())
+    elif sort_by == 'price_desc':
+        query = query.order_by(Product.price.desc())
+    else: # newest or default
+        query = query.order_by(Product.id.desc())
+
+    products = query.all()
+    categories = Category.query.all()
 
     # Statistics
     total_orders = Order.query.count()
@@ -110,6 +136,10 @@ def dashboard():
 
     return render_template('admin/dashboard.html',
                            products=products,
+                           categories=categories,
+                           search=search,
+                           category_id=category_id,
+                           sort_by=sort_by,
                            total_orders=total_orders,
                            pending_orders=pending_orders,
                            total_users=total_users,

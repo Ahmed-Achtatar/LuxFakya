@@ -48,6 +48,44 @@
 <div class="row my-5">
     <h3 class="fs-4 mb-3">{{ translations[current_lang]['recent_products'] }}</h3>
     <div class="col">
+        <!-- Filter & Sort Form -->
+        <div class="card shadow-sm mb-4 border-0">
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('admin.dashboard') }}" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="visually-hidden" for="search">{{ translations[current_lang]['search_placeholder'] }}</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0" id="search" name="search" placeholder="{{ translations[current_lang]['search_placeholder'] }}" value="{{ search }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="visually-hidden" for="category">{{ translations[current_lang]['filter_category'] }}</label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="">{{ translations[current_lang]['filter_category'] }}</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}" {% if category_id and category_id|int == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                         <label class="visually-hidden" for="sort">{{ translations[current_lang]['filter_sort'] }}</label>
+                        <select class="form-select" id="sort" name="sort">
+                            <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>{{ translations[current_lang]['sort_newest'] }}</option>
+                            <option value="name_asc" {% if sort_by == 'name_asc' %}selected{% endif %}>{{ translations[current_lang]['sort_name_asc'] }}</option>
+                            <option value="name_desc" {% if sort_by == 'name_desc' %}selected{% endif %}>{{ translations[current_lang]['sort_name_desc'] }}</option>
+                            <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>{{ translations[current_lang]['sort_price_asc'] }}</option>
+                            <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>{{ translations[current_lang]['sort_price_desc'] }}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100">{{ translations[current_lang]['btn_filter'] }}</button>
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary w-100">{{ translations[current_lang]['btn_clear'] }}</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div class="d-flex justify-content-end mb-3">
              <a href="{{ url_for('admin.add_product') }}" class="btn btn-gold"><i class="fas fa-plus"></i> {{ translations[current_lang]['add_new_product'] }}</a>
         </div>
