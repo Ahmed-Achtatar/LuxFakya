@@ -128,6 +128,17 @@ translations = {
         'add_new_product': 'Ajouter un Produit',
         'no_products_found': 'Aucun produit trouvé.',
 
+        # Filter & Sort
+        'filter_category': 'Toutes les catégories',
+        'filter_sort': 'Trier par',
+        'sort_name_asc': 'Nom (A-Z)',
+        'sort_name_desc': 'Nom (Z-A)',
+        'sort_price_asc': 'Prix (Croissant)',
+        'sort_price_desc': 'Prix (Décroissant)',
+        'sort_newest': 'Plus récents',
+        'btn_filter': 'Filtrer',
+        'btn_clear': 'Effacer',
+
         # Admin Tables
         'th_id': 'ID',
         'th_image': 'Image',
@@ -305,6 +316,17 @@ translations = {
         'add_new_product': 'إضافة منتج جديد',
         'no_products_found': 'لم يتم العثور على منتجات.',
 
+        # Filter & Sort
+        'filter_category': 'جميع التصنيفات',
+        'filter_sort': 'ترتيب حسب',
+        'sort_name_asc': 'الاسم (أ-ي)',
+        'sort_name_desc': 'الاسم (ي-أ)',
+        'sort_price_asc': 'السعر (منخفض-مرتفع)',
+        'sort_price_desc': 'السعر (مرتفع-منخفض)',
+        'sort_newest': 'الأحدث',
+        'btn_filter': 'تصفية',
+        'btn_clear': 'مسح',
+
         # Admin Tables
         'th_id': 'م',
         'th_image': 'صورة',
@@ -481,6 +503,17 @@ translations = {
         'recent_products': 'Recent Products',
         'add_new_product': 'Add New Product',
         'no_products_found': 'No products found.',
+
+        # Filter & Sort
+        'filter_category': 'All Categories',
+        'filter_sort': 'Sort By',
+        'sort_name_asc': 'Name (A-Z)',
+        'sort_name_desc': 'Name (Z-A)',
+        'sort_price_asc': 'Price (Low-High)',
+        'sort_price_desc': 'Price (High-Low)',
+        'sort_newest': 'Newest',
+        'btn_filter': 'Filter',
+        'btn_clear': 'Clear',
 
         # Admin Tables
         'th_id': 'ID',
