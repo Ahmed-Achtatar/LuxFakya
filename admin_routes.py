@@ -17,7 +17,10 @@ def allowed_file(filename):
 
 def optimize_and_save_image(file):
     filename = secure_filename(file.filename)
-    unique_filename = f"{uuid.uuid4().hex}_{filename}"
+    # Change extension to .webp
+    filename_base = filename.rsplit('.', 1)[0]
+    unique_filename = f"{uuid.uuid4().hex}_{filename_base}.webp"
+
     upload_dir = os.path.join('static', 'images')
     if not os.path.exists(upload_dir):
         os.makedirs(upload_dir)
@@ -32,9 +35,12 @@ def optimize_and_save_image(file):
              new_height = int(float(img.height) * ratio)
              img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
 
-        img.save(save_path, optimize=True, quality=85)
+        img.save(save_path, 'WEBP', optimize=True, quality=80)
     except Exception as e:
         current_app.logger.error(f"Optimization error: {e}")
+        # Fallback to original format if WebP conversion fails
+        unique_filename = f"{uuid.uuid4().hex}_{filename}"
+        save_path = os.path.join(upload_dir, unique_filename)
         file.seek(0)
         file.save(save_path)
 
