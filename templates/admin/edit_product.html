@@ -1,87 +1,112 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
+
+{% block title %}Edit Product{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white">
-                <h4>Edit Product</h4>
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white py-3 border-bottom-0">
+                <h5 class="mb-0 fw-bold">Edit Product: {{ product.name }}</h5>
             </div>
             <div class="card-body p-4">
                 <form method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Product Name</label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="category" class="form-label">Category</label>
-                        <select class="form-select" id="category" name="category" required>
-                            {% for cat in categories %}
-                                <option value="{{ cat.name }}" {% if product.category == cat.name %}selected{% endif %}>{{ cat.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="price" class="form-label">Base Price (MAD)</label>
-                            <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ product.price }}" required>
+
+                    <div class="row g-3">
+                        <div class="col-md-12 mb-3">
+                            <label for="name" class="form-label text-uppercase small text-muted fw-bold">Product Name</label>
+                            <input type="text" class="form-control form-control-lg bg-light border-0" id="name" name="name" value="{{ product.name }}" required>
                         </div>
+
                         <div class="col-md-6 mb-3">
-                            <label for="unit" class="form-label">Unit</label>
-                            <input type="text" class="form-control" id="unit" name="unit" placeholder="e.g. kg, g, pcs" value="{{ product.unit }}" required>
+                            <label for="category" class="form-label text-uppercase small text-muted fw-bold">Category</label>
+                            <select class="form-select form-select-lg bg-light border-0" id="category" name="category" required>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if product.category_id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3">{{ product.description }}</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="image" class="form-label">Product Image</label>
-                         {% if product.image_url %}
-                            <div class="mb-2">
-                                <img src="{{ product.image_url }}" alt="Current Image" style="height: 100px; object-fit: cover; border-radius: 4px;">
+
+                        <div class="col-md-6 mb-3">
+                            <label for="unit" class="form-label text-uppercase small text-muted fw-bold">Unit</label>
+                            <input type="text" class="form-control form-control-lg bg-light border-0" id="unit" name="unit" value="{{ product.unit }}" required>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                             <label for="price" class="form-label text-uppercase small text-muted fw-bold">Base Price (MAD)</label>
+                             <div class="input-group">
+                                <span class="input-group-text border-0 bg-light">MAD</span>
+                                <input type="number" step="0.01" class="form-control form-control-lg bg-light border-0" id="price" name="price" value="{{ product.price }}" required>
+                             </div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <div class="form-check form-switch form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="is_hidden" name="is_hidden" {% if product.is_hidden %}checked{% endif %}>
+                                <label class="form-check-label" for="is_hidden">Hide from Shop</label>
                             </div>
-                        {% endif %}
-                        <input type="file" class="form-control" id="image" name="image">
-                        <div class="form-text">Allowed formats: jpg, jpeg, png, webp</div>
+                            <div class="form-check form-switch form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="is_out_of_stock" name="is_out_of_stock" {% if product.is_out_of_stock %}checked{% endif %}>
+                                <label class="form-check-label" for="is_out_of_stock">Out of Stock</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label for="description" class="form-label text-uppercase small text-muted fw-bold">Description</label>
+                            <textarea class="form-control bg-light border-0" id="description" name="description" rows="4">{{ product.description }}</textarea>
+                        </div>
+
+                         <div class="col-md-12 mb-3">
+                            <label for="image" class="form-label text-uppercase small text-muted fw-bold">Product Image</label>
+                             <div class="d-flex align-items-center mb-2">
+                                 {% if product.image_url %}
+                                 <img src="{{ product.image_url }}" alt="Current Image" class="rounded me-3 shadow-sm" style="width: 60px; height: 60px; object-fit: cover;">
+                                 {% endif %}
+                                 <input type="file" class="form-control bg-light border-0" id="image" name="image">
+                             </div>
+                        </div>
                     </div>
 
-                    <hr>
-                    <h5 class="mb-3">Quantity-Based Pricing</h5>
-                    <p class="text-muted small">Define custom prices for specific quantities (e.g., Bundles). Quantity can be fractional (e.g. 0.5 for 500g).</p>
+                    <h5 class="mt-4 mb-3 fw-bold border-bottom pb-2">Volume Pricing</h5>
                     <div id="pricing-container">
                         {% for pricing in product.pricings %}
-                        <div class="row g-2 mb-2 pricing-row">
+                        <div class="row g-2 mb-2 pricing-row align-items-end">
                             <div class="col-5">
-                                <input type="number" step="0.01" class="form-control" name="pricing_quantity[]" placeholder="Quantity (e.g. 2)" value="{{ pricing.quantity }}">
+                                <label class="small text-muted mb-1">Quantity</label>
+                                <input type="number" step="0.1" name="pricing_quantity[]" class="form-control bg-light border-0" value="{{ pricing.quantity }}">
                             </div>
                             <div class="col-5">
-                                <input type="number" step="0.01" class="form-control" name="pricing_price[]" placeholder="Total Price (MAD)" value="{{ pricing.price }}">
-                            </div>
-                            <div class="col-2">
-                                <button type="button" class="btn btn-outline-danger w-100 remove-pricing"><i class="fas fa-times"></i></button>
-                            </div>
-                        </div>
-                        {% else %}
-                         <div class="row g-2 mb-2 pricing-row">
-                            <div class="col-5">
-                                <input type="number" step="0.01" class="form-control" name="pricing_quantity[]" placeholder="Quantity (e.g. 2)">
-                            </div>
-                            <div class="col-5">
-                                <input type="number" step="0.01" class="form-control" name="pricing_price[]" placeholder="Total Price (MAD)">
+                                <label class="small text-muted mb-1">Price</label>
+                                <input type="number" step="0.01" name="pricing_price[]" class="form-control bg-light border-0" value="{{ pricing.price }}">
                             </div>
                             <div class="col-2">
                                 <button type="button" class="btn btn-outline-danger w-100 remove-pricing"><i class="fas fa-times"></i></button>
                             </div>
                         </div>
                         {% endfor %}
+                         {% if not product.pricings %}
+                         <!-- Empty row if no pricing -->
+                         <div class="row g-2 mb-2 pricing-row align-items-end">
+                            <div class="col-5">
+                                <label class="small text-muted mb-1">Quantity</label>
+                                <input type="number" step="0.1" name="pricing_quantity[]" class="form-control bg-light border-0" placeholder="Qty">
+                            </div>
+                            <div class="col-5">
+                                <label class="small text-muted mb-1">Price</label>
+                                <input type="number" step="0.01" name="pricing_price[]" class="form-control bg-light border-0" placeholder="Price">
+                            </div>
+                            <div class="col-2">
+                                <button type="button" class="btn btn-outline-danger w-100 remove-pricing"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
-                    <button type="button" class="btn btn-outline-secondary btn-sm mb-4" id="add-pricing-btn"><i class="fas fa-plus"></i> Add Pricing Tier</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2 mb-4" id="add-pricing"><i class="fas fa-plus me-1"></i> Add Tier</button>
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-gold">Update Product</button>
-                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Cancel</a>
+                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+                        <button type="submit" class="btn btn-gold rounded-pill px-5">Update Product</button>
                     </div>
                 </form>
             </div>
@@ -90,19 +115,16 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const container = document.getElementById('pricing-container');
-    const addBtn = document.getElementById('add-pricing-btn');
-
-    addBtn.addEventListener('click', function() {
+    document.getElementById('add-pricing').addEventListener('click', function() {
+        const container = document.getElementById('pricing-container');
         const row = document.createElement('div');
-        row.className = 'row g-2 mb-2 pricing-row';
+        row.className = 'row g-2 mb-2 pricing-row align-items-end';
         row.innerHTML = `
             <div class="col-5">
-                <input type="number" step="0.01" class="form-control" name="pricing_quantity[]" placeholder="Quantity">
+                <input type="number" step="0.1" name="pricing_quantity[]" class="form-control bg-light border-0" placeholder="Qty">
             </div>
             <div class="col-5">
-                <input type="number" step="0.01" class="form-control" name="pricing_price[]" placeholder="Total Price">
+                <input type="number" step="0.01" name="pricing_price[]" class="form-control bg-light border-0" placeholder="Price">
             </div>
             <div class="col-2">
                 <button type="button" class="btn btn-outline-danger w-100 remove-pricing"><i class="fas fa-times"></i></button>
@@ -111,18 +133,10 @@ document.addEventListener('DOMContentLoaded', function() {
         container.appendChild(row);
     });
 
-    container.addEventListener('click', function(e) {
+    document.getElementById('pricing-container').addEventListener('click', function(e) {
         if (e.target.closest('.remove-pricing')) {
-            const row = e.target.closest('.pricing-row');
-            if (container.querySelectorAll('.pricing-row').length > 1) {
-                row.remove();
-            } else {
-                 // Clear inputs instead of removing last row
-                row.querySelector('input[name="pricing_quantity[]"]').value = '';
-                row.querySelector('input[name="pricing_price[]"]').value = '';
-            }
+            e.target.closest('.pricing-row').remove();
         }
     });
-});
 </script>
 {% endblock %}

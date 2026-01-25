@@ -1,8 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from models import db, User, Product, ProductPricing, Order, OrderItem, Category
+from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection
 import os
+import uuid
 from werkzeug.utils import secure_filename
+from datetime import datetime
+from PIL import Image
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -11,6 +14,31 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def optimize_and_save_image(file):
+    filename = secure_filename(file.filename)
+    unique_filename = f"{uuid.uuid4().hex}_{filename}"
+    upload_dir = os.path.join('static', 'images')
+    if not os.path.exists(upload_dir):
+        os.makedirs(upload_dir)
+
+    save_path = os.path.join(upload_dir, unique_filename)
+
+    try:
+        img = Image.open(file)
+        max_width = 1024
+        if img.width > max_width:
+             ratio = max_width / float(img.width)
+             new_height = int(float(img.height) * ratio)
+             img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
+
+        img.save(save_path, optimize=True, quality=85)
+    except Exception as e:
+        current_app.logger.error(f"Optimization error: {e}")
+        file.seek(0)
+        file.save(save_path)
+
+    return f'/static/images/{unique_filename}'
 
 @admin_bp.before_request
 def restrict_access():
@@ -70,7 +98,23 @@ def logout():
 @login_required
 def dashboard():
     products = Product.query.all()
-    return render_template('admin/dashboard.html', products=products)
+
+    # Statistics
+    total_orders = Order.query.count()
+    pending_orders = Order.query.filter_by(status='Pending').count()
+    total_users = User.query.count()
+    total_products = Product.query.count()
+
+    # Calculate total revenue
+    total_revenue = db.session.query(db.func.sum(Order.total_amount)).filter(Order.status == 'Completed').scalar() or 0
+
+    return render_template('admin/dashboard.html',
+                           products=products,
+                           total_orders=total_orders,
+                           pending_orders=pending_orders,
+                           total_users=total_users,
+                           total_products=total_products,
+                           total_revenue=total_revenue)
 
 @admin_bp.route('/orders')
 @login_required
@@ -84,6 +128,16 @@ def order_detail(order_id):
     order = Order.query.get_or_404(order_id)
     return render_template('admin/order_detail.html', order=order)
 
+@admin_bp.route('/orders/<int:order_id>/confirm', methods=['POST'])
+@login_required
+def confirm_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.status != 'Completed':
+        order.status = 'Completed'
+        db.session.commit()
+        flash('Order confirmed successfully.', 'success')
+    return redirect(url_for('admin.order_detail', order_id=order.id))
+
 @admin_bp.route('/categories')
 @login_required
 def categories():
@@ -95,10 +149,17 @@ def categories():
 def add_category():
     if request.method == 'POST':
         name = request.form.get('name')
+        image_url = None
+
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and allowed_file(file.filename):
+                image_url = optimize_and_save_image(file)
+
         if Category.query.filter_by(name=name).first():
             flash('Category already exists', 'danger')
         else:
-            category = Category(name=name)
+            category = Category(name=name, image_url=image_url)
             db.session.add(category)
             db.session.commit()
             flash('Category added successfully', 'success')
@@ -110,25 +171,22 @@ def add_category():
 def edit_category(id):
     category = Category.query.get_or_404(id)
     if request.method == 'POST':
-        old_name = category.name
         new_name = request.form.get('name')
 
-        if new_name != old_name:
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and allowed_file(file.filename):
+                category.image_url = optimize_and_save_image(file)
+
+        if new_name != category.name:
             if Category.query.filter_by(name=new_name).first():
                 flash('Category with this name already exists', 'danger')
                 return render_template('admin/category_form.html', title='Edit Category', category=category)
-
             category.name = new_name
-            # Update associated products
-            products = Product.query.filter_by(category=old_name).all()
-            for p in products:
-                p.category = new_name
 
-            db.session.commit()
-            flash('Category updated successfully', 'success')
-            return redirect(url_for('admin.categories'))
-        else:
-             return redirect(url_for('admin.categories'))
+        db.session.commit()
+        flash('Category updated successfully', 'success')
+        return redirect(url_for('admin.categories'))
 
     return render_template('admin/category_form.html', title='Edit Category', category=category)
 
@@ -137,7 +195,7 @@ def edit_category(id):
 def delete_category(id):
     category = Category.query.get_or_404(id)
     # Check if products exist in this category
-    if Product.query.filter_by(category=category.name).first():
+    if Product.query.filter_by(category_id=category.id).first():
         flash('Cannot delete category with associated products. Please reassign products first.', 'danger')
     else:
         db.session.delete(category)
@@ -154,23 +212,16 @@ def add_product():
         description = request.form.get('description')
         price = request.form.get('price')
         unit = request.form.get('unit', 'pcs')
-        category = request.form.get('category')
+        category_id = request.form.get('category')
+        is_hidden = True if request.form.get('is_hidden') else False
+        is_out_of_stock = True if request.form.get('is_out_of_stock') else False
 
         # Image handling
         image_url = ''
         if 'image' in request.files:
             file = request.files['image']
             if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                # Ensure static/images exists
-                upload_dir = os.path.join('static', 'images')
-                if not os.path.exists(upload_dir):
-                    os.makedirs(upload_dir)
-
-                save_path = os.path.join(upload_dir, filename)
-                # In a real app, use absolute path from app.config
-                file.save(save_path)
-                image_url = f'/static/images/{filename}'
+                image_url = optimize_and_save_image(file)
 
         # Use a placeholder if no image
         if not image_url:
@@ -181,8 +232,10 @@ def add_product():
             description=description,
             price=float(price),
             unit=unit,
-            category=category,
-            image_url=image_url
+            category_id=int(category_id),
+            image_url=image_url,
+            is_hidden=is_hidden,
+            is_out_of_stock=is_out_of_stock
         )
 
         db.session.add(new_product)
@@ -219,18 +272,14 @@ def edit_product(product_id):
         product.description = request.form.get('description')
         product.price = float(request.form.get('price'))
         product.unit = request.form.get('unit', 'pcs')
-        product.category = request.form.get('category')
+        product.category_id = int(request.form.get('category'))
+        product.is_hidden = True if request.form.get('is_hidden') else False
+        product.is_out_of_stock = True if request.form.get('is_out_of_stock') else False
 
         if 'image' in request.files:
             file = request.files['image']
             if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                upload_dir = os.path.join('static', 'images')
-                if not os.path.exists(upload_dir):
-                    os.makedirs(upload_dir)
-                save_path = os.path.join(upload_dir, filename)
-                file.save(save_path)
-                product.image_url = f'/static/images/{filename}'
+                product.image_url = optimize_and_save_image(file)
 
         # Handle Pricing
         # Remove existing pricings
@@ -262,3 +311,62 @@ def delete_product(product_id):
     db.session.commit()
     flash('Product deleted', 'success')
     return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/product/<int:product_id>/toggle_hidden', methods=['POST'])
+@login_required
+def toggle_hidden(product_id):
+    product = Product.query.get_or_404(product_id)
+    product.is_hidden = not product.is_hidden
+    db.session.commit()
+    status = 'hidden' if product.is_hidden else 'visible'
+    flash(f'Product {product.name} is now {status}.', 'success')
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/product/<int:product_id>/toggle_stock', methods=['POST'])
+@login_required
+def toggle_stock(product_id):
+    product = Product.query.get_or_404(product_id)
+    product.is_out_of_stock = not product.is_out_of_stock
+    db.session.commit()
+    status = 'out of stock' if product.is_out_of_stock else 'in stock'
+    flash(f'Product {product.name} is now {status}.', 'success')
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/settings/home', methods=['GET', 'POST'])
+@login_required
+def home_settings():
+    section = HomeSection.query.filter_by(section_name='limited_offer').first()
+
+    # Create default if missing (safety check)
+    if not section:
+        section = HomeSection(section_name='limited_offer')
+        db.session.add(section)
+        db.session.commit()
+
+    if request.method == 'POST':
+        section.title_fr = request.form.get('title_fr')
+        section.title_ar = request.form.get('title_ar')
+        section.title_en = request.form.get('title_en')
+        section.text_fr = request.form.get('text_fr')
+        section.text_ar = request.form.get('text_ar')
+        section.text_en = request.form.get('text_en')
+
+        # Date handling
+        end_date_str = request.form.get('end_date')
+        if end_date_str:
+            try:
+                section.end_date = datetime.strptime(end_date_str, '%Y-%m-%dT%H:%M')
+            except ValueError:
+                pass # Keep old date or handle error
+
+        # Image handling
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and allowed_file(file.filename):
+                section.image_url = optimize_and_save_image(file)
+
+        db.session.commit()
+        flash('Home settings updated successfully', 'success')
+        return redirect(url_for('admin.home_settings'))
+
+    return render_template('admin/home_settings.html', section=section)

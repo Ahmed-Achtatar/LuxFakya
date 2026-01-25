@@ -1,6 +1,6 @@
 import unittest
 from app import create_app, db
-from models import User, Product, Order, OrderItem
+from models import User, Product, Order, OrderItem, Category
 
 class LuxFakiaTestCase(unittest.TestCase):
     def setUp(self):
@@ -16,7 +16,14 @@ class LuxFakiaTestCase(unittest.TestCase):
             u = User(username='admin', role='admin')
             u.set_password('password')
             db.session.add(u)
-            p = Product(name='Test', price=10.0, category='Dates', image_url='', unit='kg')
+
+            # Create Category
+            c = Category(name='Dates')
+            db.session.add(c)
+            db.session.commit()
+
+            # Create Product linked to Category
+            p = Product(name='Test', price=10.0, category_id=c.id, image_url='', unit='kg')
             db.session.add(p)
             db.session.commit()
 
@@ -55,7 +62,7 @@ class LuxFakiaTestCase(unittest.TestCase):
     def test_admin_login(self):
         response = self.client.post('/admin/login', data={'username': 'admin', 'password': 'password'}, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Admin Dashboard', response.data)
+        self.assertIn(b'Tableau de bord', response.data)
 
     def test_add_to_cart_quantity(self):
         # Find the product id

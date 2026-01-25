@@ -5,20 +5,20 @@
     <div class="col-md-4">
         <div class="card shadow-sm">
             <div class="card-header bg-dark text-white text-center">
-                <h4>Admin Login</h4>
+                <h4>{{ translations[current_lang]['login_title'] }}</h4>
             </div>
             <div class="card-body p-4">
                 <form method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
+                        <label for="username" class="form-label">{{ translations[current_lang]['username'] }}</label>
                         <input type="text" class="form-control" id="username" name="username" required>
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label">{{ translations[current_lang]['password'] }}</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
-                    <button type="submit" class="btn btn-gold w-100">Login</button>
+                    <button type="submit" class="btn btn-gold w-100">{{ translations[current_lang]['sign_in'] }}</button>
                 </form>
             </div>
         </div>

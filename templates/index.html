@@ -50,46 +50,32 @@
 <!-- Categories Section -->
 <div class="container floating-categories">
     <div class="row row-cols-2 row-cols-md-4 g-4 justify-content-center">
-        <div class="col" data-aos="fade-up" data-aos-delay="100">
-            <a href="{{ url_for('main.shop', category='Dates') }}" class="text-decoration-none">
+        {% for category in all_categories %}
+        <div class="col" data-aos="fade-up" data-aos-delay="{{ 100 + (loop.index0 * 50) }}">
+            <a href="{{ url_for('main.shop', category=category.name) }}" class="text-decoration-none">
                 <div class="category-item">
-                    <div class="category-img-wrapper">
-                        <img src="{{ url_for('static', filename='images/dates.png') }}" alt="Dates">
+                    <div class="category-img-wrapper overflow-hidden position-relative">
+                        {% if category.image_url %}
+                            <img src="{{ category.image_url }}" alt="{{ category.name }}" class="w-100 h-100 object-fit-cover">
+                        {% elif category.name == 'Dattes (تمور)' %}
+                            <img src="{{ url_for('static', filename='images/dates.png') }}" alt="{{ category.name }}">
+                        {% elif category.name == 'Fruits secs / fruits à coque (مكسرات / فاكية)' %}
+                            <img src="{{ url_for('static', filename='images/nuts.png') }}" alt="{{ category.name }}">
+                        {% elif category.name == 'Fruits confits (فواكه معسلة)' %}
+                            <img src="{{ url_for('static', filename='images/driedfood.png') }}" alt="{{ category.name }}">
+                        {% elif category.name == 'Fruits lyophilisés (فواكه مجففة بالتبريد)' %}
+                            <img src="{{ url_for('static', filename='images/driedfood.png') }}" alt="{{ category.name }}">
+                        {% elif category.name == 'Offres (عروض)' %}
+                            <img src="{{ url_for('static', filename='images/gift.png') }}" alt="{{ category.name }}">
+                        {% else %}
+                             <img src="https://via.placeholder.com/300x300?text={{ category.name }}" alt="{{ category.name }}" class="w-100 h-100 object-fit-cover">
+                        {% endif %}
                     </div>
-                    <h6 class="category-title">{{ get_text('cat_dates') }}</h6>
+                    <h6 class="category-title">{{ category.name }}</h6>
                 </div>
             </a>
         </div>
-        <div class="col" data-aos="fade-up" data-aos-delay="150">
-            <a href="{{ url_for('main.shop', category='Nuts') }}" class="text-decoration-none">
-                <div class="category-item">
-                    <div class="category-img-wrapper">
-                        <img src="{{ url_for('static', filename='images/nuts.png') }}" alt="Nuts">
-                    </div>
-                    <h6 class="category-title">{{ get_text('cat_nuts') }}</h6>
-                </div>
-            </a>
-        </div>
-        <div class="col" data-aos="fade-up" data-aos-delay="200">
-            <a href="{{ url_for('main.shop', category='Dried Fruits') }}" class="text-decoration-none">
-                <div class="category-item">
-                    <div class="category-img-wrapper">
-                        <img src="{{ url_for('static', filename='images/driedfood.png') }}" alt="Dried Fruits">
-                    </div>
-                    <h6 class="category-title">{{ get_text('cat_dried') }}</h6>
-                </div>
-            </a>
-        </div>
-        <div class="col" data-aos="fade-up" data-aos-delay="250">
-            <a href="{{ url_for('main.shop', category='Gift Boxes') }}" class="text-decoration-none">
-                <div class="category-item">
-                    <div class="category-img-wrapper">
-                        <img src="{{ url_for('static', filename='images/gift.png') }}" alt="Gift Boxes">
-                    </div>
-                    <h6 class="category-title">{{ get_text('cat_gifts') }}</h6>
-                </div>
-            </a>
-        </div>
+        {% endfor %}
     </div>
 </div>
 
@@ -120,14 +106,19 @@
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3" id="product-grid">
         {% for product in all_products %}
         <div class="col product-item {% if loop.index > 4 %}d-none extra-product{% endif %}"
-             data-category="{{ product.category }}"
+             data-category="{{ product.category.name }}"
              data-name="{{ product.name | lower }}"
              data-aos="fade-up" data-aos-delay="{{ ((loop.index - 1) % 4) * 50 }}">
             <div class="card product-card h-100 shadow-sm">
-                <div class="product-image-container overflow-hidden">
+                <div class="product-image-container overflow-hidden position-relative">
                     <a href="{{ url_for('main.product_detail', product_id=product.id) }}">
                         <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
                     </a>
+                    {% if product.is_out_of_stock %}
+                    <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-50">
+                         <span class="badge bg-danger fs-6 shadow">Out of Stock</span>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="card-body text-center p-3 d-flex flex-column">
                     <h6 class="card-title font-serif fw-bold mb-1 text-truncate">
@@ -136,23 +127,29 @@
                     <p class="product-price-range mb-2 text-gold fw-bold small">{{ product.price }} {{ get_text('currency') }} {{ get_text('unit_separator') }} {{ product.unit }}</p>
 
                     <div class="mt-auto">
-                        <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST" class="d-flex flex-column gap-2">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                            <select name="quantity" class="form-select form-select-sm rounded-pill shadow-sm quantity-selector text-center" style="font-size: 0.8rem;" aria-label="Select quantity" onchange="updateProductPrice(this)" data-unit="{{ product.unit }}">
-                                {% if product.pricings %}
-                                    {% for pricing in product.pricings %}
-                                    <option value="{{ pricing.quantity }}" data-price="{{ pricing.price }}" {% if loop.first %}selected{% endif %}>{{ pricing.quantity }} {{ product.unit }}</option>
-                                    {% endfor %}
-                                {% else %}
-                                    <option value="1" data-price="{{ product.price }}" selected>1 {{ product.unit }}</option>
-                                    <option value="2" data-price="{{ product.price * 2 }}">2 {{ product.unit }}</option>
-                                    <option value="3" data-price="{{ product.price * 3 }}">3 {{ product.unit }}</option>
-                                {% endif %}
-                            </select>
-                            <button type="submit" class="btn btn-gold btn-sm rounded-pill w-100 fw-bold">
-                                {{ get_text('add_btn') }}
+                        {% if product.is_out_of_stock %}
+                            <button class="btn btn-secondary btn-sm rounded-pill w-100 fw-bold" disabled>
+                                Out of Stock
                             </button>
-                        </form>
+                        {% else %}
+                            <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST" class="d-flex flex-column gap-2">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <select name="quantity" class="form-select form-select-sm rounded-pill shadow-sm quantity-selector text-center" style="font-size: 0.8rem;" aria-label="Select quantity" onchange="updateProductPrice(this)" data-unit="{{ product.unit }}">
+                                    {% if product.pricings %}
+                                        {% for pricing in product.pricings %}
+                                        <option value="{{ pricing.quantity }}" data-price="{{ pricing.price }}" {% if loop.first %}selected{% endif %}>{{ pricing.quantity }} {{ product.unit }}</option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <option value="1" data-price="{{ product.price }}" selected>1 {{ product.unit }}</option>
+                                        <option value="2" data-price="{{ product.price * 2 }}">2 {{ product.unit }}</option>
+                                        <option value="3" data-price="{{ product.price * 3 }}">3 {{ product.unit }}</option>
+                                    {% endif %}
+                                </select>
+                                <button type="submit" class="btn btn-gold btn-sm rounded-pill w-100 fw-bold">
+                                    {{ get_text('add_btn') }}
+                                </button>
+                            </form>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -168,41 +165,48 @@
     </div>
 </div>
 
-<!-- Deals of the Month -->
+<!-- Deals of the Month (Limited Offer) -->
+{% if limited_offer and limited_offer.is_active %}
 <div class="countdown-section">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-6 text-center text-md-start mb-4 mb-md-0" data-aos="fade-right">
-                <h2 class="font-serif fw-bold mb-4">{{ get_text('deals_title') }}</h2>
-                <p class="text-muted mb-5" style="max-width: 500px;">{{ get_text('deals_text') }}</p>
+                {% set offer_title = limited_offer|attr('title_' + current_lang) or get_text('deals_title') %}
+                {% set offer_text = limited_offer|attr('text_' + current_lang) or get_text('deals_text') %}
 
-                <div class="d-flex justify-content-center justify-content-md-start mb-5 flex-wrap">
+                <h2 class="font-serif fw-bold mb-4">{{ offer_title }}</h2>
+                <p class="text-muted mb-5" style="max-width: 500px;">{{ offer_text }}</p>
+
+                {% if limited_offer.end_date %}
+                <div class="d-flex justify-content-center justify-content-md-start mb-5 flex-wrap" id="countdown-timer" data-end-date="{{ limited_offer.end_date.isoformat() }}">
                     <div class="countdown-box">
-                        <div class="countdown-number">12</div>
+                        <div class="countdown-number" id="days">00</div>
                         <div class="countdown-label">{{ get_text('days') }}</div>
                     </div>
                     <div class="countdown-box">
-                        <div class="countdown-number">04</div>
+                        <div class="countdown-number" id="hours">00</div>
                         <div class="countdown-label">{{ get_text('hours') }}</div>
                     </div>
                     <div class="countdown-box">
-                        <div class="countdown-number">15</div>
+                        <div class="countdown-number" id="minutes">00</div>
                         <div class="countdown-label">{{ get_text('minutes') }}</div>
                     </div>
                     <div class="countdown-box">
-                        <div class="countdown-number">30</div>
+                        <div class="countdown-number" id="seconds">00</div>
                         <div class="countdown-label">{{ get_text('seconds') }}</div>
                     </div>
                 </div>
+                {% endif %}
 
                 <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg px-5">{{ get_text('view_offers') }}</a>
             </div>
             <div class="col-md-6 text-center" data-aos="fade-left">
-                <img src="{{ url_for('static', filename='images/dates.png') }}" alt="Deals" class="img-fluid rounded-3 shadow">
+                <img src="{{ limited_offer.image_url or url_for('static', filename='images/dates.png') }}" alt="Deals" class="img-fluid rounded-3 shadow" style="max-height: 400px; object-fit: cover;">
             </div>
         </div>
     </div>
 </div>
+{% endif %}
 
 
 <!-- Welcome Text -->
@@ -212,7 +216,6 @@
             <h5 class="text-gold text-uppercase mb-3 letter-spacing-2">{{ get_text('welcome_pre') }}</h5>
             <h2 class="font-serif fw-bold mb-4 display-5">{{ get_text('welcome_text') }}</h2>
             <div class="d-flex justify-content-center gap-4 mt-4 text-uppercase fw-bold letter-spacing-1">
-                <a href="#" class="text-dark text-decoration-none border-bottom border-dark pb-1">{{ get_text('gift_cards_link') }}</a>
                 <a href="{{ url_for('main.shop') }}" class="text-dark text-decoration-none border-bottom border-dark pb-1">{{ get_text('best_sellers_link') }}</a>
             </div>
         </div>
@@ -307,6 +310,39 @@
 
         if (searchInput) {
             searchInput.addEventListener('input', filterProducts);
+        }
+
+        // Countdown Timer Logic
+        const countdownContainer = document.getElementById('countdown-timer');
+        if (countdownContainer) {
+            const endDateStr = countdownContainer.getAttribute('data-end-date');
+            if (endDateStr) {
+                const countDownDate = new Date(endDateStr).getTime();
+
+                const x = setInterval(function() {
+                    const now = new Date().getTime();
+                    const distance = countDownDate - now;
+
+                    if (distance < 0) {
+                        clearInterval(x);
+                        document.getElementById("days").innerText = "00";
+                        document.getElementById("hours").innerText = "00";
+                        document.getElementById("minutes").innerText = "00";
+                        document.getElementById("seconds").innerText = "00";
+                        return;
+                    }
+
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    document.getElementById("days").innerText = days < 10 ? "0" + days : days;
+                    document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
+                    document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
+                    document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
+                }, 1000);
+            }
         }
     });
 </script>

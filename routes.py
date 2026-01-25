@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash, current_app
 from flask_login import current_user
-from models import Product, db, Order, OrderItem
+from models import Product, db, Order, OrderItem, HomeSection, Category
 
 main_bp = Blueprint('main', __name__)
 
@@ -13,7 +13,11 @@ def set_lang(lang_code):
 @main_bp.route('/')
 def index():
     # Fetch all products to distribute across sections
-    all_products = Product.query.all()
+    all_products = Product.query.filter_by(is_hidden=False).all()
+    all_categories = Category.query.all()
+
+    # Fetch Limited Offer Section
+    limited_offer = HomeSection.query.filter_by(section_name='limited_offer').first()
 
     # Simulate different collections
     # In a real app, these would be filtered by date added, sales count, etc.
@@ -29,7 +33,9 @@ def index():
                          best_sellers=best_sellers,
                          popular_items=popular_items,
                          featured_products=featured_collection,
-                         all_products=all_products)
+                         all_products=all_products,
+                         limited_offer=limited_offer,
+                         all_categories=all_categories)
 
 @main_bp.route('/about')
 def about():
@@ -37,16 +43,20 @@ def about():
 
 @main_bp.route('/shop')
 def shop():
-    category = request.args.get('category')
-    if category:
-        products = Product.query.filter_by(category=category).all()
+    category_name = request.args.get('category')
+    if category_name:
+        # Combine the JOIN strategy (from Current) with the hidden check (from Incoming)
+        products = Product.query.join(Category).filter(
+            Category.name == category_name,
+            Product.is_hidden == False
+        ).all()
     else:
-        products = Product.query.all()
+        products = Product.query.filter_by(is_hidden=False).all()
 
-    categories = db.session.query(Product.category).distinct().all()
-    categories = [c[0] for c in categories]
+    # Get all categories
+    categories = Category.query.all()
 
-    return render_template('shop.html', products=products, categories=categories, current_category=category)
+    return render_template('shop.html', products=products, categories=categories, current_category=category_name)
 
 @main_bp.route('/product/<int:product_id>')
 def product_detail(product_id):
@@ -54,7 +64,7 @@ def product_detail(product_id):
 
     # Related products strategy: Same category, exclude current
     related_products = Product.query.filter(
-        Product.category == product.category,
+        Product.category_id == product.category_id,
         Product.id != product.id
     ).limit(3).all()
 
@@ -101,6 +111,11 @@ def cart():
 
 @main_bp.route('/cart/add/<int:product_id>', methods=['GET', 'POST'])
 def add_to_cart(product_id):
+    product = Product.query.get_or_404(product_id)
+    if product.is_out_of_stock:
+        flash('This product is out of stock.', 'danger')
+        return redirect(request.referrer or url_for('main.shop'))
+
     if 'cart' not in session:
         session['cart'] = {}
 

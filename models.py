@@ -2,8 +2,19 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
+import sqlite3
 
 db = SQLAlchemy()
+
+# Enable Foreign Keys for SQLite
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    if isinstance(dbapi_connection, sqlite3.Connection):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,11 +40,13 @@ class User(UserMixin, db.Model):
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
+    image_url = db.Column(db.String(500), nullable=True)
 
     def to_dict(self):
         return {
             'id': self.id,
-            'name': self.name
+            'name': self.name,
+            'image_url': self.image_url
         }
 
 class ProductPricing(db.Model):
@@ -54,8 +67,13 @@ class Product(db.Model):
     description = db.Column(db.Text, nullable=True)
     price = db.Column(db.Float, nullable=False)
     unit = db.Column(db.String(50), nullable=False, default='pcs')
-    category = db.Column(db.String(100), nullable=False)
+
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    category = db.relationship('Category', backref=db.backref('products', lazy=True))
+
     image_url = db.Column(db.String(500), nullable=True)
+    is_hidden = db.Column(db.Boolean, default=False)
+    is_out_of_stock = db.Column(db.Boolean, default=False)
     pricings = db.relationship('ProductPricing', backref='product', cascade="all, delete-orphan", lazy=True, order_by='ProductPricing.quantity')
 
     def to_dict(self):
@@ -65,8 +83,10 @@ class Product(db.Model):
             'description': self.description,
             'price': self.price,
             'unit': self.unit,
-            'category': self.category,
+            'category': self.category.name if self.category else None,
             'image_url': self.image_url,
+            'is_hidden': self.is_hidden,
+            'is_out_of_stock': self.is_out_of_stock,
             'pricings': [p.to_dict() for p in self.pricings]
         }
 
@@ -88,8 +108,41 @@ class Order(db.Model):
 class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
-    product_id = db.Column(db.Integer, nullable=True)
+
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id', ondelete='SET NULL'), nullable=True)
+
     product_name = db.Column(db.String(150), nullable=False)
     quantity = db.Column(db.Float, nullable=False)
     unit = db.Column(db.String(50), nullable=False)
     price_at_purchase = db.Column(db.Float, nullable=False)
+
+class HomeSection(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    section_name = db.Column(db.String(50), unique=True, nullable=False) # e.g., 'limited_offer'
+
+    # Content stored for multiple languages
+    title_fr = db.Column(db.String(150), nullable=True)
+    title_ar = db.Column(db.String(150), nullable=True)
+    title_en = db.Column(db.String(150), nullable=True)
+
+    text_fr = db.Column(db.Text, nullable=True)
+    text_ar = db.Column(db.Text, nullable=True)
+    text_en = db.Column(db.Text, nullable=True)
+
+    image_url = db.Column(db.String(500), nullable=True)
+    end_date = db.Column(db.DateTime, nullable=True) # For countdown
+    is_active = db.Column(db.Boolean, default=True)
+
+    def to_dict(self):
+        return {
+            'section_name': self.section_name,
+            'title_fr': self.title_fr,
+            'title_ar': self.title_ar,
+            'title_en': self.title_en,
+            'text_fr': self.text_fr,
+            'text_ar': self.text_ar,
+            'text_en': self.text_en,
+            'image_url': self.image_url,
+            'end_date': self.end_date,
+            'is_active': self.is_active
+        }
