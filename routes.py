@@ -14,6 +14,7 @@ def set_lang(lang_code):
 def index():
     # Fetch all products to distribute across sections
     all_products = Product.query.filter_by(is_hidden=False).all()
+    all_categories = Category.query.all()
 
     # Fetch Limited Offer Section
     limited_offer = HomeSection.query.filter_by(section_name='limited_offer').first()
@@ -33,7 +34,8 @@ def index():
                          popular_items=popular_items,
                          featured_products=featured_collection,
                          all_products=all_products,
-                         limited_offer=limited_offer)
+                         limited_offer=limited_offer,
+                         all_categories=all_categories)
 
 @main_bp.route('/about')
 def about():
