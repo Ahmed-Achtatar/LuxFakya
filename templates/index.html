@@ -57,13 +57,15 @@
                     <div class="category-img-wrapper overflow-hidden position-relative">
                         {% if category.image_url %}
                             <img src="{{ category.image_url }}" alt="{{ category.name }}" class="w-100 h-100 object-fit-cover">
-                        {% elif category.name == 'Dates' %}
+                        {% elif category.name == 'Dattes (تمور)' %}
                             <img src="{{ url_for('static', filename='images/dates.png') }}" alt="{{ category.name }}">
-                        {% elif category.name == 'Nuts' %}
+                        {% elif category.name == 'Fruits secs / fruits à coque (مكسرات / فاكية)' %}
                             <img src="{{ url_for('static', filename='images/nuts.png') }}" alt="{{ category.name }}">
-                        {% elif category.name == 'Dried Fruits' %}
+                        {% elif category.name == 'Fruits confits (فواكه معسلة)' %}
                             <img src="{{ url_for('static', filename='images/driedfood.png') }}" alt="{{ category.name }}">
-                        {% elif category.name == 'Gift Boxes' %}
+                        {% elif category.name == 'Fruits lyophilisés (فواكه مجففة بالتبريد)' %}
+                            <img src="{{ url_for('static', filename='images/driedfood.png') }}" alt="{{ category.name }}">
+                        {% elif category.name == 'Offres (عروض)' %}
                             <img src="{{ url_for('static', filename='images/gift.png') }}" alt="{{ category.name }}">
                         {% else %}
                              <img src="https://via.placeholder.com/300x300?text={{ category.name }}" alt="{{ category.name }}" class="w-100 h-100 object-fit-cover">
