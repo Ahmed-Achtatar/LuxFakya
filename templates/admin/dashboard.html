@@ -105,7 +105,7 @@
                     {% for product in products %}
                     <tr>
                         <th scope="row" class="ps-4 text-muted">{{ product.id }}</th>
-                        <td><img src="{{ product.image_url }}" alt="" class="rounded shadow-sm" style="width: 50px; height: 50px; object-fit: cover;"></td>
+                        <td><img src="{{ product.image_url or 'https://via.placeholder.com/300' }}" alt="" class="rounded shadow-sm" style="width: 50px; height: 50px; object-fit: cover;"></td>
                         <td class="fw-bold">{{ product.name }}</td>
                         <td><span class="badge bg-light text-dark border">{{ product.category.name }}</span></td>
                         <td class="fw-bold text-gold">{{ product.price }} MAD</td>

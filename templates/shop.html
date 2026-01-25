@@ -29,7 +29,7 @@
             <div class="col" data-aos="fade-up" data-aos-delay="{{ (loop.index % 6) * 100 }}">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="position-relative">
-                        <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 220px; object-fit: cover;">
+                        <img src="{{ product.image_url or 'https://via.placeholder.com/300' }}" class="card-img-top" alt="{{ product.name }}" style="height: 220px; object-fit: cover;">
                         {% if product.is_out_of_stock %}
                         <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-50">
                              <span class="badge bg-danger fs-6 shadow">Out of Stock</span>
