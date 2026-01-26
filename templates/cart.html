@@ -34,10 +34,24 @@
                             <td class="force-ltr">{{ item.product.price }} MAD / {{ item.product.unit }}</td>
                             <td>
                                 <form action="{{ url_for('main.update_cart', product_id=item.product.id) }}" method="POST" class="d-flex align-items-center" style="width: 140px;">
+                                    {% if item.product.unit and item.product.unit.lower() == 'kg' %}
+                                    <div class="d-flex">
+                                        <select name="quantity" class="form-select form-select-sm border-secondary text-center me-1" onchange="this.form.submit()" style="cursor: pointer;">
+                                            <option value="0.25" {% if item.quantity == 0.25 %}selected{% endif %}>250g</option>
+                                            <option value="0.5" {% if item.quantity == 0.5 %}selected{% endif %}>500g</option>
+                                            <option value="0.75" {% if item.quantity == 0.75 %}selected{% endif %}>750g</option>
+                                            <option value="1.0" {% if item.quantity == 1.0 %}selected{% endif %}>1kg</option>
+                                            {% if item.quantity not in [0.25, 0.5, 0.75, 1.0] %}
+                                            <option value="{{ item.quantity }}" selected hidden>{{ item.quantity }} Kg (Custom)</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                    {% else %}
                                     <div class="input-group input-group-sm">
                                         <input type="number" name="quantity" value="{{ item.quantity }}" min="0.1" step="0.01" class="form-control text-center">
                                         <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-sync"></i></button>
                                     </div>
+                                    {% endif %}
                                 </form>
                             </td>
                             <td class="fw-bold text-gold force-ltr">{{ item.total }} MAD</td>
