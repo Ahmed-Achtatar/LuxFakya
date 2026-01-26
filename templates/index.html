@@ -88,26 +88,26 @@
 
     <!-- Shop Filters (Hidden Initially) -->
     <div id="shop-filters" class="d-none mb-5">
-        <div class="row g-3 align-items-center justify-content-center">
-            <div class="col-md-4">
+        <div class="row g-3 mb-4 align-items-center">
+            <div class="col-md-6">
                  <input type="text" id="shop-search" class="form-control rounded-pill border-gold" placeholder="Search products...">
             </div>
-            <div class="col-md-8">
-                 <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-md-start align-items-center">
-                     <div class="d-flex gap-2 flex-wrap justify-content-center">
-                        <button class="btn btn-outline-gold active filter-btn rounded-pill" data-filter="all">All</button>
-                        {% for category in all_categories %}
-                        <button class="btn btn-outline-gold filter-btn rounded-pill" data-filter="{{ category.name }}">{{ category.name }}</button>
-                        {% endfor %}
-                     </div>
-                     <div class="ms-md-auto">
-                        <select class="form-select rounded-pill border-gold" id="index-sort-select">
-                            <option value="default">{{ get_text('filter_sort') }}</option>
-                            <option value="price-asc">{{ get_text('sort_price_asc') }}</option>
-                            <option value="price-desc">{{ get_text('sort_price_desc') }}</option>
-                            <option value="name-asc">{{ get_text('sort_name_asc') }}</option>
-                        </select>
-                     </div>
+            <div class="col-md-6 d-flex justify-content-md-end justify-content-center">
+                <select class="form-select rounded-pill border-gold w-auto" id="index-sort-select">
+                    <option value="default">{{ get_text('filter_sort') }}</option>
+                    <option value="price-asc">{{ get_text('sort_price_asc') }}</option>
+                    <option value="price-desc">{{ get_text('sort_price_desc') }}</option>
+                    <option value="name-asc">{{ get_text('sort_name_asc') }}</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                 <div class="d-flex flex-wrap gap-2 justify-content-center">
+                    <button class="btn btn-outline-gold active filter-btn rounded-pill" data-filter="all">All</button>
+                    {% for category in all_categories %}
+                    <button class="btn btn-outline-gold filter-btn rounded-pill" data-filter="{{ category.name }}">{{ category.name }}</button>
+                    {% endfor %}
                  </div>
             </div>
         </div>

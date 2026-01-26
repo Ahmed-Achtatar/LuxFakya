@@ -23,8 +23,8 @@
         <!-- Main Content -->
         <div class="col-md-9">
             <!-- Mobile Categories (Visible only on mobile) -->
-            <div class="d-md-none mb-4 mobile-cat-strip pb-2">
-                <div class="d-flex gap-2">
+            <div class="d-md-none mb-4 pb-2">
+                <div class="d-flex gap-2 flex-wrap justify-content-center">
                     <a href="{{ url_for('main.shop') }}" class="btn btn-sm rounded-pill text-nowrap {% if not current_category %}btn-gold{% else %}btn-outline-secondary{% endif %}">
                         All
                     </a>

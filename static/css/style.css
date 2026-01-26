@@ -634,7 +634,7 @@ footer .social-icon {
 }
 
 #page-content-wrapper {
-    min-width: 100vw;
+    min-width: 100%;
 }
 
 #wrapper.toggled #sidebar-wrapper {
@@ -746,14 +746,3 @@ footer .social-icon {
     background-color: var(--primary-gold);
 }
 
-/* Mobile Category Strip */
-.mobile-cat-strip {
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-}
-
-.mobile-cat-strip::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
-}
