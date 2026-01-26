@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection
+from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection, DbImage
 import os
 import uuid
+import io
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from PIL import Image
@@ -17,15 +18,7 @@ def allowed_file(filename):
 
 def optimize_and_save_image(file):
     filename = secure_filename(file.filename)
-    # Change extension to .webp
     filename_base = filename.rsplit('.', 1)[0]
-    unique_filename = f"{uuid.uuid4().hex}_{filename_base}.webp"
-
-    upload_dir = os.path.join('static', 'images')
-    if not os.path.exists(upload_dir):
-        os.makedirs(upload_dir)
-
-    save_path = os.path.join(upload_dir, unique_filename)
 
     try:
         img = Image.open(file)
@@ -35,16 +28,36 @@ def optimize_and_save_image(file):
              new_height = int(float(img.height) * ratio)
              img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
 
-        img.save(save_path, 'WEBP', optimize=True, quality=80)
+        # Save to buffer
+        output_buffer = io.BytesIO()
+        img.save(output_buffer, format='WEBP', optimize=True, quality=80)
+        output_buffer.seek(0)
+
+        new_image = DbImage(
+            filename=f"{filename_base}.webp",
+            data=output_buffer.getvalue(),
+            mimetype='image/webp'
+        )
+        db.session.add(new_image)
+        db.session.commit()
+
+        return url_for('main.get_db_image', image_id=new_image.id)
+
     except Exception as e:
         current_app.logger.error(f"Optimization error: {e}")
-        # Fallback to original format if WebP conversion fails
-        unique_filename = f"{uuid.uuid4().hex}_{filename}"
-        save_path = os.path.join(upload_dir, unique_filename)
+        # Fallback to original format
         file.seek(0)
-        file.save(save_path)
+        data = file.read()
 
-    return f'/static/images/{unique_filename}'
+        new_image = DbImage(
+            filename=filename,
+            data=data,
+            mimetype=getattr(file, 'content_type', 'application/octet-stream')
+        )
+        db.session.add(new_image)
+        db.session.commit()
+
+        return url_for('main.get_db_image', image_id=new_image.id)
 
 @admin_bp.before_request
 def restrict_access():
