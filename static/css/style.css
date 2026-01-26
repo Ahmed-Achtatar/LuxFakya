@@ -700,3 +700,14 @@ footer .social-icon {
 #menu-toggle:hover {
     color: var(--dark-bg);
 }
+
+/* Responsive Categories */
+@media (max-width: 576px) {
+    .category-img-wrapper {
+        width: 90px;
+        height: 90px;
+    }
+    .category-title {
+        font-size: 0.85rem;
+    }
+}
