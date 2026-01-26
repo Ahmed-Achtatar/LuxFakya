@@ -35,7 +35,18 @@
                                 <td class="ps-4 border-bottom">
                                     <div class="fw-bold">{{ item.product_name }}</div>
                                 </td>
-                                <td class="border-bottom">{{ item.quantity }} {{ item.unit }}</td>
+                                <td class="border-bottom">
+                                    {% if item.unit and item.unit|lower == 'kg' %}
+                                        {% if item.quantity == 0.25 %}250g
+                                        {% elif item.quantity == 0.5 %}500g
+                                        {% elif item.quantity == 0.75 %}750g
+                                        {% elif item.quantity == 1.0 %}1kg
+                                        {% else %}{{ item.quantity }} {{ item.unit }}
+                                        {% endif %}
+                                    {% else %}
+                                        {{ item.quantity }} {{ item.unit }}
+                                    {% endif %}
+                                </td>
                                 <td class="border-bottom">{{ item.price_at_purchase }} MAD</td>
                                 <td class="text-end pe-4 fw-bold border-bottom text-gold">{{ "%.2f"|format(item.quantity * item.price_at_purchase) }} MAD</td>
                             </tr>

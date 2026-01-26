@@ -37,3 +37,9 @@
 127.0.0.1 - - [26/Jan/2026 11:26:18] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
 127.0.0.1 - - [26/Jan/2026 11:26:18] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
 127.0.0.1 - - [26/Jan/2026 11:26:18] "[36mGET /static/images/nuts.png HTTP/1.1[0m" 304 -
+ * Detected change in '/app/update_units.py', reloading
+ * Restarting with stat
+[2026-01-26 11:48:05,726] INFO in app: Application starting... Environment: Production
+2026-01-26 11:48:05,726 - app - INFO - Application starting... Environment: Production
+ * Debugger is active!
+ * Debugger PIN: 410-907-091
