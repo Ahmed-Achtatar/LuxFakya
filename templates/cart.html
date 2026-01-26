@@ -34,7 +34,30 @@
                             <td class="force-ltr">{{ item.product.price }} MAD / {{ item.product.unit }}</td>
                             <td>
                                 <form action="{{ url_for('main.update_cart', product_id=item.product.id) }}" method="POST" class="d-flex align-items-center" style="width: 140px;">
-                                    {% if item.product.unit and item.product.unit.lower() == 'kg' %}
+                                    {% if item.product.unit and item.product.unit.lower() == 'kg' and item.product.pricings %}
+                                    <div class="d-flex">
+                                        <select name="quantity" class="form-select form-select-sm border-secondary text-center me-1" onchange="this.form.submit()" style="cursor: pointer;">
+                                            {% for pricing in item.product.pricings %}
+                                            <option value="{{ pricing.quantity }}" {% if item.quantity == pricing.quantity %}selected{% endif %}>
+                                                {% if pricing.display_unit == 'g' %}
+                                                    {{ (pricing.quantity * 1000)|int }}g
+                                                {% elif pricing.display_unit == 'Kg' %}
+                                                    {% if pricing.quantity == 1.0 %}1kg{% else %}{{ pricing.quantity }}kg{% endif %}
+                                                {% else %}
+                                                    {{ pricing.quantity }}{{ pricing.display_unit }}
+                                                {% endif %}
+                                            </option>
+                                            {% endfor %}
+                                            {% set found_match = namespace(found=False) %}
+                                            {% for pricing in item.product.pricings %}
+                                                {% if item.quantity == pricing.quantity %}{% set found_match.found = True %}{% endif %}
+                                            {% endfor %}
+                                            {% if not found_match.found %}
+                                            <option value="{{ item.quantity }}" selected hidden>{{ item.quantity }} Kg (Custom)</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                    {% elif item.product.unit and item.product.unit.lower() == 'kg' %}
                                     <div class="d-flex">
                                         <select name="quantity" class="form-select form-select-sm border-secondary text-center me-1" onchange="this.form.submit()" style="cursor: pointer;">
                                             <option value="0.25" {% if item.quantity == 0.25 %}selected{% endif %}>250g</option>

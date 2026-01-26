@@ -70,11 +70,22 @@
                     <div id="pricing-container">
                         {% for pricing in product.pricings %}
                         <div class="row g-2 mb-2 pricing-row align-items-end">
-                            <div class="col-5">
+                            <div class="col-3">
                                 <label class="small text-muted mb-1">Quantity</label>
+                                {% if pricing.display_unit == 'g' %}
+                                <input type="number" step="0.1" name="pricing_quantity[]" class="form-control bg-light border-0" value="{{ pricing.quantity * 1000 }}">
+                                {% else %}
                                 <input type="number" step="0.1" name="pricing_quantity[]" class="form-control bg-light border-0" value="{{ pricing.quantity }}">
+                                {% endif %}
                             </div>
-                            <div class="col-5">
+                            <div class="col-3">
+                                <label class="small text-muted mb-1">Unit</label>
+                                <select name="pricing_unit[]" class="form-select bg-light border-0">
+                                    <option value="Kg" {% if pricing.display_unit == 'Kg' %}selected{% endif %}>Kg</option>
+                                    <option value="g" {% if pricing.display_unit == 'g' %}selected{% endif %}>g</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
                                 <label class="small text-muted mb-1">Price</label>
                                 <input type="number" step="0.01" name="pricing_price[]" class="form-control bg-light border-0" value="{{ pricing.price }}">
                             </div>
@@ -86,11 +97,18 @@
                          {% if not product.pricings %}
                          <!-- Empty row if no pricing -->
                          <div class="row g-2 mb-2 pricing-row align-items-end">
-                            <div class="col-5">
+                            <div class="col-3">
                                 <label class="small text-muted mb-1">Quantity</label>
                                 <input type="number" step="0.1" name="pricing_quantity[]" class="form-control bg-light border-0" placeholder="Qty">
                             </div>
-                            <div class="col-5">
+                            <div class="col-3">
+                                <label class="small text-muted mb-1">Unit</label>
+                                <select name="pricing_unit[]" class="form-select bg-light border-0">
+                                    <option value="Kg">Kg</option>
+                                    <option value="g">g</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
                                 <label class="small text-muted mb-1">Price</label>
                                 <input type="number" step="0.01" name="pricing_price[]" class="form-control bg-light border-0" placeholder="Price">
                             </div>
@@ -118,10 +136,16 @@
         const row = document.createElement('div');
         row.className = 'row g-2 mb-2 pricing-row align-items-end';
         row.innerHTML = `
-            <div class="col-5">
+            <div class="col-3">
                 <input type="number" step="0.1" name="pricing_quantity[]" class="form-control bg-light border-0" placeholder="Qty">
             </div>
-            <div class="col-5">
+            <div class="col-3">
+                <select name="pricing_unit[]" class="form-select bg-light border-0">
+                    <option value="Kg">Kg</option>
+                    <option value="g">g</option>
+                </select>
+            </div>
+            <div class="col-4">
                 <input type="number" step="0.01" name="pricing_price[]" class="form-control bg-light border-0" placeholder="Price">
             </div>
             <div class="col-2">

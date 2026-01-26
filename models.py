@@ -61,11 +61,13 @@ class ProductPricing(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     quantity = db.Column(db.Float, nullable=False)
     price = db.Column(db.Float, nullable=False)
+    display_unit = db.Column(db.String(20), default='Kg')
 
     def to_dict(self):
         return {
             'quantity': self.quantity,
-            'price': self.price
+            'price': self.price,
+            'display_unit': self.display_unit
         }
 
 class Product(db.Model):
