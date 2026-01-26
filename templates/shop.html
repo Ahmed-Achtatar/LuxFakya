@@ -1,62 +1,166 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row g-5">
-    <div class="col-md-3" data-aos="fade-right">
-        <div class="p-4 bg-white rounded shadow-sm">
-            <h4 class="font-serif fw-bold mb-4 pb-2 border-bottom">Categories</h4>
-            <div class="list-group list-group-flush">
-                <a href="{{ url_for('main.shop') }}" class="list-group-item list-group-item-action border-0 px-0 {% if not current_category %}text-gold fw-bold{% else %}text-muted{% endif %}">
-                    <i class="fas fa-circle me-2 small {% if not current_category %}text-gold{% else %}text-light{% endif %}"></i> All Products
-                </a>
-                {% for cat in categories %}
-                <a href="{{ url_for('main.shop', category=cat.name) }}" class="list-group-item list-group-item-action border-0 px-0 {% if current_category == cat.name %}text-gold fw-bold{% else %}text-muted{% endif %}">
-                    <i class="fas fa-circle me-2 small {% if current_category == cat.name %}text-gold{% else %}text-light{% endif %}"></i> {{ cat.name }}
-                </a>
+<div class="container my-5">
+    <div class="row g-5">
+        <!-- Sidebar (Categories) -->
+        <div class="col-md-3 d-none d-md-block" data-aos="fade-right">
+            <div class="p-4 bg-white rounded shadow-sm">
+                <h4 class="font-serif fw-bold mb-4 pb-2 border-bottom">Categories</h4>
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('main.shop') }}" class="list-group-item list-group-item-action border-0 px-0 {% if not current_category %}text-gold fw-bold{% else %}text-muted{% endif %}">
+                        <i class="fas fa-circle me-2 small {% if not current_category %}text-gold{% else %}text-light{% endif %}"></i> All Products
+                    </a>
+                    {% for cat in categories %}
+                    <a href="{{ url_for('main.shop', category=cat.name) }}" class="list-group-item list-group-item-action border-0 px-0 {% if current_category == cat.name %}text-gold fw-bold{% else %}text-muted{% endif %}">
+                        <i class="fas fa-circle me-2 small {% if current_category == cat.name %}text-gold{% else %}text-light{% endif %}"></i> {{ cat.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <!-- Mobile Categories (Visible only on mobile) -->
+            <div class="d-md-none mb-4 mobile-cat-strip pb-2">
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('main.shop') }}" class="btn btn-sm rounded-pill text-nowrap {% if not current_category %}btn-gold{% else %}btn-outline-secondary{% endif %}">
+                        All
+                    </a>
+                    {% for cat in categories %}
+                    <a href="{{ url_for('main.shop', category=cat.name) }}" class="btn btn-sm rounded-pill text-nowrap {% if current_category == cat.name %}btn-gold{% else %}btn-outline-secondary{% endif %}">
+                        {{ cat.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3" data-aos="fade-down">
+                <h2 class="font-serif fw-bold m-0">Shop Our Collection</h2>
+
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-muted small text-nowrap">{{ products|length }} Products</span>
+                    <select class="form-select form-select-sm rounded-pill border-gold" id="sort-select" style="width: auto;">
+                        <option value="default">{{ get_text('filter_sort') }}</option>
+                        <option value="price-asc">{{ get_text('sort_price_asc') }}</option>
+                        <option value="price-desc">{{ get_text('sort_price_desc') }}</option>
+                        <option value="name-asc">{{ get_text('sort_name_asc') }}</option>
+                        <option value="newest">{{ get_text('sort_newest') }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3" id="product-grid">
+                {% for product in products %}
+                <div class="col product-item"
+                     data-category="{{ product.category.name }}"
+                     data-name="{{ product.name | lower }}"
+                     data-price="{{ product.price }}"
+                     data-date="{{ product.created_at }}"
+                     data-aos="fade-up" data-aos-delay="{{ ((loop.index - 1) % 4) * 50 }}">
+                    <div class="card product-card h-100 shadow-sm">
+                        <div class="product-image-container overflow-hidden position-relative">
+                            <a href="{{ url_for('main.product_detail', product_id=product.id) }}">
+                                <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                            </a>
+                            {% if product.is_out_of_stock %}
+                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-50">
+                                 <span class="badge bg-danger fs-6 shadow">Out of Stock</span>
+                            </div>
+                            {% elif product.price < 50 %}
+                            <!-- Optional Badge -->
+                            {% endif %}
+                        </div>
+                        <div class="card-body text-center p-3 d-flex flex-column">
+                            <h6 class="card-title font-serif fw-bold mb-1 text-truncate">
+                                <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">{{ product.name }}</a>
+                            </h6>
+                            <p class="product-price-range mb-2 text-gold fw-bold small force-ltr">{{ product.price }} {{ get_text('currency') }} {{ get_text('unit_separator') }} {{ product.unit }}</p>
+
+                            <div class="mt-auto">
+                                {% if product.is_out_of_stock %}
+                                    <button class="btn btn-secondary btn-sm rounded-pill w-100 fw-bold" disabled>
+                                        Out of Stock
+                                    </button>
+                                {% else %}
+                                    <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST" class="d-flex flex-column gap-2">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        <select name="quantity" class="form-select form-select-sm rounded-pill shadow-sm quantity-selector text-center" style="font-size: 0.8rem;" aria-label="Select quantity" onchange="updateProductPrice(this)" data-unit="{{ product.unit }}">
+                                            {% if product.pricings %}
+                                                {% for pricing in product.pricings %}
+                                                <option value="{{ pricing.quantity }}" data-price="{{ pricing.price }}" {% if loop.first %}selected{% endif %}>{{ pricing.quantity }} {{ product.unit }}</option>
+                                                {% endfor %}
+                                            {% else %}
+                                                <option value="1" data-price="{{ product.price }}" selected>1 {{ product.unit }}</option>
+                                                <option value="2" data-price="{{ product.price * 2 }}">2 {{ product.unit }}</option>
+                                                <option value="3" data-price="{{ product.price * 3 }}">3 {{ product.unit }}</option>
+                                            {% endif %}
+                                        </select>
+                                        <button type="submit" class="btn btn-gold btn-sm rounded-pill w-100 fw-bold">
+                                            {{ get_text('add_btn') }}
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
         </div>
     </div>
-
-    <div class="col-md-9">
-        <div class="d-flex justify-content-between align-items-center mb-4" data-aos="fade-down">
-            <h2 class="font-serif fw-bold">Shop Our Collection</h2>
-            <span class="text-muted">{{ products|length }} Products found</span>
-        </div>
-
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            {% for product in products %}
-            <div class="col" data-aos="fade-up" data-aos-delay="{{ (loop.index % 6) * 100 }}">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="position-relative">
-                        <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 220px; object-fit: cover;">
-                        {% if product.is_out_of_stock %}
-                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-50">
-                             <span class="badge bg-danger fs-6 shadow">Out of Stock</span>
-                        </div>
-                        {% elif product.price < 50 %}
-                        <span class="position-absolute top-0 end-0 m-2 badge bg-gold text-white">Best Value</span>
-                        {% endif %}
-                    </div>
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title font-serif fw-bold">{{ product.name }}</h5>
-                        <p class="card-text text-muted text-truncate small">{{ product.description }}</p>
-                        <div class="mt-auto d-flex align-items-center justify-content-between pt-3">
-                            <span class="fs-5 text-gold fw-bold">{{ product.price }} MAD / {{ product.unit }}</span>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between p-3">
-                        <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Details</a>
-                        {% if product.is_out_of_stock %}
-                        <button class="btn btn-secondary btn-sm rounded-pill px-3 shadow-sm" disabled>Out of Stock</button>
-                        {% else %}
-                        <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-gold btn-sm rounded-pill px-3 shadow-sm"><i class="fas fa-cart-plus me-1"></i> Add</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
 </div>
+
+<script>
+    function updateProductPrice(selectElement) {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const price = parseFloat(selectedOption.getAttribute('data-price')).toFixed(2);
+        const unit = selectElement.getAttribute('data-unit');
+
+        // Find the card body and the price element
+        const card = selectElement.closest('.product-card');
+        const priceElement = card.querySelector('.product-price-range');
+
+        if (priceElement) {
+            priceElement.textContent = price + ' {{ get_text("currency") }} {{ get_text("unit_separator") }} ' + unit;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const sortSelect = document.getElementById('sort-select');
+        const productGrid = document.getElementById('product-grid');
+
+        if (sortSelect && productGrid) {
+            sortSelect.addEventListener('change', function() {
+                const sortValue = this.value;
+                const products = Array.from(productGrid.children);
+
+                products.sort((a, b) => {
+                    let valA, valB;
+
+                    if (sortValue === 'price-asc' || sortValue === 'price-desc') {
+                        valA = parseFloat(a.getAttribute('data-price'));
+                        valB = parseFloat(b.getAttribute('data-price'));
+                        return sortValue === 'price-asc' ? valA - valB : valB - valA;
+                    } else if (sortValue === 'name-asc') {
+                        valA = a.getAttribute('data-name');
+                        valB = b.getAttribute('data-name');
+                        return valA.localeCompare(valB);
+                    } else if (sortValue === 'newest') {
+                        // Assuming date format allows string comparison or need parsing
+                        valA = new Date(a.getAttribute('data-date'));
+                        valB = new Date(b.getAttribute('data-date'));
+                        return valB - valA; // Descending
+                    }
+                    return 0; // Default order
+                });
+
+                // Append sorted elements back to grid
+                products.forEach(p => productGrid.appendChild(p));
+            });
+        }
+    });
+</script>
 {% endblock %}

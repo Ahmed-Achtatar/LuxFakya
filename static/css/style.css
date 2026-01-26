@@ -711,3 +711,49 @@ footer .social-icon {
         font-size: 0.85rem;
     }
 }
+
+/* RTL Fixes */
+.force-ltr {
+    direction: ltr !important;
+    unicode-bidi: embed;
+    display: inline-block;
+}
+
+/* Floating Widget */
+.floating-widget {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1050;
+}
+
+.widget-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.widget-btn:hover {
+    transform: scale(1.1);
+}
+
+.whatsapp-btn {
+    background-color: #25D366;
+}
+
+.cart-btn {
+    background-color: var(--primary-gold);
+}
+
+/* Mobile Category Strip */
+.mobile-cat-strip {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+
+.mobile-cat-strip::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
