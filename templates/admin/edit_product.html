@@ -60,9 +60,7 @@
                          <div class="col-md-12 mb-3">
                             <label for="image" class="form-label text-uppercase small text-muted fw-bold">Product Image</label>
                              <div class="d-flex align-items-center mb-2">
-                                 {% if product.image_url %}
-                                 <img src="{{ product.image_url }}" alt="Current Image" class="rounded me-3 shadow-sm" style="width: 60px; height: 60px; object-fit: cover;">
-                                 {% endif %}
+                                 <img src="{{ product.display_image_url }}" alt="Current Image" class="rounded me-3 shadow-sm" style="width: 60px; height: 60px; object-fit: cover;">
                                  <input type="file" class="form-control bg-light border-0" id="image" name="image">
                              </div>
                         </div>

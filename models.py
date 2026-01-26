@@ -76,6 +76,21 @@ class Product(db.Model):
     is_out_of_stock = db.Column(db.Boolean, default=False)
     pricings = db.relationship('ProductPricing', backref='product', cascade="all, delete-orphan", lazy=True, order_by='ProductPricing.quantity')
 
+    @property
+    def display_image_url(self):
+        if self.image_url:
+            return self.image_url
+        if self.category:
+            if 'Dattes' in self.category.name:
+                return '/static/images/dates.png'
+            if 'Fruits secs' in self.category.name:
+                return '/static/images/nuts.png'
+            if 'Fruits confits' in self.category.name or 'Fruits lyophilisés' in self.category.name:
+                return '/static/images/driedfood.png'
+            if 'Offres' in self.category.name:
+                return '/static/images/gift.png'
+        return '/static/images/logo.png'
+
     def to_dict(self):
         return {
             'id': self.id,
