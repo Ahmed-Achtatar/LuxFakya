@@ -108,6 +108,14 @@ def create_app(test_config=None):
     with app.app_context():
         try:
             db.create_all()
+
+            # Auto-fix database schema (add missing columns)
+            try:
+                from fix_db import run_db_fix
+                run_db_fix(app.config['SQLALCHEMY_DATABASE_URI'])
+            except Exception as e:
+                app.logger.error(f"Database schema fix failed: {e}")
+
         except Exception as e:
             app.logger.error(f"Database connection failed: {e}")
             print(f"CRITICAL ERROR: Database connection failed: {e}", file=sys.stderr)

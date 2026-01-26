@@ -22,6 +22,9 @@ MISSING_COLUMNS = {
     ]
 }
 
+# Placeholder for table schemas if full rebuild is needed (currently unused/incomplete)
+SCHEMAS = {}
+
 def get_default_sqlite_path():
     # Check instance folder first
     if os.path.exists('instance/luxfakia.db'):
@@ -95,8 +98,11 @@ def ensure_foreign_keys_sqlite(conn, cursor):
             needs_rebuild = True
 
         if needs_rebuild:
-            print(f"Foreign keys missing or incomplete for '{table_name}'. Rebuilding table...")
-            rebuild_table_sqlite(conn, cursor, table_name, SCHEMAS[table_name])
+            if table_name in SCHEMAS:
+                print(f"Foreign keys missing or incomplete for '{table_name}'. Rebuilding table...")
+                rebuild_table_sqlite(conn, cursor, table_name, SCHEMAS[table_name])
+            else:
+                print(f"Foreign keys missing for '{table_name}', but no schema definition found. Skipping rebuild.")
         else:
             print(f"Table '{table_name}' seems to have foreign keys ({len(fks)} found). Skipping rebuild.")
 
@@ -267,18 +273,46 @@ def ensure_foreign_keys_postgres(conn, cursor):
             else:
                 print(f"FK on {table}.{col} exists.")
 
+def run_db_fix(db_uri):
+    """
+    Analyzes the DB URI and runs the appropriate fix function.
+    """
+    if not db_uri:
+        # Default to SQLite if no URI provided
+        fix_sqlite(get_default_sqlite_path())
+        return
+
+    if db_uri.startswith('postgres'):
+        fix_postgres(db_uri)
+    elif db_uri.startswith('sqlite:'):
+        # Extract path from sqlite:///path/to/db
+        # Handle sqlite:/// (3 slashes) for relative/absolute paths
+        if db_uri.startswith('sqlite:///'):
+            path = db_uri[10:] # remove sqlite:///
+        elif db_uri.startswith('sqlite://'):
+             path = db_uri[9:]
+        else:
+             path = db_uri[7:]
+
+        # If path is empty (e.g. in-memory sqlite:///:memory: or just sqlite://)
+        if not path or path == ':memory:':
+            print("Skipping fix for in-memory SQLite database.")
+            return
+
+        fix_sqlite(path)
+    else:
+        # Fallback: Treat as a file path (for backward compatibility with direct path args)
+        fix_sqlite(db_uri)
+
 def main():
-    db_url = os.environ.get('DATABASE_URL')
     arg_path = sys.argv[1] if len(sys.argv) > 1 else None
 
     if arg_path:
-        # Explicit path provided, force SQLite
-        fix_sqlite(arg_path)
-    elif db_url and 'postgres' in db_url:
-        fix_postgres(db_url)
+        # Explicit path provided, treat as URI or file path
+        run_db_fix(arg_path)
     else:
-        # Default to SQLite
-        fix_sqlite(get_default_sqlite_path())
+        # Use env var
+        run_db_fix(os.environ.get('DATABASE_URL'))
 
 if __name__ == '__main__':
     main()
