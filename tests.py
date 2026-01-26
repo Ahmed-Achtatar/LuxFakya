@@ -35,7 +35,7 @@ class LuxFakiaTestCase(unittest.TestCase):
     def test_home(self):
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'LuxFakia', response.data)
+        self.assertIn(b'LuxFakya', response.data)
 
     def test_favicon(self):
         response = self.client.get('/favicon.ico')
@@ -120,7 +120,7 @@ class LuxFakiaTestCase(unittest.TestCase):
         # 2. Checkout GET
         response = self.client.get('/checkout')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Checkout', response.data)
+        self.assertIn(b'Caisse', response.data)
 
         # 3. Checkout POST
         response = self.client.post('/checkout', data={'name': 'John Doe', 'phone': '123456789'})

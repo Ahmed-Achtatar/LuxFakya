@@ -4,47 +4,47 @@
 <div class="row justify-content-center">
     <div class="col-lg-6">
         <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5">
-            <h2 class="mb-4 font-serif fw-bold text-center">Checkout</h2>
-            <p class="text-center text-muted mb-4">Please provide your details to confirm the order via WhatsApp.</p>
+            <h2 class="mb-4 font-serif fw-bold text-center">{{ get_text('checkout_title') }}</h2>
+            <p class="text-center text-muted mb-4">{{ get_text('checkout_desc') }}</p>
 
             <form action="{{ url_for('main.checkout') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
                 <div class="mb-3">
-                    <label for="name" class="form-label">Full Name</label>
-                    <input type="text" class="form-control form-control-lg" id="name" name="name" required placeholder="Enter your name"
+                    <label for="name" class="form-label">{{ get_text('lbl_full_name') }}</label>
+                    <input type="text" class="form-control form-control-lg" id="name" name="name" required placeholder="{{ get_text('placeholder_name') }}"
                            value="{{ current_user.full_name if current_user.is_authenticated and current_user.full_name else '' }}">
                 </div>
 
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email (Optional)</label>
-                    <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="Enter your email"
+                    <label for="email" class="form-label">{{ get_text('email') }} {{ get_text('optional_label') }}</label>
+                    <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="{{ get_text('placeholder_email') }}"
                            value="{{ current_user.email if current_user.is_authenticated and current_user.email else '' }}">
                 </div>
 
                 <div class="mb-3">
-                    <label for="phone" class="form-label">Phone Number</label>
-                    <input type="tel" class="form-control form-control-lg" id="phone" name="phone" placeholder="Enter your phone number"
+                    <label for="phone" class="form-label">{{ get_text('lbl_phone') }}</label>
+                    <input type="tel" class="form-control form-control-lg" id="phone" name="phone" placeholder="{{ get_text('placeholder_phone') }}"
                            value="{{ current_user.phone if current_user.is_authenticated and current_user.phone else '' }}">
                 </div>
 
                 <div class="mb-3">
-                    <label for="address" class="form-label">Address (Optional)</label>
-                    <input type="text" class="form-control form-control-lg" id="address" name="address" placeholder="Enter your address"
+                    <label for="address" class="form-label">{{ get_text('address_label') }} {{ get_text('optional_label') }}</label>
+                    <input type="text" class="form-control form-control-lg" id="address" name="address" placeholder="{{ get_text('placeholder_address') }}"
                            value="{{ current_user.address if current_user.is_authenticated and current_user.address else '' }}">
                 </div>
 
                 <div class="mb-4">
-                    <label for="city" class="form-label">City (Optional)</label>
-                    <input type="text" class="form-control form-control-lg" id="city" name="city" placeholder="Enter your city"
+                    <label for="city" class="form-label">{{ get_text('lbl_city') }} {{ get_text('optional_label') }}</label>
+                    <input type="text" class="form-control form-control-lg" id="city" name="city" placeholder="{{ get_text('placeholder_city') }}"
                            value="{{ current_user.city if current_user.is_authenticated and current_user.city else '' }}">
                 </div>
 
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-gold btn-lg py-3 shadow-sm">
-                        <i class="fab fa-whatsapp me-2"></i> Confirm Order via WhatsApp
+                        <i class="fab fa-whatsapp me-2"></i> {{ get_text('confirm_whatsapp') }}
                     </button>
-                    <a href="{{ url_for('main.cart') }}" class="btn btn-outline-secondary border-0">Back to Cart</a>
+                    <a href="{{ url_for('main.cart') }}" class="btn btn-outline-secondary border-0">{{ get_text('back_to_cart') }}</a>
                 </div>
             </form>
         </div>
