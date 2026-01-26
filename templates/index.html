@@ -148,7 +148,15 @@
                                 <select name="quantity" class="form-select form-select-sm rounded-pill shadow-sm quantity-selector text-center" style="font-size: 0.8rem;" aria-label="Select quantity" onchange="updateProductPrice(this)" data-unit="{{ product.unit }}">
                                     {% if product.pricings %}
                                         {% for pricing in product.pricings %}
-                                        <option value="{{ pricing.quantity }}" data-price="{{ pricing.price }}" {% if loop.first %}selected{% endif %}>{{ pricing.quantity }} {{ product.unit }}</option>
+                                        <option value="{{ pricing.quantity }}" data-price="{{ pricing.price }}" {% if loop.first %}selected{% endif %}>
+                                            {% if pricing.display_unit == 'g' %}
+                                                {{ (pricing.quantity * 1000)|int }}g
+                                            {% elif pricing.display_unit == 'Kg' %}
+                                                {% if pricing.quantity == 1.0 %}1kg{% else %}{{ pricing.quantity }}kg{% endif %}
+                                            {% else %}
+                                                {{ pricing.quantity }} {{ pricing.display_unit }}
+                                            {% endif %}
+                                        </option>
                                         {% endfor %}
                                     {% else %}
                                         <option value="1" data-price="{{ product.price }}" selected>1 {{ product.unit }}</option>
