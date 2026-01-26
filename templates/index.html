@@ -92,12 +92,22 @@
             <div class="col-md-4">
                  <input type="text" id="shop-search" class="form-control rounded-pill border-gold" placeholder="Search products...">
             </div>
-            <div class="col-md-8 text-center text-md-start">
-                 <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
-                     <button class="btn btn-outline-gold active filter-btn rounded-pill" data-filter="all">All</button>
-                     {% for category in all_categories %}
-                     <button class="btn btn-outline-gold filter-btn rounded-pill" data-filter="{{ category.name }}">{{ category.name }}</button>
-                     {% endfor %}
+            <div class="col-md-8">
+                 <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-md-start align-items-center">
+                     <div class="d-flex gap-2 flex-wrap justify-content-center">
+                        <button class="btn btn-outline-gold active filter-btn rounded-pill" data-filter="all">All</button>
+                        {% for category in all_categories %}
+                        <button class="btn btn-outline-gold filter-btn rounded-pill" data-filter="{{ category.name }}">{{ category.name }}</button>
+                        {% endfor %}
+                     </div>
+                     <div class="ms-md-auto">
+                        <select class="form-select rounded-pill border-gold" id="index-sort-select">
+                            <option value="default">{{ get_text('filter_sort') }}</option>
+                            <option value="price-asc">{{ get_text('sort_price_asc') }}</option>
+                            <option value="price-desc">{{ get_text('sort_price_desc') }}</option>
+                            <option value="name-asc">{{ get_text('sort_name_asc') }}</option>
+                        </select>
+                     </div>
                  </div>
             </div>
         </div>
@@ -108,6 +118,7 @@
         <div class="col product-item {% if loop.index > 4 %}d-none extra-product{% endif %}"
              data-category="{{ product.category.name }}"
              data-name="{{ product.name | lower }}"
+             data-price="{{ product.price }}"
              data-aos="fade-up" data-aos-delay="{{ ((loop.index - 1) % 4) * 50 }}">
             <div class="card product-card h-100 shadow-sm">
                 <div class="product-image-container overflow-hidden position-relative">
@@ -124,7 +135,7 @@
                     <h6 class="card-title font-serif fw-bold mb-1 text-truncate">
                         <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">{{ product.name }}</a>
                     </h6>
-                    <p class="product-price-range mb-2 text-gold fw-bold small">{{ product.price }} {{ get_text('currency') }} {{ get_text('unit_separator') }} {{ product.unit }}</p>
+                    <p class="product-price-range mb-2 text-gold fw-bold small force-ltr">{{ product.price }} {{ get_text('currency') }} {{ get_text('unit_separator') }} {{ product.unit }}</p>
 
                     <div class="mt-auto">
                         {% if product.is_out_of_stock %}
@@ -310,6 +321,32 @@
 
         if (searchInput) {
             searchInput.addEventListener('input', filterProducts);
+        }
+
+        // Sort Logic for Index
+        const indexSortSelect = document.getElementById('index-sort-select');
+        const productGrid = document.getElementById('product-grid');
+
+        if (indexSortSelect && productGrid) {
+            indexSortSelect.addEventListener('change', function() {
+                const sortValue = this.value;
+                const products = Array.from(productGrid.children);
+
+                products.sort((a, b) => {
+                    let valA, valB;
+                    if (sortValue === 'price-asc' || sortValue === 'price-desc') {
+                        valA = parseFloat(a.getAttribute('data-price'));
+                        valB = parseFloat(b.getAttribute('data-price'));
+                        return sortValue === 'price-asc' ? valA - valB : valB - valA;
+                    } else if (sortValue === 'name-asc') {
+                        valA = a.getAttribute('data-name');
+                        valB = b.getAttribute('data-name');
+                        return valA.localeCompare(valB);
+                    }
+                    return 0;
+                });
+                products.forEach(p => productGrid.appendChild(p));
+            });
         }
 
         // Countdown Timer Logic
