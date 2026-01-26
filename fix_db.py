@@ -16,6 +16,9 @@ MISSING_COLUMNS = {
     ],
     'category': [
         ('image_url', "VARCHAR(500)")
+    ],
+    'product_pricing': [
+        ('display_unit', "VARCHAR(20) DEFAULT 'Kg'")
     ]
 }
 
