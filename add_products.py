@@ -71,10 +71,17 @@ def add_products():
 
             # Add new pricings
             for qty, price in item['prices'].items():
+                # Determine display unit based on product unit
+                p_unit = product.unit if product.unit else 'Kg'
+                display_unit = p_unit
+                if p_unit.lower() == 'kg':
+                    display_unit = 'g' if qty < 1.0 else 'Kg'
+
                 pricing = ProductPricing(
                     product_id=product.id,
                     quantity=qty,
-                    price=price
+                    price=price,
+                    display_unit=display_unit
                 )
                 db.session.add(pricing)
 
