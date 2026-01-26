@@ -36,12 +36,21 @@
                 <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="d-flex align-items-center mb-4">
-                        <label class="me-3 fw-bold text-muted">Quantity ({{ product.unit }}):</label>
+                        <label class="me-3 fw-bold text-muted">Quantity{% if product.unit and product.unit.lower() != 'kg' %} ({{ product.unit }}){% endif %}:</label>
+                        {% if product.unit and product.unit.lower() == 'kg' %}
+                        <select name="quantity" class="form-select border-secondary text-center" style="width: 140px; cursor: pointer;">
+                            <option value="0.25">250g</option>
+                            <option value="0.5">500g</option>
+                            <option value="0.75">750g</option>
+                            <option value="1.0" selected>1kg</option>
+                        </select>
+                        {% else %}
                         <div class="input-group" style="width: 140px;">
                             <button class="btn btn-outline-secondary" type="button" onclick="this.parentNode.querySelector('input[type=number]').stepDown()"><i class="fas fa-minus"></i></button>
                             <input type="number" name="quantity" value="1" min="0.1" step="0.01" class="form-control text-center border-secondary">
                             <button class="btn btn-outline-secondary" type="button" onclick="this.parentNode.querySelector('input[type=number]').stepUp()"><i class="fas fa-plus"></i></button>
                         </div>
+                        {% endif %}
                     </div>
 
                     <div class="d-grid gap-3 col-lg-8">
