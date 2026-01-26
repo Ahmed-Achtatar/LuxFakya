@@ -135,7 +135,7 @@
                     <h6 class="card-title font-serif fw-bold mb-1 text-truncate">
                         <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">{{ product.name }}</a>
                     </h6>
-                    <p class="product-price-range mb-2 text-gold fw-bold small force-ltr">{{ product.price }} {{ get_text('currency') }} {{ get_text('unit_separator') }} {{ product.unit }}</p>
+                    <p class="product-price-range mb-2 text-gold fw-bold small force-ltr">{{ product.price }} {{ get_text('currency') }}</p>
 
                     <div class="mt-auto">
                         {% if product.is_out_of_stock %}
@@ -252,7 +252,7 @@
         const priceElement = card.querySelector('.product-price-range');
 
         if (priceElement) {
-            priceElement.textContent = price + ' {{ get_text("currency") }} {{ get_text("unit_separator") }} ' + unit;
+            priceElement.textContent = price + ' {{ get_text("currency") }}';
         }
     }
 
