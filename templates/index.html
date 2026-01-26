@@ -104,7 +104,7 @@
         <div class="row">
             <div class="col-12">
                  <div class="d-flex flex-wrap gap-2 justify-content-center">
-                    <button class="btn btn-outline-gold active filter-btn rounded-pill" data-filter="all">All</button>
+                    <button class="btn btn-outline-gold active filter-btn rounded-pill" data-filter="all">{{ get_text('filter_all_short') }}</button>
                     {% for category in all_categories %}
                     <button class="btn btn-outline-gold filter-btn rounded-pill" data-filter="{{ category.name }}">{{ category.name }}</button>
                     {% endfor %}
@@ -127,7 +127,7 @@
                     </a>
                     {% if product.is_out_of_stock %}
                     <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-50">
-                         <span class="badge bg-danger fs-6 shadow">Out of Stock</span>
+                         <span class="badge bg-danger fs-6 shadow">{{ get_text('out_of_stock') }}</span>
                     </div>
                     {% endif %}
                 </div>
@@ -140,7 +140,7 @@
                     <div class="mt-auto">
                         {% if product.is_out_of_stock %}
                             <button class="btn btn-secondary btn-sm rounded-pill w-100 fw-bold" disabled>
-                                Out of Stock
+                                {{ get_text('out_of_stock') }}
                             </button>
                         {% else %}
                             <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST" class="d-flex flex-column gap-2">
@@ -179,7 +179,7 @@
     <!-- Show More Button -->
     <div class="text-center mt-5" id="show-more-container">
         <button id="show-more-btn" class="btn btn-gold rounded-pill px-5 py-3 fw-bold text-uppercase">
-            Show More <i class="fas fa-chevron-down ms-2"></i>
+            {{ get_text('show_more') }} <i class="fas fa-chevron-down ms-2"></i>
         </button>
     </div>
 </div>
