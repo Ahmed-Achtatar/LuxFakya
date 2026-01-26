@@ -63,7 +63,7 @@
                     <div class="card product-card h-100 shadow-sm">
                         <div class="product-image-container overflow-hidden position-relative">
                             <a href="{{ url_for('main.product_detail', product_id=product.id) }}">
-                                <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                                <img src="{{ product.display_image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
                             </a>
                             {% if product.is_out_of_stock %}
                             <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-50">

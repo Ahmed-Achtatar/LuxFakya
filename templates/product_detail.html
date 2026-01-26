@@ -4,7 +4,7 @@
 <div class="card mb-5 border-0 shadow-lg overflow-hidden" style="border-radius: 20px;" data-aos="fade-up">
     <div class="row g-0">
         <div class="col-md-6 bg-light d-flex align-items-center justify-content-center position-relative">
-            <img src="{{ product.image_url }}" class="img-fluid" alt="{{ product.name }}" style="max-height: 500px; object-fit: contain;">
+            <img src="{{ product.display_image_url }}" class="img-fluid" alt="{{ product.name }}" style="max-height: 500px; object-fit: contain;">
             {% if product.is_out_of_stock %}
             <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-50">
                  <span class="badge bg-danger fs-1 shadow p-4">Out of Stock</span>
@@ -67,7 +67,7 @@
         <div class="col">
             <div class="card h-100 border-0 shadow-sm h-100">
                 <div class="position-relative overflow-hidden">
-                    <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 300px; object-fit: cover;">
+                    <img src="{{ product.display_image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 300px; object-fit: cover;">
                     <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient-dark text-white opacity-0 transition-all">
                         <a href="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="btn btn-light btn-sm w-100 stretched-link">Quick Add</a>
                     </div>
