@@ -293,13 +293,26 @@ def add_product():
         # Handle Pricing
         quantities = request.form.getlist('pricing_quantity[]')
         prices = request.form.getlist('pricing_price[]')
+        units = request.form.getlist('pricing_unit[]')
 
-        for q, p in zip(quantities, prices):
+        # Ensure we have a unit list matching others
+        if len(units) < len(quantities):
+             units.extend(['Kg'] * (len(quantities) - len(units)))
+
+        for q, p, u in zip(quantities, prices, units):
             if q and p:
+                qty_val = float(q)
+                unit_val = u if u else 'Kg'
+
+                # Normalize quantity if unit is grams
+                if unit_val == 'g':
+                    qty_val = qty_val / 1000.0
+
                 new_pricing = ProductPricing(
                     product_id=new_product.id,
-                    quantity=float(q),
-                    price=float(p)
+                    quantity=qty_val,
+                    price=float(p),
+                    display_unit=unit_val
                 )
                 db.session.add(new_pricing)
 
@@ -336,13 +349,26 @@ def edit_product(product_id):
 
         quantities = request.form.getlist('pricing_quantity[]')
         prices = request.form.getlist('pricing_price[]')
+        units = request.form.getlist('pricing_unit[]')
 
-        for q, p in zip(quantities, prices):
+        # Fallback for units length safety
+        if len(units) < len(quantities):
+             units.extend(['Kg'] * (len(quantities) - len(units)))
+
+        for q, p, u in zip(quantities, prices, units):
             if q and p: # Ensure values exist
+                qty_val = float(q)
+                unit_val = u if u else 'Kg'
+
+                # Normalize quantity if unit is grams
+                if unit_val == 'g':
+                    qty_val = qty_val / 1000.0
+
                 new_pricing = ProductPricing(
                     product_id=product.id,
-                    quantity=float(q),
-                    price=float(p)
+                    quantity=qty_val,
+                    price=float(p),
+                    display_unit=unit_val
                 )
                 db.session.add(new_pricing)
 
