@@ -50,8 +50,9 @@ class LuxFakiaTestCase(unittest.TestCase):
     def test_shop(self):
         response = self.client.get('/shop')
         self.assertEqual(response.status_code, 200)
-        # Check if unit is displayed
-        self.assertIn(b'/ kg', response.data)
+        # Check if price is displayed without unit separator
+        self.assertIn(b'10.0 MAD', response.data)
+        self.assertNotIn(b'10.0 MAD / kg', response.data)
 
     def test_admin_access_denied(self):
         response = self.client.get('/admin/')
