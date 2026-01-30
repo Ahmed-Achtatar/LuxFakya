@@ -87,11 +87,40 @@ def logout():
 @login_required
 def profile():
     if request.method == 'POST':
+        username = request.form.get('username')
         email = request.form.get('email')
         full_name = request.form.get('full_name')
         phone = request.form.get('phone')
         address = request.form.get('address')
         city = request.form.get('city')
+
+        # Username update
+        if username and username != current_user.username:
+            if User.query.filter_by(username=username).first():
+                flash('Username already taken.', 'danger')
+                return redirect(url_for('auth.profile'))
+            current_user.username = username
+
+        # Password update logic
+        current_password = request.form.get('current_password')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+
+        if current_password or new_password or confirm_password:
+            if not current_password or not new_password:
+                flash('Please provide both current and new passwords to change password.', 'warning')
+                return redirect(url_for('auth.profile'))
+
+            if not current_user.check_password(current_password):
+                flash('Incorrect current password.', 'danger')
+                return redirect(url_for('auth.profile'))
+
+            if new_password != confirm_password:
+                flash('New passwords do not match.', 'danger')
+                return redirect(url_for('auth.profile'))
+
+            current_user.set_password(new_password)
+            flash('Password updated successfully.', 'success')
 
         # Check email uniqueness if changed
         if email != current_user.email:

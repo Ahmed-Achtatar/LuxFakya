@@ -176,5 +176,110 @@ class LuxFakiaTestCase(unittest.TestCase):
         # Check that filters are hidden initially
         self.assertIn(b'd-none mb-5', response.data)
 
+
+class AuthProfileTestCase(unittest.TestCase):
+    def setUp(self):
+        self.app = create_app({
+            'TESTING': True,
+            'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
+            'WTF_CSRF_ENABLED': False
+        })
+        self.client = self.app.test_client()
+
+        with self.app.app_context():
+            db.create_all()
+            u = User(username='admin', role='admin', email='admin@test.com')
+            u.set_password('password')
+            db.session.add(u)
+            db.session.commit()
+
+    def tearDown(self):
+        with self.app.app_context():
+            db.session.remove()
+            db.drop_all()
+
+    def login(self, username='admin', password='password'):
+        return self.client.post('/login', data={'username': username, 'password': password}, follow_redirects=True)
+
+    def test_change_username(self):
+        self.login()
+        # Change username from 'admin' to 'newadmin'
+        response = self.client.post('/profile', data={
+            'username': 'newadmin',
+            'email': 'admin@test.com',
+            'full_name': 'Admin User'
+        }, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Profile updated successfully', response.data)
+
+        with self.app.app_context():
+            user = User.query.filter_by(email='admin@test.com').first()
+            self.assertEqual(user.username, 'newadmin')
+
+        # Verify login with new username
+        self.client.get('/logout')
+        response = self.client.post('/login', data={'username': 'newadmin', 'password': 'password'}, follow_redirects=True)
+        self.assertIn(b'Logged in successfully', response.data)
+
+    def test_change_password(self):
+        self.login()
+        response = self.client.post('/profile', data={
+            'username': 'admin',
+            'email': 'admin@test.com',
+            'full_name': 'Admin User',
+            'current_password': 'password',
+            'new_password': 'newpassword',
+            'confirm_password': 'newpassword'
+        }, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Password updated successfully', response.data)
+
+        # Verify login with new password
+        self.client.get('/logout')
+        response = self.client.post('/login', data={'username': 'admin', 'password': 'newpassword'}, follow_redirects=True)
+        self.assertIn(b'Logged in successfully', response.data)
+
+    def test_change_password_mismatch(self):
+        self.login()
+        response = self.client.post('/profile', data={
+            'username': 'admin',
+            'email': 'admin@test.com',
+            'current_password': 'password',
+            'new_password': 'newpassword',
+            'confirm_password': 'wrongpassword'
+        }, follow_redirects=True)
+
+        self.assertIn(b'New passwords do not match', response.data)
+
+    def test_change_password_wrong_current(self):
+        self.login()
+        response = self.client.post('/profile', data={
+            'username': 'admin',
+            'email': 'admin@test.com',
+            'current_password': 'wrongcurrent',
+            'new_password': 'newpassword',
+            'confirm_password': 'newpassword'
+        }, follow_redirects=True)
+
+        self.assertIn(b'Incorrect current password', response.data)
+
+    def test_duplicate_username(self):
+        # Create another user
+        with self.app.app_context():
+            u2 = User(username='other', email='other@test.com', role='customer')
+            u2.set_password('password')
+            db.session.add(u2)
+            db.session.commit()
+
+        self.login()
+        response = self.client.post('/profile', data={
+            'username': 'other',
+            'email': 'admin@test.com'
+        }, follow_redirects=True)
+
+        self.assertIn(b'Username already taken', response.data)
+
 if __name__ == '__main__':
     unittest.main()
