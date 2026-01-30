@@ -54,6 +54,9 @@ def about():
 
 @main_bp.route('/shop')
 def shop():
+    """
+    Display the shop page with optional category filtering.
+    """
     category_name = request.args.get('category')
     if category_name:
         # Combine the JOIN strategy (from Current) with the hidden check (from Incoming)
