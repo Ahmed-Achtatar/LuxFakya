@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from models import db, User
+from translations import get_trans
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -32,7 +33,7 @@ def login():
             db.session.add(log)
             db.session.commit()
 
-            flash('Logged in successfully.', 'success')
+            flash(get_trans('msg_login_success'), 'success')
 
             next_page = request.args.get('next')
             if next_page and next_page.startswith('/'):
@@ -53,7 +54,7 @@ def login():
             db.session.add(log)
             db.session.commit()
 
-            flash('Invalid username/email or password.', 'danger')
+            flash(get_trans('msg_login_fail'), 'danger')
 
     return render_template('auth/login.html')
 
@@ -72,11 +73,11 @@ def register():
         city = request.form.get('city')
 
         if User.query.filter_by(username=username).first():
-            flash('Username already exists.', 'danger')
+            flash(get_trans('msg_username_exists'), 'danger')
             return redirect(url_for('auth.register'))
 
         if User.query.filter_by(email=email).first():
-            flash('Email already registered.', 'danger')
+            flash(get_trans('msg_email_exists'), 'danger')
             return redirect(url_for('auth.register'))
 
         new_user = User(
@@ -94,7 +95,7 @@ def register():
         db.session.commit()
 
         login_user(new_user)
-        flash('Registration successful! Welcome.', 'success')
+        flash(get_trans('msg_reg_success'), 'success')
         return redirect(url_for('main.index'))
 
     return render_template('auth/register.html')
@@ -103,7 +104,7 @@ def register():
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.', 'info')
+    flash(get_trans('msg_logout'), 'info')
     return redirect(url_for('main.index'))
 
 @auth_bp.route('/profile', methods=['GET', 'POST'])
@@ -119,7 +120,7 @@ def profile():
         # Check email uniqueness if changed
         if email != current_user.email:
             if User.query.filter_by(email=email).first():
-                flash('Email already in use by another account.', 'danger')
+                flash(get_trans('msg_email_in_use'), 'danger')
                 return redirect(url_for('auth.profile'))
 
         current_user.email = email
@@ -128,7 +129,7 @@ def profile():
         username = request.form.get('username')
         if username and username != current_user.username:
              if User.query.filter_by(username=username).first():
-                 flash('Username already in use.', 'danger')
+                 flash(get_trans('msg_username_in_use'), 'danger')
                  return redirect(url_for('auth.profile'))
              current_user.username = username
 
@@ -144,21 +145,21 @@ def profile():
 
         if new_password:
             if not current_password:
-                flash('Please enter your current password to set a new one.', 'danger')
+                flash(get_trans('msg_enter_current_pw'), 'danger')
                 return redirect(url_for('auth.profile'))
             if not current_user.check_password(current_password):
-                flash('Incorrect current password.', 'danger')
+                flash(get_trans('msg_incorrect_pw'), 'danger')
                 return redirect(url_for('auth.profile'))
             if new_password != confirm_password:
-                flash('New passwords do not match.', 'danger')
+                flash(get_trans('msg_pw_mismatch'), 'danger')
                 return redirect(url_for('auth.profile'))
 
             current_user.set_password(new_password)
-            flash('Password updated successfully.', 'success')
+            flash(get_trans('msg_pw_updated'), 'success')
 
         db.session.commit()
         if not new_password:
-             flash('Profile updated successfully.', 'success')
+             flash(get_trans('msg_profile_updated'), 'success')
         return redirect(url_for('auth.profile'))
 
     return render_template('auth/profile.html')
@@ -171,7 +172,7 @@ def forgot_password():
     if request.method == 'POST':
         email = request.form.get('email')
         # Dummy flow
-        flash(f'If an account exists for {email}, a password reset link has been sent.', 'info')
+        flash(get_trans('msg_reset_link_sent').format(email=email), 'info')
         return redirect(url_for('auth.login'))
 
     return render_template('auth/forgot_password.html')

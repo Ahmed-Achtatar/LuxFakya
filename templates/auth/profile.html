@@ -6,60 +6,60 @@
     <div class="col-md-5 mb-4">
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body p-4">
-                <h4 class="mb-4 font-serif fw-bold">My Profile</h4>
+                <h4 class="mb-4 font-serif fw-bold">{{ get_text('my_profile') }}</h4>
                 <form method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
+                        <label for="username" class="form-label">{{ get_text('username') }}</label>
                         <input type="text" class="form-control" id="username" name="username" value="{{ current_user.username }}" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label">{{ get_text('email') }}</label>
                         <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email or '' }}" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="full_name" class="form-label">Full Name</label>
+                        <label for="full_name" class="form-label">{{ get_text('lbl_full_name') }}</label>
                         <input type="text" class="form-control" id="full_name" name="full_name" value="{{ current_user.full_name or '' }}" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="phone" class="form-label">Phone Number</label>
+                        <label for="phone" class="form-label">{{ get_text('lbl_phone') }}</label>
                         <input type="tel" class="form-control" id="phone" name="phone" value="{{ current_user.phone or '' }}">
                     </div>
 
                     <div class="mb-3">
-                        <label for="address" class="form-label">Address</label>
+                        <label for="address" class="form-label">{{ get_text('address_label') }}</label>
                         <input type="text" class="form-control" id="address" name="address" value="{{ current_user.address or '' }}">
                     </div>
 
                     <div class="mb-4">
-                        <label for="city" class="form-label">City</label>
+                        <label for="city" class="form-label">{{ get_text('lbl_city') }}</label>
                         <input type="text" class="form-control" id="city" name="city" value="{{ current_user.city or '' }}">
                     </div>
 
                     <hr class="my-4">
-                    <h5 class="mb-3 font-serif fw-bold">Change Password</h5>
+                    <h5 class="mb-3 font-serif fw-bold">{{ get_text('change_password') }}</h5>
 
                     <div class="mb-3">
-                        <label for="current_password" class="form-label">Current Password</label>
-                        <input type="password" class="form-control" id="current_password" name="current_password" placeholder="Leave blank to keep current password">
+                        <label for="current_password" class="form-label">{{ get_text('current_password') }}</label>
+                        <input type="password" class="form-control" id="current_password" name="current_password" placeholder="{{ get_text('leave_blank_pw') }}">
                     </div>
 
                     <div class="mb-3">
-                        <label for="new_password" class="form-label">New Password</label>
+                        <label for="new_password" class="form-label">{{ get_text('new_password') }}</label>
                         <input type="password" class="form-control" id="new_password" name="new_password">
                     </div>
 
                     <div class="mb-4">
-                        <label for="confirm_password" class="form-label">Confirm New Password</label>
+                        <label for="confirm_password" class="form-label">{{ get_text('confirm_new_password') }}</label>
                         <input type="password" class="form-control" id="confirm_password" name="confirm_password">
                     </div>
 
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-gold">Update Profile</button>
+                        <button type="submit" class="btn btn-gold">{{ get_text('update_profile') }}</button>
                     </div>
                 </form>
             </div>
@@ -70,17 +70,17 @@
     <div class="col-md-7">
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body p-4">
-                <h4 class="mb-4 font-serif fw-bold">Order History</h4>
+                <h4 class="mb-4 font-serif fw-bold">{{ get_text('order_history') }}</h4>
                 {% if current_user.orders %}
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead>
                             <tr>
-                                <th>Order ID</th>
-                                <th>Date</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                <th>{{ get_text('order_id') }}</th>
+                                <th>{{ get_text('th_date') }}</th>
+                                <th>{{ get_text('th_total') }}</th>
+                                <th>{{ get_text('status') }}</th>
+                                <th>{{ get_text('action') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -88,14 +88,14 @@
                             <tr>
                                 <td>#{{ order.id }}</td>
                                 <td>{{ order.created_at.strftime('%Y-%m-%d') }}</td>
-                                <td>{{ "%.2f"|format(order.total_amount) }} MAD</td>
+                                <td>{{ "%.2f"|format(order.total_amount) }} {{ get_text('currency') }}</td>
                                 <td>
                                     <span class="badge bg-{{ 'success' if order.status == 'Completed' else 'warning' if order.status == 'Pending' else 'danger' }}">
-                                        {{ order.status }}
+                                        {{ get_text(order.status|lower) }}
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{{ url_for('main.order_confirmation', order_id=order.id) }}" class="btn btn-sm btn-outline-dark">View</a>
+                                    <a href="{{ url_for('main.order_confirmation', order_id=order.id) }}" class="btn btn-sm btn-outline-dark">{{ get_text('btn_view') }}</a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -105,8 +105,8 @@
                 {% else %}
                 <div class="text-center py-5 text-muted">
                     <i class="fas fa-shopping-bag fa-3x mb-3 opacity-50"></i>
-                    <p>No orders found.</p>
-                    <a href="{{ url_for('main.shop') }}" class="btn btn-outline-gold mt-2">Start Shopping</a>
+                    <p>{{ get_text('no_orders_found') }}</p>
+                    <a href="{{ url_for('main.shop') }}" class="btn btn-outline-gold mt-2">{{ get_text('start_shopping') }}</a>
                 </div>
                 {% endif %}
             </div>
