@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash, current_app, send_file, jsonify
 from flask_login import current_user
 from models import Product, db, Order, OrderItem, HomeSection, Category, DbImage, UserLog
+from translations import get_trans
 import io
 
 main_bp = Blueprint('main', __name__)
@@ -129,7 +130,7 @@ def cart():
 def add_to_cart(product_id):
     product = Product.query.get_or_404(product_id)
     if product.is_out_of_stock:
-        flash('This product is out of stock.', 'danger')
+        flash(get_trans('msg_product_out_stock'), 'danger')
         return redirect(request.referrer or url_for('main.shop'))
 
     if 'cart' not in session:
@@ -158,11 +159,11 @@ def add_to_cart(product_id):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or 'application/json' in request.accept_mimetypes:
         return jsonify({
             'status': 'success',
-            'message': f'Added {quantity} item(s) to cart',
+            'message': get_trans('msg_added_to_cart').format(quantity=quantity),
             'cart_count': len(cart)
         })
 
-    flash(f'Added {quantity} item(s) to cart', 'success')
+    flash(get_trans('msg_added_to_cart').format(quantity=quantity), 'success')
     return redirect(request.referrer or url_for('main.shop'))
 
 @main_bp.route('/cart/remove/<int:product_id>')
@@ -176,7 +177,7 @@ def remove_from_cart(product_id):
     if pid in cart:
         del cart[pid]
         session.modified = True
-        flash('Item removed from cart', 'info')
+        flash(get_trans('msg_item_removed'), 'info')
 
     return redirect(url_for('main.cart'))
 

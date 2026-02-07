@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
 from flask_login import login_user, logout_user, login_required, current_user
 from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection, DbImage, UserLog, SiteSetting
-from translations import translations
+from translations import translations, get_trans
 import os
 import uuid
 import io
@@ -11,11 +11,6 @@ from datetime import datetime
 from PIL import Image
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
-
-def get_trans(key):
-    lang = session.get('lang', 'fr')
-    if lang == 'en': lang = 'fr'
-    return translations.get(lang, {}).get(key, key)
 
 # Allowed extensions for image upload
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}

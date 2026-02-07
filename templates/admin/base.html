@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <title>Admin Dashboard - LuxFakya</title>
+    <title>{{ get_text('admin_dashboard_title') }}</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,45 +49,45 @@
         <div class="bg-dark border-end" id="sidebar-wrapper">
             <div class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom border-secondary">
                 <a href="{{ url_for('admin.dashboard') }}" class="text-white text-decoration-none">
-                   {{ translations[current_lang]['admin_panel'] }}
+                   {{ get_text('admin_panel') }}
                 </a>
             </div>
             <div class="list-group list-group-flush my-3">
                 {% if current_user.role == 'admin' or current_user.can_manage_products or current_user.can_manage_users or current_user.can_manage_content %}
                 <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
-                    <i class="fas fa-tachometer-alt me-2"></i>{{ translations[current_lang]['dashboard'] }}
+                    <i class="fas fa-tachometer-alt me-2"></i>{{ get_text('dashboard') }}
                 </a>
                 {% endif %}
 
                 {% if current_user.role == 'admin' or current_user.can_manage_orders %}
                 <a href="{{ url_for('admin.orders') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint in ['admin.orders', 'admin.order_detail'] %}active{% endif %}">
-                    <i class="fas fa-shopping-cart me-2"></i>{{ translations[current_lang]['orders'] }}
+                    <i class="fas fa-shopping-cart me-2"></i>{{ get_text('orders') }}
                 </a>
                 {% endif %}
 
                 {% if current_user.role == 'admin' or current_user.can_manage_products %}
                 <a href="{{ url_for('admin.categories') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint in ['admin.categories', 'admin.add_category', 'admin.edit_category'] %}active{% endif %}">
-                    <i class="fas fa-tags me-2"></i>{{ translations[current_lang]['categories'] }}
+                    <i class="fas fa-tags me-2"></i>{{ get_text('categories') }}
                 </a>
                 {% endif %}
 
                 {% if current_user.role == 'admin' or current_user.can_manage_users %}
                 <a href="{{ url_for('admin.list_users') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint in ['admin.list_users', 'admin.user_detail'] %}active{% endif %}">
-                    <i class="fas fa-users me-2"></i>{{ translations[current_lang]['users'] }}
+                    <i class="fas fa-users me-2"></i>{{ get_text('users') }}
                 </a>
                 {% endif %}
 
                 {% if current_user.role == 'admin' or current_user.can_manage_content %}
                 <a href="{{ url_for('admin.home_settings') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint == 'admin.home_settings' %}active{% endif %}">
-                    <i class="fas fa-cog me-2"></i>{{ translations[current_lang]['settings'] }}
+                    <i class="fas fa-cog me-2"></i>{{ get_text('settings') }}
                 </a>
                 {% endif %}
 
                 <a href="{{ url_for('main.index') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
-                    <i class="fas fa-home me-2"></i>{{ translations[current_lang]['view_site'] }}
+                    <i class="fas fa-home me-2"></i>{{ get_text('view_site') }}
                 </a>
                 <a href="{{ url_for('auth.logout') }}" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold mt-5">
-                    <i class="fas fa-power-off me-2"></i>{{ translations[current_lang]['logout'] }}
+                    <i class="fas fa-power-off me-2"></i>{{ get_text('logout') }}
                 </a>
             </div>
         </div>
@@ -100,7 +100,7 @@
                     <div class="d-flex align-items-center">
                         <i class="fas fa-bars fs-4 me-3 text-gold cursor-pointer" id="menu-toggle"></i>
                         <h2 class="fs-5 fs-md-4 m-0 fw-bold font-serif text-dark text-truncate" style="max-width: 250px;">
-                            {% block title %}{{ translations[current_lang]['dashboard'] }}{% endblock %}
+                            {% block title %}{{ get_text('dashboard') }}{% endblock %}
                         </h2>
                     </div>
 
@@ -118,10 +118,10 @@
                                 <i class="fas fa-user-circle me-2"></i>{{ current_user.username }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">{{ translations[current_lang]['my_account'] }}</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.index') }}">{{ translations[current_lang]['view_site'] }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">{{ get_text('my_account') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.index') }}">{{ get_text('view_site') }}</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">{{ translations[current_lang]['logout'] }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">{{ get_text('logout') }}</a></li>
                             </ul>
                         </li>
                     </ul>

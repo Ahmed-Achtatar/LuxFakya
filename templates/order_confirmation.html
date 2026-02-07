@@ -7,23 +7,23 @@
             <div class="mb-4">
                 <i class="fas fa-check-circle fa-4x text-success"></i>
             </div>
-            <h2 class="mb-3 font-serif fw-bold">Order Placed!</h2>
-            <p class="text-muted mb-4">Your order #{{ order.id }} has been successfully recorded.</p>
+            <h2 class="mb-3 font-serif fw-bold">{{ get_text('order_placed') }}</h2>
+            <p class="text-muted mb-4">{{ get_text('order_placed_desc').format(id=order.id) }}</p>
 
             <div class="bg-light p-3 rounded-3 mb-4 text-start">
-                <p class="mb-1"><strong>Name:</strong> {{ order.customer_name }}</p>
-                <p class="mb-1"><strong>Total Amount:</strong> <span class="text-gold fw-bold">{{ order.total_amount }} MAD</span></p>
+                <p class="mb-1"><strong>{{ get_text('lbl_full_name') }}:</strong> {{ order.customer_name }}</p>
+                <p class="mb-1"><strong>{{ get_text('total_amount_label') }}</strong> <span class="text-gold fw-bold">{{ order.total_amount }} {{ get_text('currency') }}</span></p>
             </div>
 
-            <p class="mb-4">Click the button below to send your order details to us on WhatsApp to finalize the payment and delivery.</p>
+            <p class="mb-4">{{ get_text('wa_instructions') }}</p>
 
-            {% set wa_text = "Hello, I would like to confirm my Order #" ~ order.id ~ ". My name is " ~ order.customer_name ~ "." %}
+            {% set wa_text = get_text('wa_confirm_template').format(id=order.id, name=order.customer_name) %}
 
             <a href="https://wa.me/212676459945?text={{ wa_text | urlencode }}" target="_blank" class="btn btn-success btn-lg py-3 w-100 shadow-sm mb-3">
-                <i class="fab fa-whatsapp me-2"></i> Send to WhatsApp
+                <i class="fab fa-whatsapp me-2"></i> {{ get_text('send_to_whatsapp') }}
             </a>
 
-            <a href="{{ url_for('main.index') }}" class="btn btn-link text-muted">Return to Home</a>
+            <a href="{{ url_for('main.index') }}" class="btn btn-link text-muted">{{ get_text('return_to_home') }}</a>
         </div>
     </div>
 </div>
