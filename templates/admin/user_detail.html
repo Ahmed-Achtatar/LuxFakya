@@ -51,6 +51,48 @@
                 <small class="text-muted">User ID: {{ user.id }}</small>
             </div>
         </div>
+
+        <!-- Role & Permissions Management -->
+        <div class="card border-0 shadow-sm rounded-4 mt-4">
+            <div class="card-header bg-white p-4 border-bottom-0">
+                <h5 class="fw-bold m-0">Manage Access</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Role</label>
+                        <select name="role" class="form-select rounded-pill">
+                            <option value="customer" {% if user.role == 'customer' %}selected{% endif %}>Customer</option>
+                            <option value="moderator" {% if user.role == 'moderator' %}selected{% endif %}>Moderator</option>
+                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Administrator</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Permissions</label>
+                        <div class="row g-3">
+                            {% for perm in available_permissions %}
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="permissions" value="{{ perm.id }}" id="perm_{{ perm.id }}"
+                                           {% if perm.id in current_permissions %}checked{% endif %}>
+                                    <label class="form-check-label" for="perm_{{ perm.id }}">
+                                        {{ perm.name }}
+                                    </label>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-gold rounded-pill px-4 fw-bold">Update Access</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

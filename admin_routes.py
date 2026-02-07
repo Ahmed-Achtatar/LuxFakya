@@ -1,12 +1,14 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection, DbImage
+from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection, DbImage, UserLog
 import os
 import uuid
 import io
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from PIL import Image
+from functools import wraps
+import json
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -59,6 +61,17 @@ def optimize_and_save_image(file):
 
         return url_for('main.get_db_image', image_id=new_image.id)
 
+def permission_required(permission):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not current_user.has_permission(permission):
+                flash('You do not have permission to perform this action.', 'danger')
+                return redirect(request.referrer or url_for('admin.dashboard'))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
 @admin_bp.before_request
 def restrict_access():
     if request.endpoint == 'admin.login':
@@ -67,14 +80,14 @@ def restrict_access():
     if not current_user.is_authenticated:
         return redirect(url_for('auth.login', next=request.url))
 
-    if getattr(current_user, 'role', 'customer') != 'admin':
+    if getattr(current_user, 'role', 'customer') not in ['admin', 'moderator']:
         flash('Access denied. Admin privileges required.', 'danger')
         return redirect(url_for('main.index'))
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        if getattr(current_user, 'role', 'customer') == 'admin':
+        if getattr(current_user, 'role', 'customer') in ['admin', 'moderator']:
             return redirect(url_for('admin.dashboard'))
         flash('You are already logged in as a customer.', 'info')
         return redirect(url_for('main.index'))
@@ -85,7 +98,7 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and user.check_password(password):
-            if user.role != 'admin':
+            if user.role not in ['admin', 'moderator']:
                 flash('Access denied. Not an admin account.', 'danger')
             else:
                 login_user(user)
@@ -101,11 +114,48 @@ def list_users():
     users = User.query.order_by(User.id.desc()).all()
     return render_template('admin/users.html', users=users)
 
-@admin_bp.route('/users/<int:user_id>')
+@admin_bp.route('/users/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def user_detail(user_id):
     user = User.query.get_or_404(user_id)
-    return render_template('admin/user_detail.html', user=user)
+
+    if request.method == 'POST':
+        # Simple role-based check: Only admin can manage users' roles/permissions
+        if getattr(current_user, 'role', 'customer') != 'admin':
+             flash('Access denied. Only admins can manage users.', 'danger')
+             return redirect(url_for('admin.user_detail', user_id=user.id))
+
+        role = request.form.get('role')
+        if role:
+            user.role = role
+
+        perms = request.form.getlist('permissions')
+        user.permissions = json.dumps(perms)
+
+        db.session.commit()
+        flash('User updated successfully.', 'success')
+        return redirect(url_for('admin.user_detail', user_id=user.id))
+
+    available_permissions = [
+        {'id': 'can_delete', 'name': 'Can Delete Items'},
+        {'id': 'can_manage_orders', 'name': 'Can Manage Orders'},
+        # Add more as needed
+    ]
+
+    current_permissions = []
+    if user.permissions:
+        try:
+            current_permissions = json.loads(user.permissions)
+        except:
+            pass
+
+    return render_template('admin/user_detail.html', user=user, available_permissions=available_permissions, current_permissions=current_permissions)
+
+@admin_bp.route('/logs')
+@login_required
+def logs():
+    logs = UserLog.query.order_by(UserLog.timestamp.desc()).all()
+    return render_template('admin/logs.html', logs=logs)
 
 @admin_bp.route('/logout')
 @login_required
@@ -179,12 +229,24 @@ def order_detail(order_id):
 
 @admin_bp.route('/orders/<int:order_id>/confirm', methods=['POST'])
 @login_required
+@permission_required('can_manage_orders')
 def confirm_order(order_id):
     order = Order.query.get_or_404(order_id)
     if order.status != 'Completed':
         order.status = 'Completed'
         db.session.commit()
         flash('Order confirmed successfully.', 'success')
+    return redirect(url_for('admin.order_detail', order_id=order.id))
+
+@admin_bp.route('/orders/<int:order_id>/cancel', methods=['POST'])
+@login_required
+@permission_required('can_manage_orders')
+def cancel_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.status != 'Cancelled':
+        order.status = 'Cancelled'
+        db.session.commit()
+        flash('Order cancelled successfully.', 'success')
     return redirect(url_for('admin.order_detail', order_id=order.id))
 
 @admin_bp.route('/categories')
@@ -241,6 +303,7 @@ def edit_category(id):
 
 @admin_bp.route('/categories/delete/<int:id>', methods=['POST'])
 @login_required
+@permission_required('can_delete')
 def delete_category(id):
     category = Category.query.get_or_404(id)
     # Check if products exist in this category
@@ -380,6 +443,7 @@ def edit_product(product_id):
 
 @admin_bp.route('/delete/<int:product_id>', methods=['POST'])
 @login_required
+@permission_required('can_delete')
 def delete_product(product_id):
     product = Product.query.get_or_404(product_id)
     db.session.delete(product)
@@ -445,3 +509,56 @@ def home_settings():
         return redirect(url_for('admin.home_settings'))
 
     return render_template('admin/home_settings.html', section=section)
+
+@admin_bp.route('/settings/hero', methods=['GET', 'POST'])
+@login_required
+def hero_settings():
+    section = HomeSection.query.filter_by(section_name='hero').first()
+
+    # Create default if missing
+    if not section:
+        section = HomeSection(section_name='hero')
+        db.session.add(section)
+        db.session.commit()
+
+    if request.method == 'POST':
+        section.title_fr = request.form.get('title_fr')
+        section.title_ar = request.form.get('title_ar')
+        section.title_en = request.form.get('title_en')
+        section.text_fr = request.form.get('text_fr')
+        section.text_ar = request.form.get('text_ar')
+        section.text_en = request.form.get('text_en')
+
+        # Image handling
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and allowed_file(file.filename):
+                section.image_url = optimize_and_save_image(file)
+
+        db.session.commit()
+        flash('Hero settings updated successfully', 'success')
+        return redirect(url_for('admin.hero_settings'))
+
+    return render_template('admin/hero_settings.html', section=section)
+
+@admin_bp.route('/settings/promo', methods=['GET', 'POST'])
+@login_required
+def promo_settings():
+    section = HomeSection.query.filter_by(section_name='promo_banner').first()
+
+    if not section:
+        section = HomeSection(section_name='promo_banner')
+        db.session.add(section)
+        db.session.commit()
+
+    if request.method == 'POST':
+        section.is_active = True if request.form.get('is_active') else False
+        section.text_fr = request.form.get('text_fr')
+        section.text_ar = request.form.get('text_ar')
+        section.text_en = request.form.get('text_en')
+
+        db.session.commit()
+        flash('Promo banner updated successfully', 'success')
+        return redirect(url_for('admin.promo_settings'))
+
+    return render_template('admin/promo_settings.html', section=section)

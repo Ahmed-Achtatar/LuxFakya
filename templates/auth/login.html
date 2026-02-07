@@ -12,9 +12,12 @@
                         <label for="username" class="form-label">{{ translations[current_lang]['username'] }}</label>
                         <input type="text" class="form-control" id="username" name="username" required placeholder="{{ translations[current_lang]['enter_username'] }}">
                     </div>
-                    <div class="mb-4">
+                    <div class="mb-2">
                         <label for="password" class="form-label">{{ translations[current_lang]['password'] }}</label>
                         <input type="password" class="form-control" id="password" name="password" required placeholder="{{ translations[current_lang]['enter_password'] }}">
+                    </div>
+                    <div class="mb-4 text-end">
+                        <a href="{{ url_for('auth.forgot_password') }}" class="small text-muted text-decoration-none">{{ translations[current_lang]['forgot_password'] }}</a>
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-gold btn-lg">{{ translations[current_lang]['sign_in'] }}</button>

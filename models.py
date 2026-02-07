@@ -5,6 +5,7 @@ from datetime import datetime
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 import sqlite3
+import json
 
 db = SQLAlchemy()
 
@@ -21,7 +22,12 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(150), unique=True, nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=True)
     password_hash = db.Column(db.String(256), nullable=False)
-    role = db.Column(db.String(20), default='customer') # 'admin' or 'customer'
+    role = db.Column(db.String(20), default='customer') # 'admin', 'moderator', 'customer'
+    permissions = db.Column(db.String(500), nullable=True) # JSON string of permissions
+
+    # Password Reset
+    reset_token = db.Column(db.String(100), nullable=True)
+    reset_token_expiry = db.Column(db.DateTime, nullable=True)
 
     # Profile Details
     full_name = db.Column(db.String(150), nullable=True)
@@ -36,6 +42,26 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def has_permission(self, permission):
+        if self.role == 'admin':
+            return True
+        if not self.permissions:
+            return False
+        try:
+            perms = json.loads(self.permissions)
+            return permission in perms
+        except:
+            return False
+
+class UserLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    action = db.Column(db.String(50), nullable=False)
+    details = db.Column(db.String(255), nullable=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref='logs', lazy=True)
 
 class DbImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -142,7 +168,7 @@ class OrderItem(db.Model):
 
 class HomeSection(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    section_name = db.Column(db.String(50), unique=True, nullable=False) # e.g., 'limited_offer'
+    section_name = db.Column(db.String(50), unique=True, nullable=False) # e.g., 'limited_offer', 'hero', 'promo_banner'
 
     # Content stored for multiple languages
     title_fr = db.Column(db.String(150), nullable=True)
