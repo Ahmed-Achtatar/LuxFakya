@@ -724,7 +724,16 @@ footer .social-icon {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    z-index: 1050;
+    z-index: 9999;
+}
+
+@media (max-width: 768px) {
+    .floating-widget {
+        bottom: 20px;
+        right: 20px;
+        /* Safe area support for notched phones */
+        bottom: calc(20px + env(safe-area-inset-bottom));
+    }
 }
 
 .widget-btn {
