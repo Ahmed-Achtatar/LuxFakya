@@ -25,6 +25,9 @@ MISSING_COLUMNS = {
         ('can_manage_users', "BOOLEAN DEFAULT FALSE"),
         ('can_manage_products', "BOOLEAN DEFAULT FALSE"),
         ('can_manage_content', "BOOLEAN DEFAULT FALSE")
+    ],
+    'user_log': [
+        ('ip_address', "VARCHAR(50)")
     ]
 }
 
