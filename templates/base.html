@@ -59,56 +59,51 @@
                         {{ session.get('cart')|length if session.get('cart') else 0 }}
                     </span>
                 </a>
-             </div>
 
-            <div class="collapse navbar-collapse justify-content-between align-items-center d-none d-lg-flex" id="navbarContent">
-                <!-- Start Nav: Menu Links -->
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}"><i class="fas fa-home d-none d-lg-inline-block"></i><span class="d-lg-none">{{ get_text('home') }}</span></a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {{ get_text('categories') }}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            {% for cat in all_categories %}
-                            <li><a class="dropdown-item" href="{{ url_for('main.shop', category=cat.name) }}">{{ cat.name }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">{{ get_text('shop') }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.about') }}">{{ get_text('about_us') }}</a></li>
-                </ul>
+                <!-- Mobile Icons (End) -->
+                 <div class="d-flex d-lg-none align-items-center gap-3">
+                     <a class="position-relative text-white" href="{{ url_for('main.cart') }}">
+                        <i class="fas fa-shopping-bag"></i>
+                        {% if session.get('cart') %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gold" style="font-size: 0.5rem;">
+                            {{ session.get('cart')|length }}
+                        </span>
+                        {% endif %}
+                    </a>
+                 </div>
 
-                <!-- Center Logo (Desktop) -->
-                <a class="navbar-brand d-none d-lg-block navbar-brand-center" href="{{ url_for('main.index') }}">
-                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="LuxFakya" style="height: 120px; width: auto;">
-                </a>
-
-                <!-- End Nav: Icons -->
-                <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-uppercase" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {{ current_lang }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown" style="min-width: auto;">
-                            <li><a class="dropdown-item" href="{{ url_for('main.set_lang', lang_code='fr') }}">FR</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.set_lang', lang_code='ar') }}">AR</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        {% if current_user.is_authenticated %}
-                         <div class="dropdown">
-                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user"></i>
+                <div class="collapse navbar-collapse justify-content-between align-items-center d-none d-lg-flex" id="navbarContent">
+                    <!-- Start Nav: Menu Links -->
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                         <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}"><i class="fas fa-home d-none d-lg-inline-block"></i><span class="d-lg-none">{{ get_text('home') }}</span></a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ get_text('categories') }}
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                 {% if current_user.role == 'admin' %}
-                                 <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
-                                 {% else %}
-                                 <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profile</a></li>
-                                 {% endif %}
-                                 <li><hr class="dropdown-divider"></li>
-                                 <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">{{ get_text('logout') }}</a></li>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                {% for cat in all_categories %}
+                                <li><a class="dropdown-item" href="{{ url_for('main.shop', category=cat.name) }}">{{ cat.name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">{{ get_text('shop') }}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.about') }}">{{ get_text('about_us') }}</a></li>
+                    </ul>
+
+                    <!-- Center Logo (Desktop) -->
+                    <a class="navbar-brand d-none d-lg-block navbar-brand-center" href="{{ url_for('main.index') }}">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="LuxFakya" style="height: 120px; width: auto;">
+                    </a>
+
+                    <!-- End Nav: Icons -->
+                    <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-uppercase" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ current_lang }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown" style="min-width: auto;">
+                                <li><a class="dropdown-item" href="{{ url_for('main.set_lang', lang_code='fr') }}">FR</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.set_lang', lang_code='ar') }}">AR</a></li>
                             </ul>
                         </div>
                         {% else %}
@@ -125,8 +120,49 @@
                     </li>
                 </ul>
             </div>
-        </div>
-    </nav>
+        </nav>
+
+        <main class="flex-grow-1">
+            {% if request.endpoint != 'main.index' %}
+            <div class="container page-content-spacer">
+            {% endif %}
+
+            {% block content %}{% endblock %}
+
+            {% if request.endpoint != 'main.index' %}
+            </div>
+            {% endif %}
+        </main>
+
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <!-- Categories -->
+                    <div class="col-md-6 mb-4">
+                        <h5 class="fw-bold mb-3 font-serif">{{ get_text('footer_categories') }}</h5>
+                        <ul class="list-unstyled footer-links">
+                            {% for cat in all_categories %}
+                            <li><a href="{{ url_for('main.shop', category=cat.name) }}">{{ cat.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <!-- Contact Us -->
+                    <div class="col-md-6 mb-4">
+                        <h5 class="fw-bold mb-3 font-serif">{{ get_text('footer_contact') }}</h5>
+                        <ul class="list-unstyled footer-links">
+                            <li class="mb-2"><a href="https://maps.app.goo.gl/nmxA4nULtmBbrmPS6" target="_blank" class="text-reset text-decoration-none"><i class="fas fa-map-marker-alt me-2"></i>{{ get_text('address_val') }}</a></li>
+                            <li class="mb-2"><a href="https://maps.app.goo.gl/nmxA4nULtmBbrmPS6" target="_blank" class="text-gold fw-bold"><i class="fas fa-map me-2"></i>{{ get_text('location_label') }}</a></li>
+                            <li><a href="tel:+212676459945"><i class="fas fa-phone me-2"></i><span class="force-ltr">+212 676 459 945</span></a></li>
+                            <li><a href="https://wa.me/212676459945" target="_blank"><i class="fab fa-whatsapp me-2"></i>WhatsApp</a></li>
+                            <li><a href="mailto:luxfakya@gmail.com"><i class="fas fa-envelope me-2"></i>luxfakya@gmail.com</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </footer>
+    </div>
 
     <!-- Mobile Offcanvas Menu -->
     <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileMenu">
@@ -181,65 +217,24 @@
         </div>
     </div>
 
-    <main class="flex-grow-1">
-        <!-- Toast Container -->
-        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="toast align-items-center text-white bg-{{ 'success' if category == 'success' else 'danger' if category == 'error' else 'primary' }} border-0 shadow-lg mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
-                        <div class="d-flex">
-                            <div class="toast-body fs-6">
-                                {% if category == 'success' %}<i class="fas fa-check-circle me-2"></i>{% endif %}
-                                {{ message }}
-                            </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="toast align-items-center text-white bg-{{ 'success' if category == 'success' else 'danger' if category == 'error' else 'primary' }} border-0 shadow-lg mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                    <div class="d-flex">
+                        <div class="toast-body fs-6">
+                            {% if category == 'success' %}<i class="fas fa-check-circle me-2"></i>{% endif %}
+                            {{ message }}
                         </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        </div>
-
-        {% if request.endpoint != 'main.index' %}
-        <div class="container page-content-spacer">
-        {% endif %}
-
-        {% block content %}{% endblock %}
-
-        {% if request.endpoint != 'main.index' %}
-        </div>
-        {% endif %}
-    </main>
-
-    <footer>
-        <div class="container">
-            <div class="row">
-                <!-- Categories -->
-                <div class="col-md-6 mb-4">
-                    <h5 class="fw-bold mb-3 font-serif">{{ get_text('footer_categories') }}</h5>
-                    <ul class="list-unstyled footer-links">
-                        {% for cat in all_categories %}
-                        <li><a href="{{ url_for('main.shop', category=cat.name) }}">{{ cat.name }}</a></li>
-                        {% endfor %}
-                    </ul>
                 </div>
-
-                <!-- Contact Us -->
-                <div class="col-md-6 mb-4">
-                    <h5 class="fw-bold mb-3 font-serif">{{ get_text('footer_contact') }}</h5>
-                    <ul class="list-unstyled footer-links">
-                        <li class="mb-2"><a href="https://maps.app.goo.gl/nmxA4nULtmBbrmPS6" target="_blank" class="text-reset text-decoration-none"><i class="fas fa-map-marker-alt me-2"></i>{{ get_text('address_val') }}</a></li>
-                        <li class="mb-2"><a href="https://maps.app.goo.gl/nmxA4nULtmBbrmPS6" target="_blank" class="text-gold fw-bold"><i class="fas fa-map me-2"></i>{{ get_text('location_label') }}</a></li>
-                        <li><a href="tel:+212676459945"><i class="fas fa-phone me-2"></i><span class="force-ltr">+212 676 459 945</span></a></li>
-                        <li><a href="https://wa.me/212676459945" target="_blank"><i class="fab fa-whatsapp me-2"></i>WhatsApp</a></li>
-                        <li><a href="mailto:luxfakya@gmail.com"><i class="fas fa-envelope me-2"></i>luxfakya@gmail.com</a></li>
-                    </ul>
-                </div>
-            </div>
-
-        </div>
-    </footer>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    </div>
 
     <!-- Floating Widget -->
     <div class="floating-widget d-flex flex-column gap-3">

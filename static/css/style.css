@@ -8,8 +8,9 @@
     --text-color: #333;
 }
 
-body {
+.site-wrapper {
     overflow-x: hidden;
+    width: 100%;
 }
 
 body {
