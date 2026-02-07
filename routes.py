@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for, flash, current_app, send_file, jsonify
+from flask import Blueprint, render_template, request, session, redirect, url_for, flash, current_app, send_file
 from flask_login import current_user
-from models import Product, db, Order, OrderItem, HomeSection, Category, DbImage, UserLog
+from models import Product, db, Order, OrderItem, HomeSection, Category, DbImage
 import io
 
 main_bp = Blueprint('main', __name__)
@@ -27,11 +27,8 @@ def index():
     all_products = Product.query.filter_by(is_hidden=False).all()
     all_categories = Category.query.all()
 
-    # Fetch Home Sections
+    # Fetch Limited Offer Section
     limited_offer = HomeSection.query.filter_by(section_name='limited_offer').first()
-    hero_section = HomeSection.query.filter_by(section_name='hero').first()
-    about_section = HomeSection.query.filter_by(section_name='about').first()
-    promo_banner = HomeSection.query.filter_by(section_name='promo_banner').first()
 
     # Simulate different collections
     # In a real app, these would be filtered by date added, sales count, etc.
@@ -49,9 +46,6 @@ def index():
                          featured_products=featured_collection,
                          all_products=all_products,
                          limited_offer=limited_offer,
-                         hero_section=hero_section,
-                         about_section=about_section,
-                         promo_banner=promo_banner,
                          all_categories=all_categories)
 
 @main_bp.route('/about')
@@ -155,15 +149,6 @@ def add_to_cart(product_id):
 
     session.modified = True
     current_app.logger.info(f"Added product {product_id} (qty: {quantity}) to cart")
-
-    # Check for AJAX request
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return jsonify({
-            'status': 'success',
-            'message': f'Added {quantity} item(s) to cart',
-            'cart_count': len(cart)
-        })
-
     flash(f'Added {quantity} item(s) to cart', 'success')
     return redirect(request.referrer or url_for('main.shop'))
 
@@ -266,18 +251,6 @@ def checkout():
         db.session.commit()
 
         current_app.logger.info(f"Order created: {new_order.id} for {name} ({total_price})")
-
-        # User Tracking: Log order creation
-        try:
-            log = UserLog(
-                user_id=current_user.id if current_user.is_authenticated else None,
-                action='purchase_attempt',
-                details=f"Order {new_order.id} created. Total: {total_price}. Customer: {name}"
-            )
-            db.session.add(log)
-            db.session.commit()
-        except Exception as e:
-            current_app.logger.error(f"Failed to log purchase: {e}")
 
         # Clear cart
         session.pop('cart', None)

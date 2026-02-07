@@ -746,19 +746,3 @@ footer .social-icon {
     background-color: var(--primary-gold);
 }
 
-
-/* Mobile Widgets Fix */
-@media (max-width: 576px) {
-    .floating-widget {
-        bottom: 20px;
-        right: 15px;
-        z-index: 1060;
-    }
-    .widget-btn {
-        width: 45px;
-        height: 45px;
-    }
-    .widget-btn i {
-        font-size: 1.2rem;
-    }
-}

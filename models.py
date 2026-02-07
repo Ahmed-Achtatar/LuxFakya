@@ -29,12 +29,6 @@ class User(UserMixin, db.Model):
     address = db.Column(db.String(255), nullable=True)
     city = db.Column(db.String(100), nullable=True)
 
-    # Permissions
-    can_manage_orders = db.Column(db.Boolean, default=False)
-    can_manage_products = db.Column(db.Boolean, default=False)
-    can_manage_users = db.Column(db.Boolean, default=False)
-    can_manage_content = db.Column(db.Boolean, default=False)
-
     orders = db.relationship('Order', backref='user', lazy=True)
 
     def set_password(self, password):
@@ -49,15 +43,6 @@ class DbImage(db.Model):
     data = db.Column(db.LargeBinary, nullable=False)
     mimetype = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-class UserLog(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    action = db.Column(db.String(100), nullable=False) # e.g., 'login', 'checkout_attempt'
-    details = db.Column(db.Text, nullable=True)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
-    user = db.relationship('User', backref='logs', lazy=True)
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)

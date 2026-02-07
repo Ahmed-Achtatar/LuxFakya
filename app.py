@@ -5,7 +5,7 @@ import traceback
 from flask import Flask, session, request, send_from_directory, jsonify
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
-from models import db, User, Category, Product, HomeSection
+from models import db, User, Category
 from translations import translations
 
 def create_app(test_config=None):
@@ -97,52 +97,12 @@ def create_app(test_config=None):
         except Exception:
             categories = []
 
-        # Calculate Cart Total & Promo Banner
-        cart_total = 0
-        promo_banner = None
-        remaining_amount = 0
-
-        try:
-            # Promo Banner
-            promo_banner = HomeSection.query.filter_by(section_name='promo_banner').first()
-
-            # Cart Total
-            cart = session.get('cart', {})
-            if cart:
-                pids = [int(k) for k in cart.keys()]
-                if pids:
-                    products = Product.query.filter(Product.id.in_(pids)).all()
-                    product_map = {p.id: p for p in products}
-
-                    for pid_str, quantity in cart.items():
-                        product = product_map.get(int(pid_str))
-                        if product:
-                            item_price = product.price * quantity
-                            for pricing in product.pricings:
-                                if pricing.quantity == quantity:
-                                    item_price = pricing.price
-                                    break
-                            cart_total += item_price
-
-            if promo_banner and promo_banner.text_en:
-                try:
-                    threshold = float(promo_banner.text_en)
-                    remaining_amount = max(0, threshold - cart_total)
-                except ValueError:
-                    remaining_amount = 0
-
-        except Exception as e:
-            app.logger.error(f"Error in context processor: {e}")
-
         return dict(
             get_text=get_text,
             translations=translations,
             current_lang=lang,
             text_dir='rtl' if lang == 'ar' else 'ltr',
-            all_categories=categories,
-            cart_total=cart_total,
-            promo_banner=promo_banner,
-            remaining_amount=remaining_amount
+            all_categories=categories
         )
 
     with app.app_context():

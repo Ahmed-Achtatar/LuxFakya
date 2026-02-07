@@ -30,18 +30,7 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <!-- Promo Banner -->
-    {% if promo_banner and promo_banner.text_en %}
-    <div class="bg-gold text-white py-2 text-center fw-bold small fixed-top" style="z-index: 1040;">
-        {% if remaining_amount > 0 %}
-            {{ (promo_banner.title_fr if current_lang == 'fr' else promo_banner.title_ar)|replace('{remaining}', "%.2f"|format(remaining_amount)) }}
-        {% else %}
-            {{ promo_banner.text_fr if current_lang == 'fr' else promo_banner.text_ar }}
-        {% endif %}
-    </div>
-    {% endif %}
-
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top {% if request.endpoint == 'main.index' %}navbar-transparent{% else %}bg-dark-scrolled{% endif %} transition-all" id="mainNavbar" style="top: {% if promo_banner and promo_banner.text_en %}35px{% else %}0{% endif %};">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top {% if request.endpoint == 'main.index' %}navbar-transparent{% else %}bg-dark-scrolled{% endif %} transition-all" id="mainNavbar">
         <div class="container-fluid px-lg-5 position-relative">
             <!-- Mobile Toggle (Start) -->
             <button class="d-lg-none btn border-0 text-white p-0 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
@@ -266,9 +255,6 @@
 
     <!-- AOS Animation JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
-    <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
     <script>
         // Initialize AOS
