@@ -87,6 +87,10 @@ def create_app(test_config=None):
     @app.context_processor
     def inject_global_context():
         lang = session.get('lang', 'fr')
+        if lang == 'en':
+            lang = 'fr'
+            session['lang'] = 'fr'
+
         def get_text(key):
             # Fallback to key if translation missing, or fallback to FR/EN if needed?
             # Ideally fallback to English or the key itself.

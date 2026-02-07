@@ -1,14 +1,14 @@
 {% extends "admin/base.html" %}
 
-{% block title %}Order Details #{{ order.id }}{% endblock %}
+{% block title %}{{ translations[current_lang]['orders'] }} #{{ order.id }}{% endblock %}
 
 {% block content %}
 <div class="row mb-4">
     <div class="col-12 d-flex justify-content-between align-items-center">
         <div>
-             <span class="text-muted">Orders / </span> <span class="fw-bold">Order #{{ order.id }}</span>
+             <span class="text-muted">{{ translations[current_lang]['orders'] }} / </span> <span class="fw-bold">{{ translations[current_lang]['orders'] }} #{{ order.id }}</span>
         </div>
-        <a href="{{ url_for('admin.orders') }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-2"></i>Back to Orders</a>
+        <a href="{{ url_for('admin.orders') }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-2"></i>{{ translations[current_lang]['back_to_orders'] }}</a>
     </div>
 </div>
 
@@ -16,17 +16,17 @@
     <div class="col-lg-8">
         <div class="card border-0 shadow-sm rounded-4 mb-4">
             <div class="card-header bg-white py-3 border-bottom-0">
-                <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-shopping-basket me-2 text-gold"></i>Order Items</h5>
+                <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-shopping-basket me-2 text-gold"></i>{{ translations[current_lang]['order_items'] }}</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table align-middle mb-0">
                         <thead class="bg-light">
                             <tr class="text-muted small text-uppercase">
-                                <th class="ps-4 py-3 border-bottom-0">Product</th>
-                                <th class="py-3 border-bottom-0">Quantity</th>
-                                <th class="py-3 border-bottom-0">Unit Price</th>
-                                <th class="py-3 text-end pe-4 border-bottom-0">Total</th>
+                                <th class="ps-4 py-3 border-bottom-0">{{ translations[current_lang]['product_table_product'] }}</th>
+                                <th class="py-3 border-bottom-0">{{ translations[current_lang]['product_table_quantity'] }}</th>
+                                <th class="py-3 border-bottom-0">{{ translations[current_lang]['unit_price'] }}</th>
+                                <th class="py-3 text-end pe-4 border-bottom-0">{{ translations[current_lang]['product_table_total'] }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -57,7 +57,7 @@
             </div>
             <div class="card-footer bg-white p-4 text-end border-top-0 rounded-bottom-4">
                 <div class="d-flex justify-content-end align-items-center gap-3">
-                    <span class="text-muted text-uppercase small">Total Amount</span>
+                    <span class="text-muted text-uppercase small">{{ translations[current_lang]['total_amount'] }}</span>
                     <h3 class="fw-bold mb-0 text-gold">{{ order.total_amount }} MAD</h3>
                 </div>
             </div>
@@ -66,7 +66,7 @@
     <div class="col-lg-4">
         <div class="card border-0 shadow-sm rounded-4 mb-4">
             <div class="card-header bg-white py-3 border-bottom-0">
-                <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-user-circle me-2 text-gold"></i>Customer Details</h5>
+                <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-user-circle me-2 text-gold"></i>{{ translations[current_lang]['customer_details'] }}</h5>
             </div>
             <div class="card-body">
                 <div class="d-flex align-items-center mb-3">
@@ -75,41 +75,41 @@
                     </div>
                     <div>
                         <h6 class="mb-0 fw-bold">{{ order.customer_name }}</h6>
-                        <small class="text-muted">Customer</small>
+                        <small class="text-muted">{{ translations[current_lang]['customer_label'] }}</small>
                     </div>
                 </div>
                 <hr class="text-muted opacity-25">
                 <div class="mb-3">
-                    <label class="small text-muted text-uppercase mb-1">Phone</label>
+                    <label class="small text-muted text-uppercase mb-1">{{ translations[current_lang]['lbl_phone'] }}</label>
                     <p class="mb-0 fw-bold"><a href="tel:{{ order.customer_phone }}" class="text-decoration-none text-dark">{{ order.customer_phone }}</a></p>
                 </div>
                  <div class="mb-3">
-                    <label class="small text-muted text-uppercase mb-1">Order Date</label>
+                    <label class="small text-muted text-uppercase mb-1">{{ translations[current_lang]['order_date'] }}</label>
                     <p class="mb-0 fw-bold">{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
                 </div>
                 <div class="mb-0">
-                    <label class="small text-muted text-uppercase mb-1">Status</label>
+                    <label class="small text-muted text-uppercase mb-1">{{ translations[current_lang]['th_status'] }}</label>
                     <div class="d-flex flex-column gap-2">
                         {% if order.status == 'Pending' %}
-                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill align-self-start">{{ order.status }}</span>
+                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill align-self-start">{{ translations[current_lang]['pending'] }}</span>
                         <div class="d-flex gap-2">
                             <form action="{{ url_for('admin.confirm_order', order_id=order.id) }}" method="POST">
                                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                 <button type="submit" class="btn btn-sm btn-success rounded-pill px-3" onclick="return confirm('Are you sure you want to confirm this order?');">
-                                    <i class="fas fa-check me-1"></i> Confirm
+                                 <button type="submit" class="btn btn-sm btn-success rounded-pill px-3" onclick="return confirm('{{ translations[current_lang]['confirm_order_msg'] }}');">
+                                    <i class="fas fa-check me-1"></i> {{ translations[current_lang]['confirm_order_btn'] }}
                                  </button>
                             </form>
                             <form action="{{ url_for('admin.cancel_order', order_id=order.id) }}" method="POST">
                                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                 <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3" onclick="return confirm('Are you sure you want to cancel this order?');">
-                                    <i class="fas fa-times me-1"></i> Cancel
+                                 <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3" onclick="return confirm('{{ translations[current_lang]['cancel_order_msg'] }}');">
+                                    <i class="fas fa-times me-1"></i> {{ translations[current_lang]['cancel_order_btn'] }}
                                  </button>
                             </form>
                         </div>
                         {% elif order.status == 'Completed' %}
-                        <span class="badge bg-success px-3 py-2 rounded-pill align-self-start">{{ order.status }}</span>
+                        <span class="badge bg-success px-3 py-2 rounded-pill align-self-start">{{ translations[current_lang]['completed'] }}</span>
                         {% elif order.status == 'Cancelled' %}
-                        <span class="badge bg-danger px-3 py-2 rounded-pill align-self-start">{{ order.status }}</span>
+                        <span class="badge bg-danger px-3 py-2 rounded-pill align-self-start">{{ translations[current_lang]['cancelled'] }}</span>
                         {% else %}
                         <span class="badge bg-secondary px-3 py-2 rounded-pill align-self-start">{{ order.status }}</span>
                         {% endif %}
