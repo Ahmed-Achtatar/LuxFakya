@@ -110,8 +110,17 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and user.check_password(password):
-            if user.role != 'admin':
-                flash('Access denied. Not an admin account.', 'danger')
+            # Check if admin OR has permissions
+            is_admin = user.role == 'admin'
+            has_perms = (
+                user.can_manage_orders or
+                user.can_manage_users or
+                user.can_manage_products or
+                user.can_manage_content
+            )
+
+            if not (is_admin or has_perms):
+                flash('Access denied. Not an admin or moderator account.', 'danger')
             else:
                 login_user(user)
                 return redirect(url_for('admin.dashboard'))
@@ -155,6 +164,37 @@ def user_detail(user_id):
 
     return render_template('admin/user_detail.html', user=user)
 
+@admin_bp.route('/users/add', methods=['GET', 'POST'])
+@login_required
+@permission_required('can_manage_users')
+def add_user():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if User.query.filter_by(username=username).first():
+            flash('Username already exists.', 'danger')
+        elif email and User.query.filter_by(email=email).first():
+            flash('Email already exists.', 'danger')
+        else:
+            user = User(username=username, email=email)
+            user.set_password(password)
+
+            # Set Permissions
+            user.can_manage_orders = True if request.form.get('can_manage_orders') else False
+            user.can_manage_users = True if request.form.get('can_manage_users') else False
+            user.can_manage_products = True if request.form.get('can_manage_products') else False
+            user.can_manage_content = True if request.form.get('can_manage_content') else False
+
+            db.session.add(user)
+            db.session.commit()
+
+            flash('User created successfully.', 'success')
+            return redirect(url_for('admin.list_users'))
+
+    return render_template('admin/add_moderator.html')
+
 @admin_bp.route('/logout')
 @login_required
 def logout():
@@ -164,6 +204,12 @@ def logout():
 @admin_bp.route('/')
 @login_required
 def dashboard():
+    # Restrict "Orders Only" moderators from seeing the dashboard
+    if getattr(current_user, 'role', 'customer') != 'admin' and \
+       current_user.can_manage_orders and \
+       not (current_user.can_manage_users or current_user.can_manage_products or current_user.can_manage_content):
+        return redirect(url_for('admin.orders'))
+
     # Filter Parameters
     search = request.args.get('search', '').strip()
     category_id = request.args.get('category')
