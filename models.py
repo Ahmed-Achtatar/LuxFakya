@@ -37,6 +37,14 @@ class User(UserMixin, db.Model):
 
     orders = db.relationship('Order', backref='user', lazy=True)
 
+    @property
+    def is_staff(self):
+        return bool((self.role == 'admin') or \
+               self.can_manage_orders or \
+               self.can_manage_users or \
+               self.can_manage_products or \
+               self.can_manage_content)
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

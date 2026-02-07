@@ -125,7 +125,9 @@ def login():
 @permission_required('can_manage_users')
 def list_users():
     users = User.query.order_by(User.id.desc()).all()
-    return render_template('admin/users.html', users=users)
+    staff_users = [u for u in users if u.is_staff]
+    client_users = [u for u in users if not u.is_staff]
+    return render_template('admin/users.html', staff_users=staff_users, client_users=client_users)
 
 @admin_bp.route('/users/<int:user_id>', methods=['GET', 'POST'])
 @login_required
@@ -136,6 +138,12 @@ def user_detail(user_id):
     if request.method == 'POST':
         # Only allow changing permissions if current user is admin
         if getattr(current_user, 'role', 'customer') == 'admin':
+             if request.form.get('action') == 'promote':
+                 user.can_manage_orders = True # Default permission to make them staff
+                 db.session.commit()
+                 flash('User promoted to Moderator. You can now assign specific permissions.', 'success')
+                 return redirect(url_for('admin.user_detail', user_id=user.id))
+
              user.can_manage_orders = True if request.form.get('can_manage_orders') else False
              user.can_manage_users = True if request.form.get('can_manage_users') else False
              user.can_manage_products = True if request.form.get('can_manage_products') else False
