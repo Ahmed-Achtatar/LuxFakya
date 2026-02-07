@@ -84,8 +84,6 @@ def create_app(test_config=None):
     app.register_blueprint(admin_bp)
     app.register_blueprint(auth_bp)
 
-    from models import HomeSection # Import here to avoid circular dependency if possible
-
     @app.context_processor
     def inject_global_context():
         lang = session.get('lang', 'fr')
@@ -99,18 +97,12 @@ def create_app(test_config=None):
         except Exception:
             categories = []
 
-        try:
-            promo = HomeSection.query.filter_by(section_name='promo_banner').first()
-        except Exception:
-            promo = None
-
         return dict(
             get_text=get_text,
             translations=translations,
             current_lang=lang,
             text_dir='rtl' if lang == 'ar' else 'ltr',
-            all_categories=categories,
-            promo_banner=promo
+            all_categories=categories
         )
 
     with app.app_context():

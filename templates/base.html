@@ -27,31 +27,10 @@
     <!-- AOS Animation CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
     {% block extra_css %}{% endblock %}
 </head>
 <body class="d-flex flex-column min-vh-100">
-
-    {% if promo_banner and promo_banner.is_active %}
-        {% set promo_text = promo_banner|attr('text_' + current_lang) %}
-        {% if promo_text %}
-            <div class="bg-gold text-white text-center py-2 fw-bold small fixed-top" style="z-index: 1060;">
-                {% if '{remaining}' in promo_text %}
-                    {% set remaining = 500 - (cart_total or 0) %}
-                    {% if remaining > 0 %}
-                        {{ promo_text.replace('{remaining}', remaining|round(0)|int|string) }}
-                    {% else %}
-                        {{ get_text('free_shipping_unlocked') }} <i class="fas fa-truck-fast ms-1"></i>
-                    {% endif %}
-                {% else %}
-                    {{ promo_text }}
-                {% endif %}
-            </div>
-        {% endif %}
-    {% endif %}
-
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top {% if request.endpoint == 'main.index' %}navbar-transparent{% else %}bg-dark-scrolled{% endif %} transition-all {% if promo_banner and promo_banner.is_active %}mt-5{% endif %}" id="mainNavbar">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top {% if request.endpoint == 'main.index' %}navbar-transparent{% else %}bg-dark-scrolled{% endif %} transition-all" id="mainNavbar">
         <div class="container-fluid px-lg-5 position-relative">
             <!-- Mobile Toggle (Start) -->
             <button class="d-lg-none btn border-0 text-white p-0 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
@@ -67,9 +46,11 @@
              <div class="d-flex d-lg-none align-items-center gap-3">
                  <a class="position-relative text-white" href="{{ url_for('main.cart') }}">
                     <i class="fas fa-shopping-bag"></i>
-                    <span class="cart-count-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gold {% if not session.get('cart') %}d-none{% endif %}" style="font-size: 0.5rem;">
-                        {{ session.get('cart')|length if session.get('cart') else 0 }}
+                    {% if session.get('cart') %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gold" style="font-size: 0.5rem;">
+                        {{ session.get('cart')|length }}
                     </span>
+                    {% endif %}
                 </a>
              </div>
 
@@ -130,9 +111,11 @@
                     <li class="nav-item">
                         <a class="nav-link position-relative" href="{{ url_for('main.cart') }}">
                             <i class="fas fa-shopping-bag"></i>
-                            <span class="cart-count-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gold {% if not session.get('cart') %}d-none{% endif %}" style="font-size: 0.6rem;">
-                                {{ session.get('cart')|length if session.get('cart') else 0 }}
+                            {% if session.get('cart') %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gold" style="font-size: 0.6rem;">
+                                {{ session.get('cart')|length }}
                             </span>
+                            {% endif %}
                         </a>
                     </li>
                 </ul>
@@ -260,9 +243,11 @@
         </a>
         <a href="{{ url_for('main.cart') }}" class="widget-btn cart-btn shadow-lg d-flex align-items-center justify-content-center text-white text-decoration-none position-relative">
             <i class="fas fa-shopping-bag fa-lg"></i>
-            <span class="cart-count-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light {% if not session.get('cart') %}d-none{% endif %}" style="font-size: 0.7rem;">
-                {{ session.get('cart')|length if session.get('cart') else 0 }}
+            {% if session.get('cart') %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light" style="font-size: 0.7rem;">
+                {{ session.get('cart')|length }}
             </span>
+            {% endif %}
         </a>
     </div>
 
@@ -289,149 +274,17 @@
 
         // Navbar Scroll Effect
         const navbar = document.getElementById('mainNavbar');
-        if (navbar) {
-            window.addEventListener('scroll', function() {
-                if (window.scrollY > 50) {
-                    navbar.classList.add('bg-dark-scrolled');
-                    navbar.classList.remove('navbar-transparent');
-                    navbar.classList.add('shadow');
-                } else {
-                    {% if request.endpoint == 'main.index' %}
-                    navbar.classList.remove('bg-dark-scrolled');
-                    navbar.classList.add('navbar-transparent');
-                    navbar.classList.remove('shadow');
-                    {% endif %}
-                }
-            });
-        }
-
-        // Cart AJAX Logic
-        function updateCartBadges(count) {
-            document.querySelectorAll('.cart-count-badge').forEach(el => {
-                el.textContent = count;
-                if (count > 0) {
-                    el.classList.remove('d-none');
-                } else {
-                    el.classList.add('d-none');
-                }
-            });
-        }
-
-        function showToast(message, type='success') {
-            const toastContainer = document.querySelector('.toast-container');
-            if (!toastContainer) return;
-
-            const bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
-            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-
-            const toastHtml = `
-                <div class="toast align-items-center text-white ${bgClass} border-0 shadow-lg mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
-                    <div class="d-flex">
-                        <div class="toast-body fs-6">
-                            <i class="fas ${icon} me-2"></i> ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                </div>
-            `;
-
-            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
-            const newToastEl = toastContainer.lastElementChild;
-            const toast = new bootstrap.Toast(newToastEl);
-            toast.show();
-
-            newToastEl.addEventListener('hidden.bs.toast', () => {
-                newToastEl.remove();
-            });
-        }
-
-        document.addEventListener('submit', function(e) {
-            if (e.target.tagName === 'FORM' && e.target.action.includes('/cart/add/')) {
-                e.preventDefault();
-                const form = e.target;
-                const submitBtn = form.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                     submitBtn.disabled = true;
-                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                }
-
-                const formData = new FormData(form);
-                const data = {};
-                formData.forEach((value, key) => data[key] = value);
-
-                fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRFToken': formData.get('csrf_token') || ''
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        updateCartBadges(data.cart_count);
-                        showToast(data.message, 'success');
-                    } else {
-                        showToast(data.message || 'Error adding to cart', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showToast('An error occurred. Please try again.', 'error');
-                })
-                .finally(() => {
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = '{{ get_text("add_btn") }}';
-                        // Note: If on product page, we might want to restore original text "Add to Cart".
-                        // But "Add" is generic enough or we can store original text.
-                        // Ideally:
-                        // submitBtn.innerHTML = submitBtn.getAttribute('data-original-text') || '{{ get_text("add_btn") }}';
-                        // For now simple restore is fine or just icon.
-                        submitBtn.innerHTML = '<i class="fas fa-shopping-bag me-2"></i> {{ get_text("add_btn") }}';
-                    }
-                });
-            }
-        });
-
-        // Handle Quick Add Links
-        document.addEventListener('click', function(e) {
-            const link = e.target.closest('a');
-            if (link && link.href && link.href.includes('/cart/add/') && !link.classList.contains('disabled')) {
-                e.preventDefault();
-
-                // Add simple loading effect
-                const originalContent = link.innerHTML;
-                link.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                link.classList.add('disabled');
-
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                fetch(link.href, {
-                    method: 'POST', // Use POST for state change
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRFToken': csrfToken
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        updateCartBadges(data.cart_count);
-                        showToast(data.message, 'success');
-                    } else {
-                        showToast(data.message || 'Error adding to cart', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showToast('An error occurred.', 'error');
-                })
-                .finally(() => {
-                    link.innerHTML = originalContent;
-                    link.classList.remove('disabled');
-                });
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-dark-scrolled');
+                navbar.classList.remove('navbar-transparent');
+                navbar.classList.add('shadow');
+            } else {
+                {% if request.endpoint == 'main.index' %}
+                navbar.classList.remove('bg-dark-scrolled');
+                navbar.classList.add('navbar-transparent');
+                navbar.classList.remove('shadow');
+                {% endif %}
             }
         });
     </script>

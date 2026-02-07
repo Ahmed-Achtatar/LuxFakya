@@ -610,17 +610,6 @@ footer .social-icon {
     }
 }
 
-/* Adjustments for Promo Banner */
-body:has(.fixed-top.bg-gold) .navbar.fixed-top {
-    top: 35px; /* Adjust based on banner height */
-}
-
-@media (max-width: 991.98px) {
-    body:has(.fixed-top.bg-gold) .navbar.fixed-top {
-        top: 35px;
-    }
-}
-
 /* Admin Dashboard Styles */
 #wrapper {
     overflow-x: hidden;
@@ -747,29 +736,6 @@ body:has(.fixed-top.bg-gold) .navbar.fixed-top {
 
 .widget-btn:hover {
     transform: scale(1.1);
-}
-
-/* Mobile Adjustments for Floating Widget */
-@media (max-width: 767.98px) {
-    .floating-widget {
-        bottom: 20px;
-        right: 20px;
-        gap: 1rem !important; /* Increase gap slightly for touch targets */
-    }
-
-    .widget-btn {
-        width: 50px;
-        height: 50px;
-    }
-
-    .widget-btn i {
-        font-size: 1.2rem; /* Smaller icon */
-    }
-
-    /* Ensure it's above other elements like toasts */
-    .toast-container {
-        bottom: 90px !important; /* Move toasts up */
-    }
 }
 
 .whatsapp-btn {

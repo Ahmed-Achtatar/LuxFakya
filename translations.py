@@ -225,7 +225,6 @@ translations = {
         'placeholder_address': 'Entrez votre adresse',
         'placeholder_city': 'Entrez votre ville',
         'optional_label': '(Optionnel)',
-        'free_shipping_unlocked': 'Livraison gratuite débloquée !',
     },
     'ar': {
         # Nav
@@ -453,7 +452,6 @@ translations = {
         'placeholder_address': 'أدخل عنوانك',
         'placeholder_city': 'أدخل مدينتك',
         'optional_label': '(اختياري)',
-        'free_shipping_unlocked': 'تم فتح الشحن المجاني!',
     },
     'en': {
         # Nav
@@ -681,6 +679,5 @@ translations = {
         'placeholder_address': 'Enter your address',
         'placeholder_city': 'Enter your city',
         'optional_label': '(Optional)',
-        'free_shipping_unlocked': 'Free Shipping Unlocked!',
     }
 }
