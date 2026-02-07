@@ -97,12 +97,50 @@ def create_app(test_config=None):
         except Exception:
             categories = []
 
+        # Calculate cart total for free shipping banner
+        cart_total = 0
+        remaining_amount = 500
+        cart = session.get('cart', {})
+
+        if cart:
+            try:
+                product_ids = [int(pid) for pid in cart.keys()]
+                if product_ids:
+                    from models import Product
+                    products = Product.query.filter(Product.id.in_(product_ids)).all()
+                    product_map = {p.id: p for p in products}
+
+                    for pid_str, quantity in cart.items():
+                        pid = int(pid_str)
+                        if pid in product_map:
+                            product = product_map[pid]
+                            # Default price logic (simplified vs exact route logic, but close enough for banner)
+                            # Or replicate exact logic
+                            price = product.price * quantity # Base total
+
+                            # Check pricing tiers for override
+                            found_tier = False
+                            for pricing in product.pricings:
+                                if pricing.quantity == quantity:
+                                    price = pricing.price
+                                    found_tier = True
+                                    break
+
+                            cart_total += price
+            except Exception as e:
+                app.logger.error(f"Error calculating cart total: {e}")
+
+        remaining_amount = max(0, 500 - cart_total)
+
         return dict(
             get_text=get_text,
             translations=translations,
             current_lang=lang,
             text_dir='rtl' if lang == 'ar' else 'ltr',
-            all_categories=categories
+            all_categories=categories,
+            cart_total=cart_total,
+            remaining_amount=remaining_amount,
+            free_shipping_threshold=500
         )
 
     with app.app_context():

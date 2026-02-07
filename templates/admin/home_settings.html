@@ -3,74 +3,98 @@
 {% block title %}Home Settings{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h3 class="fs-4 mb-3">Manage "Limited Offer" Section</h3>
-        <p class="text-muted">Customize the promotional section on the homepage.</p>
-    </div>
-</div>
-
 <div class="row">
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body p-4">
-                <form method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="col-md-12">
+        <h3 class="fs-4 mb-3">Homepage Content Management</h3>
 
-                    <h5 class="fw-bold mb-3 text-gold">Titles</h5>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            <label class="form-label">French Title</label>
-                            <input type="text" class="form-control" name="title_fr" value="{{ section.title_fr or '' }}">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Arabic Title</label>
-                            <input type="text" class="form-control" name="title_ar" value="{{ section.title_ar or '' }}" dir="rtl">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">English Title</label>
-                            <input type="text" class="form-control" name="title_en" value="{{ section.title_en or '' }}">
-                        </div>
-                    </div>
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <ul class="nav nav-tabs mb-4" id="homeSettingsTabs" role="tablist">
+                    {% for name, section in sections.items() %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {% if loop.first %}active{% endif %} text-uppercase" id="tab-{{ name }}" data-bs-toggle="tab" data-bs-target="#content-{{ name }}" type="button" role="tab" aria-controls="content-{{ name }}" aria-selected="{{ 'true' if loop.first else 'false' }}">
+                            {{ name | replace('_', ' ') }}
+                        </button>
+                    </li>
+                    {% endfor %}
+                </ul>
 
-                    <h5 class="fw-bold mb-3 text-gold">Description Text</h5>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            <label class="form-label">French Text</label>
-                            <textarea class="form-control" name="text_fr" rows="4">{{ section.text_fr or '' }}</textarea>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Arabic Text</label>
-                            <textarea class="form-control" name="text_ar" rows="4" dir="rtl">{{ section.text_ar or '' }}</textarea>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">English Text</label>
-                            <textarea class="form-control" name="text_en" rows="4">{{ section.text_en or '' }}</textarea>
-                        </div>
-                    </div>
+                <div class="tab-content" id="homeSettingsTabsContent">
+                    {% for name, section in sections.items() %}
+                    <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="content-{{ name }}" role="tabpanel" aria-labelledby="tab-{{ name }}">
+                        <form method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="section_name" value="{{ name }}">
 
-                    <h5 class="fw-bold mb-3 text-gold">Settings</h5>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <label class="form-label">Countdown End Date</label>
-                            <input type="datetime-local" class="form-control" name="end_date"
-                                   value="{{ section.end_date.strftime('%Y-%m-%dT%H:%M') if section.end_date else '' }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Section Image</label>
-                            <input type="file" class="form-control" name="image">
-                            {% if section.image_url %}
-                            <div class="mt-2">
-                                <img src="{{ section.image_url }}" alt="Current Image" class="img-thumbnail" style="height: 100px;">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <!-- Titles -->
+                                    <div class="mb-3">
+                                        <label for="title_fr_{{ name }}" class="form-label">Title (FR)</label>
+                                        <input type="text" class="form-control" id="title_fr_{{ name }}" name="title_fr_{{ name }}" value="{{ section.title_fr or '' }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="title_ar_{{ name }}" class="form-label">Title (AR)</label>
+                                        <input type="text" class="form-control" id="title_ar_{{ name }}" name="title_ar_{{ name }}" value="{{ section.title_ar or '' }}" dir="rtl">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="title_en_{{ name }}" class="form-label">Title (EN)</label>
+                                        <input type="text" class="form-control" id="title_en_{{ name }}" name="title_en_{{ name }}" value="{{ section.title_en or '' }}">
+                                    </div>
+
+                                    <!-- Texts -->
+                                    <div class="mb-3">
+                                        <label for="text_fr_{{ name }}" class="form-label">Text (FR)</label>
+                                        <textarea class="form-control" id="text_fr_{{ name }}" name="text_fr_{{ name }}" rows="2">{{ section.text_fr or '' }}</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="text_ar_{{ name }}" class="form-label">Text (AR)</label>
+                                        <textarea class="form-control" id="text_ar_{{ name }}" name="text_ar_{{ name }}" rows="2" dir="rtl">{{ section.text_ar or '' }}</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="text_en_{{ name }}" class="form-label">Text (EN)</label>
+                                        <textarea class="form-control" id="text_en_{{ name }}" name="text_en_{{ name }}" rows="2">{{ section.text_en or '' }}</textarea>
+                                    </div>
+
+                                    <!-- Extra for Limited Offer -->
+                                    {% if name == 'limited_offer' %}
+                                    <div class="mb-3">
+                                        <label for="end_date_{{ name }}" class="form-label">End Date</label>
+                                        <input type="datetime-local" class="form-control" id="end_date_{{ name }}" name="end_date_{{ name }}" value="{{ section.end_date.strftime('%Y-%m-%dT%H:%M') if section.end_date else '' }}">
+                                    </div>
+                                    {% endif %}
+
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="is_active_{{ name }}" name="is_active_{{ name }}" {% if section.is_active %}checked{% endif %}>
+                                        <label class="form-check-label" for="is_active_{{ name }}">
+                                            Active / Visible
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <!-- Image -->
+                                    <div class="mb-3">
+                                        <label for="image_{{ name }}" class="form-label">Image</label>
+                                        <input type="file" class="form-control" id="image_{{ name }}" name="image_{{ name }}" accept="image/*">
+                                        <div class="form-text">Recommended: 1920x800 for Hero, 800x800 for Offer.</div>
+                                    </div>
+                                    {% if section.image_url %}
+                                    <div class="mb-3">
+                                        <p>Current Image:</p>
+                                        <img src="{{ section.image_url }}" alt="Preview" class="img-fluid rounded shadow-sm">
+                                    </div>
+                                    {% endif %}
+                                </div>
                             </div>
-                            {% endif %}
-                        </div>
-                    </div>
 
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-gold px-5 rounded-pill fw-bold">Save Changes</button>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-gold">Save {{ name | replace('_', ' ') }}</button>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>

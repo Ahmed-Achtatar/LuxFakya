@@ -19,6 +19,12 @@ MISSING_COLUMNS = {
     ],
     'product_pricing': [
         ('display_unit', "VARCHAR(20) DEFAULT 'Kg'")
+    ],
+    'user': [
+        ('can_manage_orders', "BOOLEAN DEFAULT FALSE"),
+        ('can_manage_users', "BOOLEAN DEFAULT FALSE"),
+        ('can_manage_products', "BOOLEAN DEFAULT FALSE"),
+        ('can_manage_content', "BOOLEAN DEFAULT FALSE")
     ]
 }
 

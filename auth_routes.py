@@ -20,6 +20,18 @@ def login():
 
         if user and user.check_password(password):
             login_user(user)
+
+            # Log Login Success
+            from models import UserLog
+            log = UserLog(
+                user_id=user.id,
+                action='Login Successful',
+                ip_address=request.remote_addr,
+                details=f"User {user.username} logged in."
+            )
+            db.session.add(log)
+            db.session.commit()
+
             flash('Logged in successfully.', 'success')
 
             next_page = request.args.get('next')
@@ -30,6 +42,17 @@ def login():
                 return redirect(url_for('admin.dashboard'))
             return redirect(url_for('main.index'))
         else:
+            # Log Login Failure
+            from models import UserLog
+            log = UserLog(
+                user_id=None,
+                action='Login Failed',
+                ip_address=request.remote_addr,
+                details=f"Failed login attempt for username/email: {username_or_email}"
+            )
+            db.session.add(log)
+            db.session.commit()
+
             flash('Invalid username/email or password.', 'danger')
 
     return render_template('auth/login.html')
@@ -100,6 +123,15 @@ def profile():
                 return redirect(url_for('auth.profile'))
 
         current_user.email = email
+
+        # Check username uniqueness if changed
+        username = request.form.get('username')
+        if username and username != current_user.username:
+             if User.query.filter_by(username=username).first():
+                 flash('Username already in use.', 'danger')
+                 return redirect(url_for('auth.profile'))
+             current_user.username = username
+
         current_user.full_name = full_name
         current_user.phone = phone
         current_user.address = address
@@ -110,3 +142,16 @@ def profile():
         return redirect(url_for('auth.profile'))
 
     return render_template('auth/profile.html')
+
+@auth_bp.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        # Dummy flow
+        flash(f'If an account exists for {email}, a password reset link has been sent.', 'info')
+        return redirect(url_for('auth.login'))
+
+    return render_template('auth/forgot_password.html')

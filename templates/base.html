@@ -29,18 +29,35 @@
 
     {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <div class="site-wrapper d-flex flex-column min-vh-100">
-        <nav class="navbar navbar-expand-lg navbar-dark fixed-top {% if request.endpoint == 'main.index' %}navbar-transparent{% else %}bg-dark-scrolled{% endif %} transition-all" id="mainNavbar">
-            <div class="container-fluid px-lg-5 position-relative">
-                <!-- Mobile Toggle (Start) -->
-                <button class="d-lg-none btn border-0 text-white p-0 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
-                    <i class="fas fa-bars fa-lg"></i>
-                </button>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Promo Banner -->
+    <div class="fixed-top bg-gold text-white text-center py-2 small fw-bold" style="z-index: 1060; height: 35px;">
+        {% if remaining_amount <= 0 %}
+            <i class="fas fa-truck me-2"></i> {{ get_text('promo_free_shipping') }}
+        {% else %}
+            <i class="fas fa-truck me-2"></i> {{ get_text('promo_add_more').replace('{amount}', "%.2f"|format(remaining_amount)) }}
+        {% endif %}
+    </div>
 
-                <!-- Mobile Logo (Center) -->
-                <a class="navbar-brand d-lg-none mx-auto" href="{{ url_for('main.index') }}">
-                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="LuxFakya" style="height: 110px; width: auto;">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top {% if request.endpoint == 'main.index' %}navbar-transparent{% else %}bg-dark-scrolled{% endif %} transition-all" id="mainNavbar" style="top: 35px;">
+        <div class="container-fluid px-lg-5 position-relative">
+            <!-- Mobile Toggle (Start) -->
+            <button class="d-lg-none btn border-0 text-white p-0 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
+                <i class="fas fa-bars fa-lg"></i>
+            </button>
+
+            <!-- Mobile Logo (Center) -->
+            <a class="navbar-brand d-lg-none mx-auto" href="{{ url_for('main.index') }}">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="LuxFakya" style="height: 110px; width: auto;">
+            </a>
+
+            <!-- Mobile Icons (End) -->
+             <div class="d-flex d-lg-none align-items-center gap-3">
+                 <a class="position-relative text-white" href="{{ url_for('main.cart') }}">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gold {% if not session.get('cart') %}d-none{% endif %}" style="font-size: 0.5rem;">
+                        {{ session.get('cart')|length if session.get('cart') else 0 }}
+                    </span>
                 </a>
 
                 <!-- Mobile Icons (End) -->
@@ -88,39 +105,20 @@
                                 <li><a class="dropdown-item" href="{{ url_for('main.set_lang', lang_code='fr') }}">FR</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('main.set_lang', lang_code='ar') }}">AR</a></li>
                             </ul>
-                        </li>
-                        <li class="nav-item">
-                            {% if current_user.is_authenticated %}
-                             <div class="dropdown">
-                                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-user"></i>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                     {% if current_user.role == 'admin' %}
-                                     <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
-                                     {% else %}
-                                     <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profile</a></li>
-                                     {% endif %}
-                                     <li><hr class="dropdown-divider"></li>
-                                     <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">{{ get_text('logout') }}</a></li>
-                                </ul>
-                            </div>
-                            {% else %}
-                            <a class="nav-link" href="{{ url_for('auth.login') }}"><i class="fas fa-user"></i></a>
-                            {% endif %}
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link position-relative" href="{{ url_for('main.cart') }}">
-                                <i class="fas fa-shopping-bag"></i>
-                                {% if session.get('cart') %}
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gold" style="font-size: 0.6rem;">
-                                    {{ session.get('cart')|length }}
-                                </span>
-                                {% endif %}
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                        </div>
+                        {% else %}
+                        <a class="nav-link" href="{{ url_for('auth.login') }}"><i class="fas fa-user"></i></a>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{{ url_for('main.cart') }}">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gold {% if not session.get('cart') %}d-none{% endif %}" style="font-size: 0.6rem;">
+                                {{ session.get('cart')|length if session.get('cart') else 0 }}
+                            </span>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </nav>
 
@@ -245,11 +243,9 @@
         </a>
         <a href="{{ url_for('main.cart') }}" class="widget-btn cart-btn shadow-lg d-flex align-items-center justify-content-center text-white text-decoration-none position-relative">
             <i class="fas fa-shopping-bag fa-lg"></i>
-            {% if session.get('cart') %}
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light" style="font-size: 0.7rem;">
-                {{ session.get('cart')|length }}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light {% if not session.get('cart') %}d-none{% endif %}" style="font-size: 0.7rem;">
+                {{ session.get('cart')|length if session.get('cart') else 0 }}
             </span>
-            {% endif %}
         </a>
     </div>
 
@@ -289,6 +285,78 @@
                 {% endif %}
             }
         });
+
+        // AJAX Cart Handling
+        document.addEventListener('submit', function(e) {
+            if (e.target.tagName === 'FORM' && e.target.action.includes('/cart/add/')) {
+                e.preventDefault();
+                const form = e.target;
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+
+                // Disable button
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Update Cart Badge
+                        const cartBadges = document.querySelectorAll('.fa-shopping-bag + .badge');
+                        cartBadges.forEach(badge => {
+                            badge.textContent = data.cart_count;
+                            badge.classList.remove('d-none');
+                        });
+
+                        // Badge updated via class removal
+
+                        showToast(data.message, 'success');
+                    } else {
+                        showToast('Error adding to cart', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('An error occurred', 'danger');
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                });
+            }
+        });
+
+        function showToast(message, type = 'success') {
+            const toastContainer = document.querySelector('.toast-container');
+            const toastHtml = `
+                <div class="toast align-items-center text-white bg-${type === 'error' ? 'danger' : type} border-0 shadow-lg mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body fs-6">
+                            ${type === 'success' ? '<i class="fas fa-check-circle me-2"></i>' : ''}
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            const newToastEl = toastContainer.lastElementChild;
+            const toast = new bootstrap.Toast(newToastEl);
+            toast.show();
+
+            // Remove after hidden
+            newToastEl.addEventListener('hidden.bs.toast', () => {
+                newToastEl.remove();
+            });
+        }
     </script>
 </body>
 </html>

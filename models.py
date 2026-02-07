@@ -29,6 +29,12 @@ class User(UserMixin, db.Model):
     address = db.Column(db.String(255), nullable=True)
     city = db.Column(db.String(100), nullable=True)
 
+    # Granular Permissions (For Moderators/Admins)
+    can_manage_orders = db.Column(db.Boolean, default=False)
+    can_manage_users = db.Column(db.Boolean, default=False)
+    can_manage_products = db.Column(db.Boolean, default=False)
+    can_manage_content = db.Column(db.Boolean, default=False)
+
     orders = db.relationship('Order', backref='user', lazy=True)
 
     def set_password(self, password):
@@ -36,6 +42,16 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+class UserLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    action = db.Column(db.String(100), nullable=False)
+    details = db.Column(db.Text, nullable=True)
+    ip_address = db.Column(db.String(50), nullable=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('logs', lazy=True))
 
 class DbImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
