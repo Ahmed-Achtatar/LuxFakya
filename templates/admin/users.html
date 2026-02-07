@@ -5,7 +5,9 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <div class="card border-0 shadow-sm rounded-4 mt-4">
+        <!-- Staff Section -->
+        <h4 class="mb-3">Staff (Admin & Moderators)</h4>
+        <div class="card border-0 shadow-sm rounded-4 mb-5">
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0 rounded-3 overflow-hidden">
@@ -19,7 +21,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for user in users %}
+                            {% for user in staff_users %}
                             <tr>
                                 <td class="ps-4 fw-bold text-muted">#{{ user.id }}</td>
                                 <td class="fw-bold">{{ user.username }}</td>
@@ -28,11 +30,50 @@
                                     {% if user.role == 'admin' %}
                                     <span class="badge bg-danger">{{ translations[current_lang]['role_admin'] }}</span>
                                     {% else %}
-                                    <span class="badge bg-info text-dark">{{ translations[current_lang]['role_customer'] }}</span>
+                                    <span class="badge bg-primary">Moderator</span>
                                     {% endif %}
                                 </td>
                                 <td class="text-end pe-4">
-                                    <a href="{{ url_for('admin.user_detail', user_id=user.id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">{{ translations[current_lang]['btn_view'] }}</a>
+                                    <a href="{{ url_for('admin.user_detail', user_id=user.id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">{{ translations[current_lang]['btn_view'] }} / Edit</a>
+                                </td>
+                            </tr>
+                            {% else %}
+                             <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">No staff found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clients Section -->
+        <h4 class="mb-3">Clients</h4>
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 rounded-3 overflow-hidden">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 py-3 border-bottom-0">{{ translations[current_lang]['th_id'] }}</th>
+                                <th class="py-3 border-bottom-0">{{ translations[current_lang]['th_username'] }}</th>
+                                <th class="py-3 border-bottom-0">{{ translations[current_lang]['email'] }}</th>
+                                <th class="py-3 border-bottom-0">{{ translations[current_lang]['th_role'] }}</th>
+                                <th class="py-3 text-end pe-4 border-bottom-0">{{ translations[current_lang]['th_actions'] }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in client_users %}
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">#{{ user.id }}</td>
+                                <td class="fw-bold">{{ user.username }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    <span class="badge bg-info text-dark">{{ translations[current_lang]['role_customer'] }}</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a href="{{ url_for('admin.user_detail', user_id=user.id) }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">{{ translations[current_lang]['btn_view'] }}</a>
                                 </td>
                             </tr>
                             {% else %}
