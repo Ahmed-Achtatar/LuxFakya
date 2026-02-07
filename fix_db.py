@@ -181,8 +181,11 @@ def check_and_add_columns_postgres(conn, cursor):
     print("Checking for missing columns (PostgreSQL)...")
 
     for table, columns in MISSING_COLUMNS.items():
+        # Handle reserved words
+        safe_table = f'"{table}"' if table in ['user', 'order'] else table
+
         # Check if table exists
-        cursor.execute("SELECT to_regclass(%s)", (table,))
+        cursor.execute("SELECT to_regclass(%s)", (safe_table,))
         if not cursor.fetchone()[0]:
              print(f"Table '{table}' does not exist. Skipping.")
              continue
@@ -202,7 +205,7 @@ def check_and_add_columns_postgres(conn, cursor):
                 # "VARCHAR(50) DEFAULT 'pcs' NOT NULL"
                 # PostgreSQL syntax is similar but strict
                 try:
-                    cursor.execute(f"ALTER TABLE {table} ADD COLUMN {col_name} {col_def}")
+                    cursor.execute(f"ALTER TABLE {safe_table} ADD COLUMN {col_name} {col_def}")
                     print(f"Column '{col_name}' added successfully.")
                 except Exception as e:
                      print(f"Error adding column {col_name}: {e}")
@@ -217,7 +220,7 @@ def ensure_foreign_keys_postgres(conn, cursor):
     expected_fks = {
         'product': [('category_id', 'category', 'id')],
         'product_pricing': [('product_id', 'product', 'id')],
-        'order': [('user_id', 'user', 'id')],
+        'order': [('user_id', '"user"', 'id')],
         'order_item': [
              ('order_id', '"order"', 'id'),
              ('product_id', 'product', 'id')
@@ -225,8 +228,11 @@ def ensure_foreign_keys_postgres(conn, cursor):
     }
 
     for table, fks in expected_fks.items():
+        # Handle reserved words
+        safe_table = f'"{table}"' if table in ['user', 'order'] else table
+
         # Check if table exists
-        cursor.execute("SELECT to_regclass(%s)", (table if table != 'order' else '"order"',))
+        cursor.execute("SELECT to_regclass(%s)", (safe_table,))
         if not cursor.fetchone()[0]:
              continue
 
@@ -248,7 +254,7 @@ def ensure_foreign_keys_postgres(conn, cursor):
         existing_constraints = cursor.fetchall() # list of (col, fk_table, fk_col)
 
         for col, target_table, target_col in fks:
-            # Handle "order" quoting in logic
+            # Handle "order"/"user" quoting in logic
             target_table_clean = target_table.replace('"', '')
 
             found = False
@@ -260,7 +266,7 @@ def ensure_foreign_keys_postgres(conn, cursor):
             if not found:
                 print(f"Missing FK on {table}.{col} -> {target_table}.{target_col}. Adding...")
                 constraint_name = f"fk_{table}_{col}"
-                safe_table = f'"{table}"' if table == 'order' else table
+                # safe_table is already defined above
 
                 alter_sql = f"""
                     ALTER TABLE {safe_table}
