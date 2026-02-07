@@ -92,18 +92,20 @@
                                                 {% for pricing in product.pricings %}
                                                 <option value="{{ pricing.quantity }}" data-price="{{ pricing.price }}" {% if loop.first %}selected{% endif %}>
                                                     {% if pricing.display_unit == 'g' %}
-                                                        {{ (pricing.quantity * 1000)|int }}g
+                                                {{ (pricing.quantity * 1000)|int }}{{ get_text('unit_g') }}
                                                     {% elif pricing.display_unit == 'Kg' %}
-                                                        {% if pricing.quantity == 1.0 %}1kg{% else %}{{ pricing.quantity }}kg{% endif %}
+                                                {% if pricing.quantity == 1.0 %}1{{ get_text('unit_kg') }}{% else %}{{ pricing.quantity }}{{ get_text('unit_kg') }}{% endif %}
                                                     {% else %}
-                                                        {{ pricing.quantity }} {{ pricing.display_unit }}
+                                                {{ pricing.quantity }} {{ get_text('unit_' ~ pricing.display_unit|lower) }}
                                                     {% endif %}
                                                 </option>
                                                 {% endfor %}
                                             {% else %}
-                                                <option value="1" data-price="{{ product.price }}" selected>1 {{ product.unit }}</option>
-                                                <option value="2" data-price="{{ product.price * 2 }}">2 {{ product.unit }}</option>
-                                                <option value="3" data-price="{{ product.price * 3 }}">3 {{ product.unit }}</option>
+                                        {% set u_text = get_text('unit_' ~ product.unit|lower) %}
+                                        {% set u_disp = u_text if u_text != 'unit_' ~ product.unit|lower else product.unit %}
+                                        <option value="1" data-price="{{ product.price }}" selected>1 {{ u_disp }}</option>
+                                        <option value="2" data-price="{{ product.price * 2 }}">2 {{ u_disp }}</option>
+                                        <option value="3" data-price="{{ product.price * 3 }}">3 {{ u_disp }}</option>
                                             {% endif %}
                                         </select>
                                         <button type="submit" class="btn btn-gold btn-sm rounded-pill w-100 fw-bold">

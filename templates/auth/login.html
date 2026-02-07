@@ -16,7 +16,7 @@
                         <label for="password" class="form-label">{{ translations[current_lang]['password'] }}</label>
                         <input type="password" class="form-control" id="password" name="password" required placeholder="{{ translations[current_lang]['enter_password'] }}">
                         <div class="text-end mt-1">
-                            <a href="{{ url_for('auth.forgot_password') }}" class="small text-muted text-decoration-none">Forgot Password?</a>
+                            <a href="{{ url_for('auth.forgot_password') }}" class="small text-muted text-decoration-none">{{ get_text('forgot_password_q') }}</a>
                         </div>
                     </div>
                     <div class="d-grid">

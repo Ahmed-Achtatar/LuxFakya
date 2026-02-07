@@ -99,7 +99,7 @@
                         <li class="nav-item">
                             {% if current_user.is_authenticated %}
                                 {% if current_user.is_staff %}
-                                <a class="nav-link" href="{{ url_for('admin.dashboard') }}" title="Dashboard"><i class="fas fa-tachometer-alt"></i></a>
+                                <a class="nav-link" href="{{ url_for('admin.dashboard') }}" title="{{ get_text('dashboard') }}"><i class="fas fa-tachometer-alt"></i></a>
                                 {% else %}
                                 <a class="nav-link" href="{{ url_for('auth.profile') }}"><i class="fas fa-user"></i></a>
                                 {% endif %}
@@ -152,7 +152,7 @@
                             <li class="mb-2"><a href="https://maps.app.goo.gl/nmxA4nULtmBbrmPS6" target="_blank" class="text-reset text-decoration-none"><i class="fas fa-map-marker-alt me-2"></i>{{ get_text('address_val') }}</a></li>
                             <li class="mb-2"><a href="https://maps.app.goo.gl/nmxA4nULtmBbrmPS6" target="_blank" class="text-gold fw-bold"><i class="fas fa-map me-2"></i>{{ get_text('location_label') }}</a></li>
                             <li><a href="tel:+212676459945"><i class="fas fa-phone me-2"></i><span class="force-ltr">+212 676 459 945</span></a></li>
-                            <li><a href="https://wa.me/212676459945" target="_blank"><i class="fab fa-whatsapp me-2"></i>WhatsApp</a></li>
+                            <li><a href="https://wa.me/212676459945" target="_blank"><i class="fab fa-whatsapp me-2"></i>{{ get_text('whatsapp') }}</a></li>
                             <li><a href="mailto:luxfakya@gmail.com"><i class="fas fa-envelope me-2"></i>luxfakya@gmail.com</a></li>
                         </ul>
                     </div>
@@ -173,7 +173,7 @@
                     </button>
                 </div>
             </form>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="{{ get_text('btn_close') }}"></button>
         </div>
         <div class="offcanvas-body">
             <div class="d-flex justify-content-end mb-3">
@@ -205,9 +205,9 @@
                 <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light w-100 rounded-pill">{{ get_text('login_register') }}</a>
                 {% else %}
                     {% if current_user.is_staff %}
-                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-light w-100 rounded-pill">Dashboard</a>
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-light w-100 rounded-pill">{{ get_text('dashboard') }}</a>
                     {% else %}
-                    <a href="{{ url_for('auth.profile') }}" class="btn btn-outline-light w-100 rounded-pill">Profile</a>
+                    <a href="{{ url_for('auth.profile') }}" class="btn btn-outline-light w-100 rounded-pill">{{ get_text('my_profile') }}</a>
                     {% endif %}
                 <a href="{{ url_for('auth.logout') }}" class="btn btn-gold w-100 rounded-pill">{{ get_text('logout') }}</a>
                 {% endif %}
@@ -226,7 +226,7 @@
                             {% if category == 'success' %}<i class="fas fa-check-circle me-2"></i>{% endif %}
                             {{ message }}
                         </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="{{ get_text('btn_close') }}"></button>
                     </div>
                 </div>
             {% endfor %}
@@ -318,12 +318,12 @@
 
                         showToast(data.message, 'success');
                     } else {
-                        showToast('Error adding to cart', 'danger');
+                        showToast('{{ get_text("error_adding_cart") }}', 'danger');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showToast('An error occurred', 'danger');
+                    showToast('{{ get_text("error_occurred") }}', 'danger');
                 })
                 .finally(() => {
                     submitBtn.disabled = false;
@@ -341,7 +341,7 @@
                             ${type === 'success' ? '<i class="fas fa-check-circle me-2"></i>' : ''}
                             ${message}
                         </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="{{ get_text('btn_close') }}"></button>
                     </div>
                 </div>
             `;
