@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection, DbImage
+from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection, DbImage, UserLog
 import os
 import uuid
 import io
@@ -67,14 +67,15 @@ def restrict_access():
     if not current_user.is_authenticated:
         return redirect(url_for('auth.login', next=request.url))
 
-    if getattr(current_user, 'role', 'customer') != 'admin':
+    role = getattr(current_user, 'role', 'customer')
+    if role not in ['admin', 'moderator']:
         flash('Access denied. Admin privileges required.', 'danger')
         return redirect(url_for('main.index'))
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        if getattr(current_user, 'role', 'customer') == 'admin':
+        if getattr(current_user, 'role', 'customer') in ['admin', 'moderator']:
             return redirect(url_for('admin.dashboard'))
         flash('You are already logged in as a customer.', 'info')
         return redirect(url_for('main.index'))
@@ -85,7 +86,7 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and user.check_password(password):
-            if user.role != 'admin':
+            if user.role not in ['admin', 'moderator']:
                 flash('Access denied. Not an admin account.', 'danger')
             else:
                 login_user(user)
@@ -106,6 +107,47 @@ def list_users():
 def user_detail(user_id):
     user = User.query.get_or_404(user_id)
     return render_template('admin/user_detail.html', user=user)
+
+@admin_bp.route('/users/<int:user_id>/update_role', methods=['POST'])
+@login_required
+def update_user_role(user_id):
+    if current_user.role != 'admin':
+        flash('Only admins can change user roles.', 'danger')
+        return redirect(url_for('admin.user_detail', user_id=user_id))
+
+    user = User.query.get_or_404(user_id)
+    if user.id == current_user.id:
+        flash('You cannot change your own role.', 'danger')
+        return redirect(url_for('admin.user_detail', user_id=user_id))
+
+    role = request.form.get('role')
+    if role in ['admin', 'moderator', 'customer']:
+        user.role = role
+
+    # Permissions
+    user.can_manage_orders = True if request.form.get('can_manage_orders') else False
+    user.can_manage_products = True if request.form.get('can_manage_products') else False
+    user.can_manage_users = True if request.form.get('can_manage_users') else False
+    user.can_manage_content = True if request.form.get('can_manage_content') else False
+
+    db.session.commit()
+    flash(f'User {user.username} updated successfully.', 'success')
+    return redirect(url_for('admin.user_detail', user_id=user_id))
+
+@admin_bp.route('/logs')
+@login_required
+def logs():
+    # Only allow admin (or users with specific permission if we implement that fully)
+    if getattr(current_user, 'role', 'customer') != 'admin' and not getattr(current_user, 'can_manage_users', False):
+         flash('Access denied.', 'danger')
+         return redirect(url_for('admin.dashboard'))
+
+    page = request.args.get('page', 1, type=int)
+    # Use pagination if possible, else list all limit 100
+    logs_query = UserLog.query.order_by(UserLog.timestamp.desc())
+    logs = logs_query.limit(100).all()
+
+    return render_template('admin/logs.html', logs=logs)
 
 @admin_bp.route('/logout')
 @login_required
@@ -180,11 +222,29 @@ def order_detail(order_id):
 @admin_bp.route('/orders/<int:order_id>/confirm', methods=['POST'])
 @login_required
 def confirm_order(order_id):
+    if current_user.role != 'admin' and not current_user.can_manage_orders:
+        flash('Permission denied.', 'danger')
+        return redirect(url_for('admin.dashboard'))
+
     order = Order.query.get_or_404(order_id)
     if order.status != 'Completed':
         order.status = 'Completed'
         db.session.commit()
         flash('Order confirmed successfully.', 'success')
+    return redirect(url_for('admin.order_detail', order_id=order.id))
+
+@admin_bp.route('/orders/<int:order_id>/cancel', methods=['POST'])
+@login_required
+def cancel_order(order_id):
+    if current_user.role != 'admin' and not current_user.can_manage_orders:
+        flash('Permission denied.', 'danger')
+        return redirect(url_for('admin.dashboard'))
+
+    order = Order.query.get_or_404(order_id)
+    if order.status != 'Cancelled':
+        order.status = 'Cancelled'
+        db.session.commit()
+        flash('Order cancelled.', 'warning')
     return redirect(url_for('admin.order_detail', order_id=order.id))
 
 @admin_bp.route('/categories')
@@ -196,6 +256,10 @@ def categories():
 @admin_bp.route('/categories/add', methods=['GET', 'POST'])
 @login_required
 def add_category():
+    if current_user.role != 'admin' and not current_user.can_manage_products:
+        flash('Permission denied.', 'danger')
+        return redirect(url_for('admin.categories'))
+
     if request.method == 'POST':
         name = request.form.get('name')
         image_url = None
@@ -218,6 +282,10 @@ def add_category():
 @admin_bp.route('/categories/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_category(id):
+    if current_user.role != 'admin' and not current_user.can_manage_products:
+        flash('Permission denied.', 'danger')
+        return redirect(url_for('admin.categories'))
+
     category = Category.query.get_or_404(id)
     if request.method == 'POST':
         new_name = request.form.get('name')
@@ -242,6 +310,10 @@ def edit_category(id):
 @admin_bp.route('/categories/delete/<int:id>', methods=['POST'])
 @login_required
 def delete_category(id):
+    if current_user.role != 'admin' and not current_user.can_manage_products:
+        flash('Permission denied.', 'danger')
+        return redirect(url_for('admin.categories'))
+
     category = Category.query.get_or_404(id)
     # Check if products exist in this category
     if Product.query.filter_by(category_id=category.id).first():
@@ -255,6 +327,10 @@ def delete_category(id):
 @admin_bp.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_product():
+    if current_user.role != 'admin' and not current_user.can_manage_products:
+        flash('Permission denied.', 'danger')
+        return redirect(url_for('admin.dashboard'))
+
     categories = db.session.execute(db.select(Category)).scalars().all()
     if request.method == 'POST':
         name = request.form.get('name')
@@ -326,6 +402,10 @@ def add_product():
 @admin_bp.route('/edit/<int:product_id>', methods=['GET', 'POST'])
 @login_required
 def edit_product(product_id):
+    if current_user.role != 'admin' and not current_user.can_manage_products:
+        flash('Permission denied.', 'danger')
+        return redirect(url_for('admin.dashboard'))
+
     product = Product.query.get_or_404(product_id)
     categories = db.session.execute(db.select(Category)).scalars().all()
 
@@ -381,6 +461,10 @@ def edit_product(product_id):
 @admin_bp.route('/delete/<int:product_id>', methods=['POST'])
 @login_required
 def delete_product(product_id):
+    if current_user.role != 'admin' and not current_user.can_manage_products:
+        flash('Permission denied.', 'danger')
+        return redirect(url_for('admin.dashboard'))
+
     product = Product.query.get_or_404(product_id)
     db.session.delete(product)
     db.session.commit()
@@ -390,6 +474,9 @@ def delete_product(product_id):
 @admin_bp.route('/product/<int:product_id>/toggle_hidden', methods=['POST'])
 @login_required
 def toggle_hidden(product_id):
+    if current_user.role != 'admin' and not current_user.can_manage_products:
+        flash('Permission denied.', 'danger')
+        return redirect(url_for('admin.dashboard'))
     product = Product.query.get_or_404(product_id)
     product.is_hidden = not product.is_hidden
     db.session.commit()
@@ -400,6 +487,9 @@ def toggle_hidden(product_id):
 @admin_bp.route('/product/<int:product_id>/toggle_stock', methods=['POST'])
 @login_required
 def toggle_stock(product_id):
+    if current_user.role != 'admin' and not current_user.can_manage_products:
+        flash('Permission denied.', 'danger')
+        return redirect(url_for('admin.dashboard'))
     product = Product.query.get_or_404(product_id)
     product.is_out_of_stock = not product.is_out_of_stock
     db.session.commit()
@@ -410,38 +500,55 @@ def toggle_stock(product_id):
 @admin_bp.route('/settings/home', methods=['GET', 'POST'])
 @login_required
 def home_settings():
-    section = HomeSection.query.filter_by(section_name='limited_offer').first()
+    if current_user.role != 'admin' and not current_user.can_manage_content:
+        flash('Permission denied.', 'danger')
+        return redirect(url_for('admin.dashboard'))
 
-    # Create default if missing (safety check)
-    if not section:
-        section = HomeSection(section_name='limited_offer')
-        db.session.add(section)
-        db.session.commit()
+    sections = {}
+    section_names = ['limited_offer', 'hero', 'about', 'promo_banner']
+
+    # Fetch all, create if missing
+    for name in section_names:
+        s = HomeSection.query.filter_by(section_name=name).first()
+        if not s:
+            s = HomeSection(section_name=name)
+            db.session.add(s)
+            db.session.commit()
+        sections[name] = s
 
     if request.method == 'POST':
-        section.title_fr = request.form.get('title_fr')
-        section.title_ar = request.form.get('title_ar')
-        section.title_en = request.form.get('title_en')
-        section.text_fr = request.form.get('text_fr')
-        section.text_ar = request.form.get('text_ar')
-        section.text_en = request.form.get('text_en')
+        target_section = request.form.get('section_name')
+        if target_section and target_section in sections:
+            s = sections[target_section]
 
-        # Date handling
-        end_date_str = request.form.get('end_date')
-        if end_date_str:
-            try:
-                section.end_date = datetime.strptime(end_date_str, '%Y-%m-%dT%H:%M')
-            except ValueError:
-                pass # Keep old date or handle error
+            s.title_fr = request.form.get(f'{target_section}_title_fr')
+            s.title_ar = request.form.get(f'{target_section}_title_ar')
+            s.title_en = request.form.get(f'{target_section}_title_en')
 
-        # Image handling
-        if 'image' in request.files:
-            file = request.files['image']
-            if file and allowed_file(file.filename):
-                section.image_url = optimize_and_save_image(file)
+            s.text_fr = request.form.get(f'{target_section}_text_fr')
+            s.text_ar = request.form.get(f'{target_section}_text_ar')
+            s.text_en = request.form.get(f'{target_section}_text_en')
 
-        db.session.commit()
-        flash('Home settings updated successfully', 'success')
-        return redirect(url_for('admin.home_settings'))
+            # Date handling (only for limited_offer generally, but generic is fine)
+            end_date_str = request.form.get(f'{target_section}_end_date')
+            if end_date_str:
+                try:
+                    s.end_date = datetime.strptime(end_date_str, '%Y-%m-%dT%H:%M')
+                except ValueError:
+                    s.end_date = None # Clear if empty/invalid
+            elif target_section == 'limited_offer':
+                # If explicitly cleared for limited offer
+                s.end_date = None
 
-    return render_template('admin/home_settings.html', section=section)
+            # Image handling
+            file_key = f'{target_section}_image'
+            if file_key in request.files:
+                file = request.files[file_key]
+                if file and allowed_file(file.filename):
+                    s.image_url = optimize_and_save_image(file)
+
+            db.session.commit()
+            flash(f'{target_section.replace("_", " ").title()} settings updated successfully', 'success')
+            return redirect(url_for('admin.home_settings'))
+
+    return render_template('admin/home_settings.html', sections=sections)

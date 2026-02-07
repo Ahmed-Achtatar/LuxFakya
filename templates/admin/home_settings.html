@@ -3,74 +3,206 @@
 {% block title %}Home Settings{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
+<div class="row my-4">
     <div class="col-12">
-        <h3 class="fs-4 mb-3">Manage "Limited Offer" Section</h3>
-        <p class="text-muted">Customize the promotional section on the homepage.</p>
-    </div>
-</div>
+        <h2 class="mb-4">Homepage Settings</h2>
 
-<div class="row">
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body p-4">
-                <form method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom-0">
+                <ul class="nav nav-tabs card-header-tabs" id="homeSettingsTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="hero-tab" data-bs-toggle="tab" data-bs-target="#hero" type="button" role="tab" aria-controls="hero" aria-selected="true">Hero Section</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="limited-tab" data-bs-toggle="tab" data-bs-target="#limited" type="button" role="tab" aria-controls="limited" aria-selected="false">Limited Offer</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="false">About Section</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="promo-tab" data-bs-toggle="tab" data-bs-target="#promo" type="button" role="tab" aria-controls="promo" aria-selected="false">Promo Banner</button>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content" id="homeSettingsTabContent">
 
-                    <h5 class="fw-bold mb-3 text-gold">Titles</h5>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            <label class="form-label">French Title</label>
-                            <input type="text" class="form-control" name="title_fr" value="{{ section.title_fr or '' }}">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Arabic Title</label>
-                            <input type="text" class="form-control" name="title_ar" value="{{ section.title_ar or '' }}" dir="rtl">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">English Title</label>
-                            <input type="text" class="form-control" name="title_en" value="{{ section.title_en or '' }}">
-                        </div>
-                    </div>
+                    <!-- HERO SECTION -->
+                    <div class="tab-pane fade show active" id="hero" role="tabpanel" aria-labelledby="hero-tab">
+                        <form method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="section_name" value="hero">
 
-                    <h5 class="fw-bold mb-3 text-gold">Description Text</h5>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            <label class="form-label">French Text</label>
-                            <textarea class="form-control" name="text_fr" rows="4">{{ section.text_fr or '' }}</textarea>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Arabic Text</label>
-                            <textarea class="form-control" name="text_ar" rows="4" dir="rtl">{{ section.text_ar or '' }}</textarea>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">English Text</label>
-                            <textarea class="form-control" name="text_en" rows="4">{{ section.text_en or '' }}</textarea>
-                        </div>
-                    </div>
-
-                    <h5 class="fw-bold mb-3 text-gold">Settings</h5>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <label class="form-label">Countdown End Date</label>
-                            <input type="datetime-local" class="form-control" name="end_date"
-                                   value="{{ section.end_date.strftime('%Y-%m-%dT%H:%M') if section.end_date else '' }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Section Image</label>
-                            <input type="file" class="form-control" name="image">
-                            {% if section.image_url %}
-                            <div class="mt-2">
-                                <img src="{{ section.image_url }}" alt="Current Image" class="img-thumbnail" style="height: 100px;">
+                            <h5 class="mb-3">Hero Configuration</h5>
+                            <div class="mb-3">
+                                <label class="form-label">Title (FR)</label>
+                                <input type="text" class="form-control" name="hero_title_fr" value="{{ sections['hero'].title_fr or '' }}">
                             </div>
-                            {% endif %}
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label">Title (AR)</label>
+                                <input type="text" class="form-control" name="hero_title_ar" value="{{ sections['hero'].title_ar or '' }}" dir="rtl">
+                            </div>
+                             <div class="mb-3">
+                                <label class="form-label">Subtitle/Text (FR)</label>
+                                <textarea class="form-control" name="hero_text_fr" rows="2">{{ sections['hero'].text_fr or '' }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Subtitle/Text (AR)</label>
+                                <textarea class="form-control" name="hero_text_ar" rows="2" dir="rtl">{{ sections['hero'].text_ar or '' }}</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Hero Background Image</label>
+                                {% if sections['hero'].image_url %}
+                                <div class="mb-2">
+                                    <img src="{{ sections['hero'].image_url }}" alt="Hero" class="img-thumbnail" style="max-height: 150px;">
+                                </div>
+                                {% endif %}
+                                <input type="file" class="form-control" name="hero_image">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save Hero Settings</button>
+                        </form>
                     </div>
 
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-gold px-5 rounded-pill fw-bold">Save Changes</button>
+                    <!-- LIMITED OFFER -->
+                    <div class="tab-pane fade" id="limited" role="tabpanel" aria-labelledby="limited-tab">
+                        <form method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="section_name" value="limited_offer">
+
+                            <h5 class="mb-3">Limited Offer Configuration</h5>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                     <div class="mb-3">
+                                        <label class="form-label">Title (FR)</label>
+                                        <input type="text" class="form-control" name="limited_offer_title_fr" value="{{ sections['limited_offer'].title_fr or '' }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Text (FR)</label>
+                                        <textarea class="form-control" name="limited_offer_text_fr" rows="3">{{ sections['limited_offer'].text_fr or '' }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <div class="mb-3">
+                                        <label class="form-label">Title (AR)</label>
+                                        <input type="text" class="form-control" name="limited_offer_title_ar" value="{{ sections['limited_offer'].title_ar or '' }}" dir="rtl">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Text (AR)</label>
+                                        <textarea class="form-control" name="limited_offer_text_ar" rows="3" dir="rtl">{{ sections['limited_offer'].text_ar or '' }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Offer End Date</label>
+                                <input type="datetime-local" class="form-control" name="limited_offer_end_date"
+                                       value="{{ sections['limited_offer'].end_date.strftime('%Y-%m-%dT%H:%M') if sections['limited_offer'].end_date else '' }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Offer Image</label>
+                                {% if sections['limited_offer'].image_url %}
+                                <div class="mb-2">
+                                    <img src="{{ sections['limited_offer'].image_url }}" alt="Offer" class="img-thumbnail" style="max-height: 150px;">
+                                </div>
+                                {% endif %}
+                                <input type="file" class="form-control" name="limited_offer_image">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save Limited Offer</button>
+                        </form>
                     </div>
-                </form>
+
+                    <!-- ABOUT SECTION -->
+                    <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">
+                         <form method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="section_name" value="about">
+
+                            <h5 class="mb-3">About Section Configuration</h5>
+                             <div class="row">
+                                <div class="col-md-6">
+                                     <div class="mb-3">
+                                        <label class="form-label">Title (FR)</label>
+                                        <input type="text" class="form-control" name="about_title_fr" value="{{ sections['about'].title_fr or '' }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Text (FR)</label>
+                                        <textarea class="form-control" name="about_text_fr" rows="5">{{ sections['about'].text_fr or '' }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <div class="mb-3">
+                                        <label class="form-label">Title (AR)</label>
+                                        <input type="text" class="form-control" name="about_title_ar" value="{{ sections['about'].title_ar or '' }}" dir="rtl">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Text (AR)</label>
+                                        <textarea class="form-control" name="about_text_ar" rows="5" dir="rtl">{{ sections['about'].text_ar or '' }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">About Image</label>
+                                {% if sections['about'].image_url %}
+                                <div class="mb-2">
+                                    <img src="{{ sections['about'].image_url }}" alt="About" class="img-thumbnail" style="max-height: 150px;">
+                                </div>
+                                {% endif %}
+                                <input type="file" class="form-control" name="about_image">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save About Settings</button>
+                        </form>
+                    </div>
+
+                    <!-- PROMO BANNER -->
+                    <div class="tab-pane fade" id="promo" role="tabpanel" aria-labelledby="promo-tab">
+                         <form method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="section_name" value="promo_banner">
+
+                            <h5 class="mb-3">Free Shipping Banner</h5>
+                            <p class="text-muted small">Set the threshold amount and the message. Use <code>{remaining}</code> in the message as a placeholder for the remaining amount.</p>
+
+                             <div class="mb-3">
+                                <label class="form-label">Free Shipping Threshold (MAD)</label>
+                                <input type="number" step="0.01" class="form-control" name="promo_banner_text_en" value="{{ sections['promo_banner'].text_en or '500' }}" placeholder="e.g., 500">
+                                <div class="form-text">We use 'text_en' field to store the numeric threshold.</div>
+                            </div>
+
+                             <div class="row">
+                                <div class="col-md-6">
+                                     <div class="mb-3">
+                                        <label class="form-label">Banner Text (FR)</label>
+                                        <input type="text" class="form-control" name="promo_banner_title_fr" value="{{ sections['promo_banner'].title_fr or 'Livraison gratuite à partir de 500DH! Plus que {remaining} DH.' }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Success Text (FR) - When reached</label>
+                                         <input type="text" class="form-control" name="promo_banner_text_fr" value="{{ sections['promo_banner'].text_fr or 'Livraison Gratuite débloquée!' }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <div class="mb-3">
+                                        <label class="form-label">Banner Text (AR)</label>
+                                        <input type="text" class="form-control" name="promo_banner_title_ar" value="{{ sections['promo_banner'].title_ar or '' }}" dir="rtl">
+                                    </div>
+                                     <div class="mb-3">
+                                        <label class="form-label">Success Text (AR)</label>
+                                         <input type="text" class="form-control" name="promo_banner_text_ar" value="{{ sections['promo_banner'].text_ar or '' }}" dir="rtl">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save Banner Settings</button>
+                        </form>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
