@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection, DbImage, UserLog
+from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection, DbImage, UserLog, SiteSetting
 import os
 import uuid
 import io
@@ -239,7 +239,7 @@ def dashboard():
     categories = Category.query.all()
 
     # Statistics
-    total_orders = Order.query.count()
+    total_orders = Order.query.filter(Order.status != 'Cancelled').count()
     pending_orders = Order.query.filter_by(status='Pending').count()
     total_users = User.query.count()
     total_products = Product.query.count()
@@ -547,43 +547,58 @@ def home_settings():
             db.session.add(s)
         sections[name] = s
 
+    # Fetch Global Settings
+    free_shipping_setting = SiteSetting.query.filter_by(key='free_shipping_threshold').first()
+    free_shipping_threshold = free_shipping_setting.value if free_shipping_setting else '500'
+
     # Commit any new sections
     if db.session.dirty or db.session.new:
         db.session.commit()
 
     if request.method == 'POST':
-        section_name = request.form.get('section_name')
-        if section_name and section_name in sections:
-            section = sections[section_name]
+        # Update All Sections
+        for name, section in sections.items():
+            section.title_fr = request.form.get(f'title_fr_{name}')
+            section.title_ar = request.form.get(f'title_ar_{name}')
+            section.title_en = request.form.get(f'title_en_{name}')
 
-            section.title_fr = request.form.get(f'title_fr_{section_name}')
-            section.title_ar = request.form.get(f'title_ar_{section_name}')
-            section.title_en = request.form.get(f'title_en_{section_name}')
-
-            section.text_fr = request.form.get(f'text_fr_{section_name}')
-            section.text_ar = request.form.get(f'text_ar_{section_name}')
-            section.text_en = request.form.get(f'text_en_{section_name}')
+            section.text_fr = request.form.get(f'text_fr_{name}')
+            section.text_ar = request.form.get(f'text_ar_{name}')
+            section.text_en = request.form.get(f'text_en_{name}')
 
             # Date handling (only for limited_offer really, but generic is fine)
-            end_date_str = request.form.get(f'end_date_{section_name}')
+            end_date_str = request.form.get(f'end_date_{name}')
             if end_date_str:
                 try:
                     section.end_date = datetime.strptime(end_date_str, '%Y-%m-%dT%H:%M')
                 except ValueError:
                     pass
+            else:
+                 # If empty string and previously set, clear it? Or just ignore?
+                 # Standard behavior for datetime-local input is empty string if cleared
+                 if name == 'limited_offer':
+                     pass # Keeping logic simple, maybe allow clearing?
 
             # Active toggle
-            section.is_active = True if request.form.get(f'is_active_{section_name}') else False
+            section.is_active = True if request.form.get(f'is_active_{name}') else False
 
             # Image handling
-            file_key = f'image_{section_name}'
+            file_key = f'image_{name}'
             if file_key in request.files:
                 file = request.files[file_key]
                 if file and allowed_file(file.filename):
                     section.image_url = optimize_and_save_image(file)
 
-            db.session.commit()
-            flash(f'Section {section_name} updated successfully', 'success')
-            return redirect(url_for('admin.home_settings'))
+        # Update Global Settings
+        threshold_val = request.form.get('free_shipping_threshold')
+        if threshold_val:
+            if not free_shipping_setting:
+                free_shipping_setting = SiteSetting(key='free_shipping_threshold')
+                db.session.add(free_shipping_setting)
+            free_shipping_setting.value = threshold_val
 
-    return render_template('admin/home_settings.html', sections=sections)
+        db.session.commit()
+        flash('Settings updated successfully', 'success')
+        return redirect(url_for('admin.home_settings'))
+
+    return render_template('admin/home_settings.html', sections=sections, free_shipping_threshold=free_shipping_threshold)

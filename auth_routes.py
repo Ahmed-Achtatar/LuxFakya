@@ -137,8 +137,28 @@ def profile():
         current_user.address = address
         current_user.city = city
 
+        # Handle Password Change
+        current_password = request.form.get('current_password')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+
+        if new_password:
+            if not current_password:
+                flash('Please enter your current password to set a new one.', 'danger')
+                return redirect(url_for('auth.profile'))
+            if not current_user.check_password(current_password):
+                flash('Incorrect current password.', 'danger')
+                return redirect(url_for('auth.profile'))
+            if new_password != confirm_password:
+                flash('New passwords do not match.', 'danger')
+                return redirect(url_for('auth.profile'))
+
+            current_user.set_password(new_password)
+            flash('Password updated successfully.', 'success')
+
         db.session.commit()
-        flash('Profile updated successfully.', 'success')
+        if not new_password:
+             flash('Profile updated successfully.', 'success')
         return redirect(url_for('auth.profile'))
 
     return render_template('auth/profile.html')

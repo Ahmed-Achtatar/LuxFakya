@@ -194,3 +194,14 @@ class HomeSection(db.Model):
             'end_date': self.end_date,
             'is_active': self.is_active
         }
+
+class SiteSetting(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(50), unique=True, nullable=False)
+    value = db.Column(db.String(255), nullable=True)
+
+    def to_dict(self):
+        return {
+            'key': self.key,
+            'value': self.value
+        }
