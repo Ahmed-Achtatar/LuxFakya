@@ -225,6 +225,8 @@ translations = {
         'placeholder_address': 'Entrez votre adresse',
         'placeholder_city': 'Entrez votre ville',
         'optional_label': '(Optionnel)',
+        'promo_free_shipping': 'Livraison Gratuite Débloquée !',
+        'promo_add_more': 'Ajoutez {amount} MAD pour la livraison gratuite !',
     },
     'ar': {
         # Nav
@@ -452,6 +454,8 @@ translations = {
         'placeholder_address': 'أدخل عنوانك',
         'placeholder_city': 'أدخل مدينتك',
         'optional_label': '(اختياري)',
+        'promo_free_shipping': 'تم فتح الشحن المجاني!',
+        'promo_add_more': 'أضف {amount} درهم للحصول على شحن مجاني!',
     },
     'en': {
         # Nav
@@ -679,5 +683,7 @@ translations = {
         'placeholder_address': 'Enter your address',
         'placeholder_city': 'Enter your city',
         'optional_label': '(Optional)',
+        'promo_free_shipping': 'Free Shipping Unlocked!',
+        'promo_add_more': 'Add {amount} MAD more for Free Shipping!',
     }
 }

@@ -89,19 +89,29 @@
                 </div>
                 <div class="mb-0">
                     <label class="small text-muted text-uppercase mb-1">Status</label>
-                    <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex flex-column gap-2">
                         {% if order.status == 'Pending' %}
-                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">{{ order.status }}</span>
-                        <form action="{{ url_for('admin.confirm_order', order_id=order.id) }}" method="POST">
-                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                             <button type="submit" class="btn btn-sm btn-success rounded-pill px-3" onclick="return confirm('Are you sure you want to confirm this order?');">
-                                <i class="fas fa-check me-1"></i> Confirm Purchase
-                             </button>
-                        </form>
+                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill align-self-start">{{ order.status }}</span>
+                        <div class="d-flex gap-2">
+                            <form action="{{ url_for('admin.confirm_order', order_id=order.id) }}" method="POST">
+                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                 <button type="submit" class="btn btn-sm btn-success rounded-pill px-3" onclick="return confirm('Are you sure you want to confirm this order?');">
+                                    <i class="fas fa-check me-1"></i> Confirm
+                                 </button>
+                            </form>
+                            <form action="{{ url_for('admin.cancel_order', order_id=order.id) }}" method="POST">
+                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                 <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3" onclick="return confirm('Are you sure you want to cancel this order?');">
+                                    <i class="fas fa-times me-1"></i> Cancel
+                                 </button>
+                            </form>
+                        </div>
                         {% elif order.status == 'Completed' %}
-                        <span class="badge bg-success px-3 py-2 rounded-pill">{{ order.status }}</span>
+                        <span class="badge bg-success px-3 py-2 rounded-pill align-self-start">{{ order.status }}</span>
+                        {% elif order.status == 'Cancelled' %}
+                        <span class="badge bg-danger px-3 py-2 rounded-pill align-self-start">{{ order.status }}</span>
                         {% else %}
-                        <span class="badge bg-secondary px-3 py-2 rounded-pill">{{ order.status }}</span>
+                        <span class="badge bg-secondary px-3 py-2 rounded-pill align-self-start">{{ order.status }}</span>
                         {% endif %}
                     </div>
                 </div>

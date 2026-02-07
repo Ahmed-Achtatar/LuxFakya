@@ -51,6 +51,37 @@
                 <small class="text-muted">User ID: {{ user.id }}</small>
             </div>
         </div>
+
+        {% if current_user.role == 'admin' %}
+        <div class="card border-0 shadow-sm rounded-4 mt-4">
+            <div class="card-header bg-white border-bottom-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0">Permissions (Moderator Access)</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="can_manage_orders" name="can_manage_orders" {% if user.can_manage_orders %}checked{% endif %}>
+                        <label class="form-check-label" for="can_manage_orders">Can Manage Orders</label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="can_manage_users" name="can_manage_users" {% if user.can_manage_users %}checked{% endif %}>
+                        <label class="form-check-label" for="can_manage_users">Can Manage Users</label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="can_manage_products" name="can_manage_products" {% if user.can_manage_products %}checked{% endif %}>
+                        <label class="form-check-label" for="can_manage_products">Can Manage Products</label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="can_manage_content" name="can_manage_content" {% if user.can_manage_content %}checked{% endif %}>
+                        <label class="form-check-label" for="can_manage_content">Can Manage Content (CMS)</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Permissions</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
     </div>
 </div>
 {% endblock %}

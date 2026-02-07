@@ -1,0 +1,49 @@
+{% extends "admin/base.html" %}
+
+{% block title %}User Logs{% endblock %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col">
+        <h3 class="fs-4 mb-3">User Activity Logs</h3>
+        <div class="bg-white rounded shadow-sm table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th scope="col" class="ps-4 py-3">Timestamp</th>
+                        <th scope="col" class="py-3">User</th>
+                        <th scope="col" class="py-3">Action</th>
+                        <th scope="col" class="py-3">Details</th>
+                        <th scope="col" class="py-3">IP Address</th>
+                    </tr>
+                </thead>
+                <tbody class="border-top-0">
+                    {% for log in logs %}
+                    <tr>
+                        <td class="ps-4 text-muted">{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td class="fw-bold">
+                            {% if log.user %}
+                                <a href="{{ url_for('admin.user_detail', user_id=log.user.id) }}">{{ log.user.username }}</a>
+                            {% else %}
+                                <span class="text-muted">Anonymous</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge {% if 'Success' in log.action %}bg-success{% elif 'Fail' in log.action %}bg-danger{% else %}bg-info{% endif %}">
+                                {{ log.action }}
+                            </span>
+                        </td>
+                        <td class="text-muted small">{{ log.details }}</td>
+                        <td class="text-muted small">{{ log.ip_address }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">No logs found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

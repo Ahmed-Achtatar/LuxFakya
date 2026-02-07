@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for, flash, current_app, send_file
+from flask import Blueprint, render_template, request, session, redirect, url_for, flash, current_app, send_file, jsonify
 from flask_login import current_user
-from models import Product, db, Order, OrderItem, HomeSection, Category, DbImage
+from models import Product, db, Order, OrderItem, HomeSection, Category, DbImage, UserLog
 import io
 
 main_bp = Blueprint('main', __name__)
@@ -27,8 +27,12 @@ def index():
     all_products = Product.query.filter_by(is_hidden=False).all()
     all_categories = Category.query.all()
 
-    # Fetch Limited Offer Section
-    limited_offer = HomeSection.query.filter_by(section_name='limited_offer').first()
+    # Fetch Sections
+    sections = {s.section_name: s for s in HomeSection.query.all()}
+    limited_offer = sections.get('limited_offer')
+
+    # Hero Slides
+    hero_slides = [sections.get(f'hero_slide_{i}') for i in range(1, 4)]
 
     # Simulate different collections
     # In a real app, these would be filtered by date added, sales count, etc.
@@ -46,6 +50,7 @@ def index():
                          featured_products=featured_collection,
                          all_products=all_products,
                          limited_offer=limited_offer,
+                         hero_slides=hero_slides,
                          all_categories=all_categories)
 
 @main_bp.route('/about')
@@ -149,6 +154,14 @@ def add_to_cart(product_id):
 
     session.modified = True
     current_app.logger.info(f"Added product {product_id} (qty: {quantity}) to cart")
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or 'application/json' in request.accept_mimetypes:
+        return jsonify({
+            'status': 'success',
+            'message': f'Added {quantity} item(s) to cart',
+            'cart_count': len(cart)
+        })
+
     flash(f'Added {quantity} item(s) to cart', 'success')
     return redirect(request.referrer or url_for('main.shop'))
 
@@ -193,6 +206,17 @@ def checkout():
         return redirect(url_for('main.shop'))
 
     if request.method == 'POST':
+        # Log Checkout Attempt
+        user_id = current_user.id if current_user.is_authenticated else None
+        log = UserLog(
+            user_id=user_id,
+            action='Checkout Attempt',
+            ip_address=request.remote_addr,
+            details=f"Checkout started. Cart size: {len(session['cart'])}"
+        )
+        db.session.add(log)
+        db.session.commit()
+
         name = request.form.get('name')
         phone = request.form.get('phone')
         email = request.form.get('email')
@@ -251,6 +275,16 @@ def checkout():
         db.session.commit()
 
         current_app.logger.info(f"Order created: {new_order.id} for {name} ({total_price})")
+
+        # Log Order Success
+        log_success = UserLog(
+            user_id=new_order.user_id,
+            action='Checkout Success',
+            ip_address=request.remote_addr,
+            details=f"Order {new_order.id} placed by {name}. Total: {total_price}"
+        )
+        db.session.add(log_success)
+        db.session.commit()
 
         # Clear cart
         session.pop('cart', None)

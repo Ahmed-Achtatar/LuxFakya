@@ -51,6 +51,9 @@
                 <a href="{{ url_for('admin.home_settings') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint == 'admin.home_settings' %}active{% endif %}">
                     <i class="fas fa-cog me-2"></i>{{ translations[current_lang]['settings'] }}
                 </a>
+                <a href="{{ url_for('admin.logs') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint == 'admin.logs' %}active{% endif %}">
+                    <i class="fas fa-history me-2"></i>Logs
+                </a>
                 <a href="{{ url_for('main.index') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
                     <i class="fas fa-home me-2"></i>{{ translations[current_lang]['view_site'] }}
                 </a>

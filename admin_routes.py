@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection, DbImage
+from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection, DbImage, UserLog
 import os
 import uuid
 import io
+from functools import wraps
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from PIL import Image
@@ -67,9 +68,33 @@ def restrict_access():
     if not current_user.is_authenticated:
         return redirect(url_for('auth.login', next=request.url))
 
-    if getattr(current_user, 'role', 'customer') != 'admin':
-        flash('Access denied. Admin privileges required.', 'danger')
+    # Allow access if admin or has any management permission
+    is_admin = getattr(current_user, 'role', 'customer') == 'admin'
+    has_perms = (
+        current_user.can_manage_orders or
+        current_user.can_manage_users or
+        current_user.can_manage_products or
+        current_user.can_manage_content
+    )
+
+    if not (is_admin or has_perms):
+        flash('Access denied. Admin or Moderator privileges required.', 'danger')
         return redirect(url_for('main.index'))
+
+def permission_required(permission_name):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if getattr(current_user, 'role', 'customer') == 'admin':
+                return f(*args, **kwargs)
+
+            if getattr(current_user, permission_name, False):
+                return f(*args, **kwargs)
+
+            flash('Access denied. Insufficient permissions.', 'danger')
+            return redirect(url_for('admin.dashboard'))
+        return decorated_function
+    return decorator
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -97,14 +122,29 @@ def login():
 
 @admin_bp.route('/users')
 @login_required
+@permission_required('can_manage_users')
 def list_users():
     users = User.query.order_by(User.id.desc()).all()
     return render_template('admin/users.html', users=users)
 
-@admin_bp.route('/users/<int:user_id>')
+@admin_bp.route('/users/<int:user_id>', methods=['GET', 'POST'])
 @login_required
+@permission_required('can_manage_users')
 def user_detail(user_id):
     user = User.query.get_or_404(user_id)
+
+    if request.method == 'POST':
+        # Only allow changing permissions if current user is admin
+        if getattr(current_user, 'role', 'customer') == 'admin':
+             user.can_manage_orders = True if request.form.get('can_manage_orders') else False
+             user.can_manage_users = True if request.form.get('can_manage_users') else False
+             user.can_manage_products = True if request.form.get('can_manage_products') else False
+             user.can_manage_content = True if request.form.get('can_manage_content') else False
+             db.session.commit()
+             flash('Permissions updated.', 'success')
+        else:
+             flash('Only Admins can change permissions.', 'warning')
+
     return render_template('admin/user_detail.html', user=user)
 
 @admin_bp.route('/logout')
@@ -165,20 +205,30 @@ def dashboard():
                            total_products=total_products,
                            total_revenue=total_revenue)
 
+@admin_bp.route('/logs')
+@login_required
+@permission_required('can_manage_users')
+def logs():
+    logs = UserLog.query.order_by(UserLog.timestamp.desc()).limit(100).all()
+    return render_template('admin/logs.html', logs=logs)
+
 @admin_bp.route('/orders')
 @login_required
+@permission_required('can_manage_orders')
 def orders():
     orders = Order.query.order_by(Order.created_at.desc()).all()
     return render_template('admin/orders.html', orders=orders)
 
 @admin_bp.route('/orders/<int:order_id>')
 @login_required
+@permission_required('can_manage_orders')
 def order_detail(order_id):
     order = Order.query.get_or_404(order_id)
     return render_template('admin/order_detail.html', order=order)
 
 @admin_bp.route('/orders/<int:order_id>/confirm', methods=['POST'])
 @login_required
+@permission_required('can_manage_orders')
 def confirm_order(order_id):
     order = Order.query.get_or_404(order_id)
     if order.status != 'Completed':
@@ -187,14 +237,27 @@ def confirm_order(order_id):
         flash('Order confirmed successfully.', 'success')
     return redirect(url_for('admin.order_detail', order_id=order.id))
 
+@admin_bp.route('/orders/<int:order_id>/cancel', methods=['POST'])
+@login_required
+@permission_required('can_manage_orders')
+def cancel_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.status != 'Cancelled':
+        order.status = 'Cancelled'
+        db.session.commit()
+        flash('Order cancelled successfully.', 'warning')
+    return redirect(url_for('admin.order_detail', order_id=order.id))
+
 @admin_bp.route('/categories')
 @login_required
+@permission_required('can_manage_products')
 def categories():
     categories = db.session.execute(db.select(Category)).scalars().all()
     return render_template('admin/categories.html', categories=categories)
 
 @admin_bp.route('/categories/add', methods=['GET', 'POST'])
 @login_required
+@permission_required('can_manage_products')
 def add_category():
     if request.method == 'POST':
         name = request.form.get('name')
@@ -217,6 +280,7 @@ def add_category():
 
 @admin_bp.route('/categories/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
+@permission_required('can_manage_products')
 def edit_category(id):
     category = Category.query.get_or_404(id)
     if request.method == 'POST':
@@ -241,6 +305,7 @@ def edit_category(id):
 
 @admin_bp.route('/categories/delete/<int:id>', methods=['POST'])
 @login_required
+@permission_required('can_manage_products')
 def delete_category(id):
     category = Category.query.get_or_404(id)
     # Check if products exist in this category
@@ -254,6 +319,7 @@ def delete_category(id):
 
 @admin_bp.route('/add', methods=['GET', 'POST'])
 @login_required
+@permission_required('can_manage_products')
 def add_product():
     categories = db.session.execute(db.select(Category)).scalars().all()
     if request.method == 'POST':
@@ -325,6 +391,7 @@ def add_product():
 
 @admin_bp.route('/edit/<int:product_id>', methods=['GET', 'POST'])
 @login_required
+@permission_required('can_manage_products')
 def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
     categories = db.session.execute(db.select(Category)).scalars().all()
@@ -380,6 +447,7 @@ def edit_product(product_id):
 
 @admin_bp.route('/delete/<int:product_id>', methods=['POST'])
 @login_required
+@permission_required('can_manage_products')
 def delete_product(product_id):
     product = Product.query.get_or_404(product_id)
     db.session.delete(product)
@@ -389,6 +457,7 @@ def delete_product(product_id):
 
 @admin_bp.route('/product/<int:product_id>/toggle_hidden', methods=['POST'])
 @login_required
+@permission_required('can_manage_products')
 def toggle_hidden(product_id):
     product = Product.query.get_or_404(product_id)
     product.is_hidden = not product.is_hidden
@@ -399,6 +468,7 @@ def toggle_hidden(product_id):
 
 @admin_bp.route('/product/<int:product_id>/toggle_stock', methods=['POST'])
 @login_required
+@permission_required('can_manage_products')
 def toggle_stock(product_id):
     product = Product.query.get_or_404(product_id)
     product.is_out_of_stock = not product.is_out_of_stock
@@ -409,39 +479,57 @@ def toggle_stock(product_id):
 
 @admin_bp.route('/settings/home', methods=['GET', 'POST'])
 @login_required
+@permission_required('can_manage_content')
 def home_settings():
-    section = HomeSection.query.filter_by(section_name='limited_offer').first()
+    # Define managed sections
+    target_sections = ['hero_slide_1', 'hero_slide_2', 'hero_slide_3', 'limited_offer']
+    sections = {}
 
-    # Create default if missing (safety check)
-    if not section:
-        section = HomeSection(section_name='limited_offer')
-        db.session.add(section)
+    # Fetch or Create
+    for name in target_sections:
+        s = HomeSection.query.filter_by(section_name=name).first()
+        if not s:
+            s = HomeSection(section_name=name)
+            db.session.add(s)
+        sections[name] = s
+
+    # Commit any new sections
+    if db.session.dirty or db.session.new:
         db.session.commit()
 
     if request.method == 'POST':
-        section.title_fr = request.form.get('title_fr')
-        section.title_ar = request.form.get('title_ar')
-        section.title_en = request.form.get('title_en')
-        section.text_fr = request.form.get('text_fr')
-        section.text_ar = request.form.get('text_ar')
-        section.text_en = request.form.get('text_en')
+        section_name = request.form.get('section_name')
+        if section_name and section_name in sections:
+            section = sections[section_name]
 
-        # Date handling
-        end_date_str = request.form.get('end_date')
-        if end_date_str:
-            try:
-                section.end_date = datetime.strptime(end_date_str, '%Y-%m-%dT%H:%M')
-            except ValueError:
-                pass # Keep old date or handle error
+            section.title_fr = request.form.get(f'title_fr_{section_name}')
+            section.title_ar = request.form.get(f'title_ar_{section_name}')
+            section.title_en = request.form.get(f'title_en_{section_name}')
 
-        # Image handling
-        if 'image' in request.files:
-            file = request.files['image']
-            if file and allowed_file(file.filename):
-                section.image_url = optimize_and_save_image(file)
+            section.text_fr = request.form.get(f'text_fr_{section_name}')
+            section.text_ar = request.form.get(f'text_ar_{section_name}')
+            section.text_en = request.form.get(f'text_en_{section_name}')
 
-        db.session.commit()
-        flash('Home settings updated successfully', 'success')
-        return redirect(url_for('admin.home_settings'))
+            # Date handling (only for limited_offer really, but generic is fine)
+            end_date_str = request.form.get(f'end_date_{section_name}')
+            if end_date_str:
+                try:
+                    section.end_date = datetime.strptime(end_date_str, '%Y-%m-%dT%H:%M')
+                except ValueError:
+                    pass
 
-    return render_template('admin/home_settings.html', section=section)
+            # Active toggle
+            section.is_active = True if request.form.get(f'is_active_{section_name}') else False
+
+            # Image handling
+            file_key = f'image_{section_name}'
+            if file_key in request.files:
+                file = request.files[file_key]
+                if file and allowed_file(file.filename):
+                    section.image_url = optimize_and_save_image(file)
+
+            db.session.commit()
+            flash(f'Section {section_name} updated successfully', 'success')
+            return redirect(url_for('admin.home_settings'))
+
+    return render_template('admin/home_settings.html', sections=sections)
