@@ -62,7 +62,7 @@ def check_and_add_columns_sqlite(conn, cursor):
             print(f"Table '{table}' does not exist. Skipping column checks.")
             continue
 
-        safe_table = f'"{table}"' if table == 'order' else table
+        safe_table = f'"{table}"' if table in ['order', 'user'] else table
         cursor.execute(f"PRAGMA table_info({safe_table})")
         existing_cols = [col[1] for col in cursor.fetchall()]
 
@@ -70,7 +70,7 @@ def check_and_add_columns_sqlite(conn, cursor):
             if col_name not in existing_cols:
                 print(f"Column '{col_name}' missing in '{table}'. Adding it...")
                 try:
-                    cursor.execute(f"ALTER TABLE {table} ADD COLUMN {col_name} {col_def}")
+                    cursor.execute(f"ALTER TABLE {safe_table} ADD COLUMN {col_name} {col_def}")
                     print(f"Column '{col_name}' added successfully.")
                 except Exception as e:
                     print(f"Error adding column {col_name}: {e}")
@@ -89,7 +89,7 @@ def ensure_foreign_keys_sqlite(conn, cursor):
             print(f"Table '{table_name}' does not exist. Skipping.")
             continue
 
-        safe_table_name = f'"{table_name}"' if table_name == 'order' else table_name
+        safe_table_name = f'"{table_name}"' if table_name in ['order', 'user'] else table_name
         cursor.execute(f"PRAGMA foreign_key_list({safe_table_name})")
         fks = cursor.fetchall()
 
@@ -114,7 +114,8 @@ def ensure_foreign_keys_sqlite(conn, cursor):
 
 def rebuild_table_sqlite(conn, cursor, table_name, create_sql):
     try:
-        safe_table_name = f'"{table_name}"' if table_name == 'order' else table_name
+        # Not fully implemented for all tables, but preserved for existing logic
+        safe_table_name = f'"{table_name}"' if table_name in ['order', 'user'] else table_name
 
         # Get columns
         cursor.execute("PRAGMA table_info(product)")
@@ -122,8 +123,6 @@ def rebuild_table_sqlite(conn, cursor, table_name, create_sql):
 
         if 'unit' not in columns:
             print("Column 'unit' missing. Adding it...")
-            # SQLite supports ADD COLUMN.
-            # We set a default value 'pcs' because existing rows need a value.
             cursor.execute("ALTER TABLE product ADD COLUMN unit VARCHAR(50) DEFAULT 'pcs' NOT NULL")
             conn.commit()
             print("Column 'unit' added successfully.")
@@ -160,7 +159,7 @@ def fix_postgres(db_url):
         print("Error: psycopg2 module not found. Please install requirements.txt.")
         return
 
-    # Fix postgres:// schema if necessary (common in some providers)
+    # Fix postgres:// schema if necessary
     if db_url.startswith("postgres://"):
         db_url = db_url.replace("postgres://", "postgresql://", 1)
 
@@ -182,6 +181,7 @@ def check_and_add_columns_postgres(conn, cursor):
 
     for table, columns in MISSING_COLUMNS.items():
         # Check if table exists
+        # to_regclass handles unquoted identifiers by lowercasing them, so 'user' matches 'user' or '"user"' table
         cursor.execute("SELECT to_regclass(%s)", (table,))
         if not cursor.fetchone()[0]:
              print(f"Table '{table}' does not exist. Skipping.")
@@ -195,14 +195,13 @@ def check_and_add_columns_postgres(conn, cursor):
         """, (table,))
         existing_cols = [row[0] for row in cursor.fetchall()]
 
+        safe_table = f'"{table}"' if table in ['order', 'user'] else table
+
         for col_name, col_def in columns:
             if col_name not in existing_cols:
                 print(f"Column '{col_name}' missing in '{table}'. Adding it...")
-                # Extract type and constraints from col_def (simplified)
-                # "VARCHAR(50) DEFAULT 'pcs' NOT NULL"
-                # PostgreSQL syntax is similar but strict
                 try:
-                    cursor.execute(f"ALTER TABLE {table} ADD COLUMN {col_name} {col_def}")
+                    cursor.execute(f"ALTER TABLE {safe_table} ADD COLUMN {col_name} {col_def}")
                     print(f"Column '{col_name}' added successfully.")
                 except Exception as e:
                      print(f"Error adding column {col_name}: {e}")
@@ -213,11 +212,10 @@ def ensure_foreign_keys_postgres(conn, cursor):
     print("\nChecking foreign keys (PostgreSQL)...")
 
     # Map table to expected FK definitions (target_table, column)
-    # This is a bit manual but safer than parsing SCHEMAS
     expected_fks = {
         'product': [('category_id', 'category', 'id')],
         'product_pricing': [('product_id', 'product', 'id')],
-        'order': [('user_id', 'user', 'id')],
+        'order': [('user_id', '"user"', 'id')],
         'order_item': [
              ('order_id', '"order"', 'id'),
              ('product_id', 'product', 'id')
@@ -247,8 +245,10 @@ def ensure_foreign_keys_postgres(conn, cursor):
 
         existing_constraints = cursor.fetchall() # list of (col, fk_table, fk_col)
 
+        safe_table = f'"{table}"' if table in ['order', 'user'] else table
+
         for col, target_table, target_col in fks:
-            # Handle "order" quoting in logic
+            # Handle "order" and "user" quoting in logic for target table check
             target_table_clean = target_table.replace('"', '')
 
             found = False
@@ -260,7 +260,6 @@ def ensure_foreign_keys_postgres(conn, cursor):
             if not found:
                 print(f"Missing FK on {table}.{col} -> {target_table}.{target_col}. Adding...")
                 constraint_name = f"fk_{table}_{col}"
-                safe_table = f'"{table}"' if table == 'order' else table
 
                 alter_sql = f"""
                     ALTER TABLE {safe_table}

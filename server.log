@@ -105,3 +105,19 @@ Database file not found.
 127.0.0.1 - - [07/Feb/2026 15:57:32] "GET /static/css/style.css HTTP/1.1" 200 -
 127.0.0.1 - - [07/Feb/2026 15:57:32] "GET /static/js/main.js HTTP/1.1" 200 -
 127.0.0.1 - - [07/Feb/2026 15:57:32] "GET /static/images/slide1.png HTTP/1.1" 200 -
+ * Detected change in '/app/fix_db.py', reloading
+Targeting SQLite database: luxfakia.db
+Database file not found.
+ * Restarting with stat
+[2026-02-07 16:23:50,414] INFO in app: Application starting... Environment: Production
+2026-02-07 16:23:50,414 - app - INFO - Application starting... Environment: Production
+ * Debugger is active!
+ * Debugger PIN: 410-907-091
+ * Detected change in '/app/fix_db.py', reloading
+Targeting SQLite database: luxfakia.db
+Database file not found.
+ * Restarting with stat
+[2026-02-07 16:24:08,430] INFO in app: Application starting... Environment: Production
+2026-02-07 16:24:08,430 - app - INFO - Application starting... Environment: Production
+ * Debugger is active!
+ * Debugger PIN: 410-907-091
