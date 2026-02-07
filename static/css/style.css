@@ -756,3 +756,14 @@ footer .social-icon {
     background-color: var(--primary-gold);
 }
 
+
+/* Fix for admin tabs invisibility */
+.nav-tabs .nav-link {
+    color: var(--text-color) !important;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-gold) !important;
+    font-weight: bold;
+    border-color: #dee2e6 #dee2e6 #fff;
+}

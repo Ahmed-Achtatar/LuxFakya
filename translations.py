@@ -227,6 +227,11 @@ translations = {
         'optional_label': '(Optionnel)',
         'promo_free_shipping': 'Livraison Gratuite Débloquée !',
         'promo_add_more': 'Ajoutez {amount} MAD pour la livraison gratuite !',
+
+        'desc_manage_orders': "Permet à l'utilisateur de voir, confirmer et annuler les commandes.",
+        'desc_manage_users': "Permet à l'utilisateur de voir les listes d'utilisateurs et de gérer les permissions des modérateurs.",
+        'desc_manage_products': "Permet à l'utilisateur d'ajouter, modifier, supprimer et gérer l'inventaire des produits.",
+        'desc_manage_content': "Permet à l'utilisateur de gérer les sections de la page d'accueil, les paramètres et le contenu du site.",
     },
     'ar': {
         # Nav
@@ -456,6 +461,11 @@ translations = {
         'optional_label': '(اختياري)',
         'promo_free_shipping': 'تم فتح الشحن المجاني!',
         'promo_add_more': 'أضف {amount} درهم للحصول على شحن مجاني!',
+
+        'desc_manage_orders': "يسمح للمستخدم بعرض الطلبات وتأكيدها وإلغائها.",
+        'desc_manage_users': "يسمح للمستخدم بعرض قوائم المستخدمين وإدارة أذونات المشرفين.",
+        'desc_manage_products': "يسمح للمستخدم بإضافة المنتجات وتعديلها وحذفها وإدارة المخزون.",
+        'desc_manage_content': "يسمح للمستخدم بإدارة أقسام الصفحة الرئيسية والإعدادات ومحتوى الموقع.",
     },
     'en': {
         # Nav
@@ -685,5 +695,10 @@ translations = {
         'optional_label': '(Optional)',
         'promo_free_shipping': 'Free Shipping Unlocked!',
         'promo_add_more': 'Add {amount} MAD more for Free Shipping!',
+
+        'desc_manage_orders': "Allows the user to view, confirm, and cancel orders.",
+        'desc_manage_users': "Allows the user to view user lists and manage moderator permissions.",
+        'desc_manage_products': "Allows the user to add, edit, delete, and manage product inventory.",
+        'desc_manage_content': "Allows the user to manage homepage sections, settings, and site content.",
     }
 }
