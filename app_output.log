@@ -1,5 +1,5 @@
-[2026-02-07 21:39:27,918] INFO in app: Application starting... Environment: Production
-2026-02-07 21:39:27,918 - app - INFO - Application starting... Environment: Production
+[2026-02-07 22:03:19,539] INFO in app: Application starting... Environment: Production
+2026-02-07 22:03:19,539 - app - INFO - Application starting... Environment: Production
 Targeting SQLite database: luxfakia.db
 Database file not found.
  * Serving Flask app 'app'
@@ -8,15 +8,71 @@ Database file not found.
  * Running on http://127.0.0.1:5000
 [33mPress CTRL+C to quit[0m
  * Restarting with stat
-[2026-02-07 21:39:28,657] INFO in app: Application starting... Environment: Production
-2026-02-07 21:39:28,657 - app - INFO - Application starting... Environment: Production
+[2026-02-07 22:03:20,421] INFO in app: Application starting... Environment: Production
+2026-02-07 22:03:20,421 - app - INFO - Application starting... Environment: Production
  * Debugger is active!
  * Debugger PIN: 410-907-091
-127.0.0.1 - - [07/Feb/2026 21:39:42] "GET /admin/login HTTP/1.1" 200 -
-127.0.0.1 - - [07/Feb/2026 21:39:42] "GET /static/css/style.css HTTP/1.1" 200 -
-127.0.0.1 - - [07/Feb/2026 21:39:42] "GET /static/images/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [07/Feb/2026 21:39:43] "[32mPOST /admin/login HTTP/1.1[0m" 302 -
+127.0.0.1 - - [07/Feb/2026 22:04:08] "GET /admin/login HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:04:08] "GET /static/css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:04:08] "GET /static/images/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:04:09] "[32mPOST /admin/login HTTP/1.1[0m" 302 -
 /app/app.py:56: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
   return User.query.get(int(user_id))
-127.0.0.1 - - [07/Feb/2026 21:39:43] "GET /admin/ HTTP/1.1" 200 -
-127.0.0.1 - - [07/Feb/2026 21:39:43] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:04:09] "GET /admin/ HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:04:09] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:04:09] "GET /admin/users/add HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:04:09] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:04:10] "GET /admin/users HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:04:10] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:04:10] "GET /admin/users/add HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:04:10] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:04:11] "[32mPOST /admin/users/add HTTP/1.1[0m" 302 -
+127.0.0.1 - - [07/Feb/2026 22:04:11] "GET /admin/users HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:04:11] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:04:11] "GET /admin/users/2 HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:04:11] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:05:01] "[31m[1mPOST /admin/login HTTP/1.1[0m" 400 -
+127.0.0.1 - - [07/Feb/2026 22:05:01] "[32mGET /admin/users/2 HTTP/1.1[0m" 302 -
+127.0.0.1 - - [07/Feb/2026 22:05:01] "GET /login?next=http://localhost:5000/admin/users/2 HTTP/1.1" 200 -
+ * Detected change in '/app/verification/verify_permissions.py', reloading
+Targeting SQLite database: luxfakia.db
+Database file not found.
+ * Restarting with stat
+[2026-02-07 22:05:23,864] INFO in app: Application starting... Environment: Production
+2026-02-07 22:05:23,864 - app - INFO - Application starting... Environment: Production
+ * Debugger is active!
+ * Debugger PIN: 410-907-091
+127.0.0.1 - - [07/Feb/2026 22:05:27] "GET /admin/login HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:05:27] "GET /static/images/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:05:27] "GET /static/css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:05:28] "[32mPOST /admin/login HTTP/1.1[0m" 302 -
+/app/app.py:56: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  return User.query.get(int(user_id))
+127.0.0.1 - - [07/Feb/2026 22:05:28] "GET /admin/ HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:05:28] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:05:28] "GET /admin/users/add HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:05:28] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:05:29] "GET /admin/users HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:05:29] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:05:29] "GET /admin/users/2 HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:05:29] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:06:23] "GET /admin/login HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:06:23] "GET /static/css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:06:23] "GET /static/images/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:06:23] "[32mPOST /admin/login HTTP/1.1[0m" 302 -
+127.0.0.1 - - [07/Feb/2026 22:06:23] "GET /admin/ HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:06:23] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:06:23] "GET /admin/users/add HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:06:23] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:06:24] "GET /admin/users HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:06:24] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Feb/2026 22:06:24] "GET /admin/users/2 HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 22:06:24] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+ * Detected change in '/app/translations.py', reloading
+Targeting SQLite database: luxfakia.db
+Database file not found.
+ * Restarting with stat
+[2026-02-07 22:08:18,140] INFO in app: Application starting... Environment: Production
+2026-02-07 22:08:18,140 - app - INFO - Application starting... Environment: Production
+ * Debugger is active!
+ * Debugger PIN: 410-907-091

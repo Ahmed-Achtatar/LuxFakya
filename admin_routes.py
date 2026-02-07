@@ -158,6 +158,19 @@ def user_detail(user_id):
              user.can_manage_users = True if request.form.get('can_manage_users') else False
              user.can_manage_products = True if request.form.get('can_manage_products') else False
              user.can_manage_content = True if request.form.get('can_manage_content') else False
+
+             user.can_add_product = True if request.form.get('can_add_product') else False
+             user.can_edit_product = True if request.form.get('can_edit_product') else False
+             user.can_delete_product = True if request.form.get('can_delete_product') else False
+
+             user.can_add_category = True if request.form.get('can_add_category') else False
+             user.can_edit_category = True if request.form.get('can_edit_category') else False
+             user.can_delete_category = True if request.form.get('can_delete_category') else False
+
+             user.can_add_user = True if request.form.get('can_add_user') else False
+             user.can_edit_user = True if request.form.get('can_edit_user') else False
+             user.can_delete_user = True if request.form.get('can_delete_user') else False
+
              db.session.commit()
              flash(get_trans('msg_perms_updated'), 'success')
         else:
@@ -167,7 +180,7 @@ def user_detail(user_id):
 
 @admin_bp.route('/users/add', methods=['GET', 'POST'])
 @login_required
-@permission_required('can_manage_users')
+@permission_required('can_add_user')
 def add_user():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -188,6 +201,18 @@ def add_user():
             user.can_manage_products = True if request.form.get('can_manage_products') else False
             user.can_manage_content = True if request.form.get('can_manage_content') else False
 
+            user.can_add_product = True if request.form.get('can_add_product') else False
+            user.can_edit_product = True if request.form.get('can_edit_product') else False
+            user.can_delete_product = True if request.form.get('can_delete_product') else False
+
+            user.can_add_category = True if request.form.get('can_add_category') else False
+            user.can_edit_category = True if request.form.get('can_edit_category') else False
+            user.can_delete_category = True if request.form.get('can_delete_category') else False
+
+            user.can_add_user = True if request.form.get('can_add_user') else False
+            user.can_edit_user = True if request.form.get('can_edit_user') else False
+            user.can_delete_user = True if request.form.get('can_delete_user') else False
+
             db.session.add(user)
             db.session.commit()
 
@@ -195,6 +220,20 @@ def add_user():
             return redirect(url_for('admin.list_users'))
 
     return render_template('admin/add_moderator.html')
+
+@admin_bp.route('/users/delete/<int:user_id>', methods=['POST'])
+@login_required
+@permission_required('can_delete_user')
+def delete_user(user_id):
+    if user_id == current_user.id:
+        flash(get_trans('msg_delete_self_error'), 'danger')
+        return redirect(url_for('admin.list_users'))
+
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash(get_trans('msg_user_deleted'), 'success')
+    return redirect(url_for('admin.list_users'))
 
 @admin_bp.route('/logout')
 @login_required
@@ -312,7 +351,7 @@ def categories():
 
 @admin_bp.route('/categories/add', methods=['GET', 'POST'])
 @login_required
-@permission_required('can_manage_products')
+@permission_required('can_add_category')
 def add_category():
     if request.method == 'POST':
         name = request.form.get('name')
@@ -335,7 +374,7 @@ def add_category():
 
 @admin_bp.route('/categories/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
-@permission_required('can_manage_products')
+@permission_required('can_edit_category')
 def edit_category(id):
     category = Category.query.get_or_404(id)
     if request.method == 'POST':
@@ -360,7 +399,7 @@ def edit_category(id):
 
 @admin_bp.route('/categories/delete/<int:id>', methods=['POST'])
 @login_required
-@permission_required('can_manage_products')
+@permission_required('can_delete_category')
 def delete_category(id):
     category = Category.query.get_or_404(id)
     # Check if products exist in this category
@@ -374,7 +413,7 @@ def delete_category(id):
 
 @admin_bp.route('/add', methods=['GET', 'POST'])
 @login_required
-@permission_required('can_manage_products')
+@permission_required('can_add_product')
 def add_product():
     categories = db.session.execute(db.select(Category)).scalars().all()
     if request.method == 'POST':
@@ -446,7 +485,7 @@ def add_product():
 
 @admin_bp.route('/edit/<int:product_id>', methods=['GET', 'POST'])
 @login_required
-@permission_required('can_manage_products')
+@permission_required('can_edit_product')
 def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
     categories = db.session.execute(db.select(Category)).scalars().all()
@@ -502,7 +541,7 @@ def edit_product(product_id):
 
 @admin_bp.route('/delete/<int:product_id>', methods=['POST'])
 @login_required
-@permission_required('can_manage_products')
+@permission_required('can_delete_product')
 def delete_product(product_id):
     product = Product.query.get_or_404(product_id)
     db.session.delete(product)
@@ -512,7 +551,7 @@ def delete_product(product_id):
 
 @admin_bp.route('/product/<int:product_id>/toggle_hidden', methods=['POST'])
 @login_required
-@permission_required('can_manage_products')
+@permission_required('can_edit_product')
 def toggle_hidden(product_id):
     product = Product.query.get_or_404(product_id)
     product.is_hidden = not product.is_hidden
@@ -523,7 +562,7 @@ def toggle_hidden(product_id):
 
 @admin_bp.route('/product/<int:product_id>/toggle_stock', methods=['POST'])
 @login_required
-@permission_required('can_manage_products')
+@permission_required('can_edit_product')
 def toggle_stock(product_id):
     product = Product.query.get_or_404(product_id)
     product.is_out_of_stock = not product.is_out_of_stock

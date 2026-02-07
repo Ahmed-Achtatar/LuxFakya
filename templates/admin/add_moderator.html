@@ -40,24 +40,78 @@
 
                     <h5 class="fw-bold mb-3">{{ get_text('permissions_title') }}</h5>
 
+                    <!-- Orders -->
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="can_manage_orders" name="can_manage_orders" checked>
-                        <label class="form-check-label fw-bold" for="can_manage_orders">{{ get_text('can_manage_orders') }}</label>
+                        <label class="form-check-label fw-bold" for="can_manage_orders">{{ translations[current_lang]['perm_manage_orders'] }}</label>
                         <small class="text-muted d-block">{{ translations[current_lang]['desc_manage_orders'] }}</small>
                     </div>
-                    <div class="form-check form-switch mb-3">
+
+                    <hr class="my-3">
+
+                    <!-- Users -->
+                    <div class="form-check form-switch mb-2">
                         <input class="form-check-input" type="checkbox" id="can_manage_users" name="can_manage_users">
-                        <label class="form-check-label fw-bold" for="can_manage_users">{{ get_text('can_manage_users') }}</label>
-                        <small class="text-muted d-block">{{ translations[current_lang]['desc_manage_users'] }}</small>
+                        <label class="form-check-label fw-bold" for="can_manage_users">{{ translations[current_lang]['perm_manage_users'] }} (View)</label>
                     </div>
-                    <div class="form-check form-switch mb-3">
+                    <div class="ms-4">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="can_add_user" name="can_add_user">
+                            <label class="form-check-label" for="can_add_user">{{ translations[current_lang]['perm_add_user'] }}</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="can_edit_user" name="can_edit_user">
+                            <label class="form-check-label" for="can_edit_user">{{ translations[current_lang]['perm_edit_user'] }}</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="can_delete_user" name="can_delete_user">
+                            <label class="form-check-label" for="can_delete_user">{{ translations[current_lang]['perm_delete_user'] }}</label>
+                        </div>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <!-- Products & Categories -->
+                    <div class="form-check form-switch mb-2">
                         <input class="form-check-input" type="checkbox" id="can_manage_products" name="can_manage_products">
-                        <label class="form-check-label fw-bold" for="can_manage_products">{{ get_text('can_manage_products') }}</label>
-                        <small class="text-muted d-block">{{ translations[current_lang]['desc_manage_products'] }}</small>
+                        <label class="form-check-label fw-bold" for="can_manage_products">{{ translations[current_lang]['perm_manage_products'] }} (View)</label>
                     </div>
+                    <div class="ms-4">
+                        <h6 class="text-muted mt-2">Products</h6>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="can_add_product" name="can_add_product">
+                            <label class="form-check-label" for="can_add_product">{{ translations[current_lang]['perm_add_product'] }}</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="can_edit_product" name="can_edit_product">
+                            <label class="form-check-label" for="can_edit_product">{{ translations[current_lang]['perm_edit_product'] }}</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="can_delete_product" name="can_delete_product">
+                            <label class="form-check-label" for="can_delete_product">{{ translations[current_lang]['perm_delete_product'] }}</label>
+                        </div>
+
+                        <h6 class="text-muted mt-2">Categories</h6>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="can_add_category" name="can_add_category">
+                            <label class="form-check-label" for="can_add_category">{{ translations[current_lang]['perm_add_category'] }}</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="can_edit_category" name="can_edit_category">
+                            <label class="form-check-label" for="can_edit_category">{{ translations[current_lang]['perm_edit_category'] }}</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="can_delete_category" name="can_delete_category">
+                            <label class="form-check-label" for="can_delete_category">{{ translations[current_lang]['perm_delete_category'] }}</label>
+                        </div>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <!-- Content -->
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="can_manage_content" name="can_manage_content">
-                        <label class="form-check-label fw-bold" for="can_manage_content">{{ get_text('can_manage_content') }}</label>
+                        <label class="form-check-label fw-bold" for="can_manage_content">{{ translations[current_lang]['perm_manage_content'] }}</label>
                         <small class="text-muted d-block">{{ translations[current_lang]['desc_manage_content'] }}</small>
                     </div>
 

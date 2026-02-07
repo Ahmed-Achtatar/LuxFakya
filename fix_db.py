@@ -24,7 +24,16 @@ MISSING_COLUMNS = {
         ('can_manage_orders', "BOOLEAN DEFAULT FALSE"),
         ('can_manage_users', "BOOLEAN DEFAULT FALSE"),
         ('can_manage_products', "BOOLEAN DEFAULT FALSE"),
-        ('can_manage_content', "BOOLEAN DEFAULT FALSE")
+        ('can_manage_content', "BOOLEAN DEFAULT FALSE"),
+        ('can_add_product', "BOOLEAN DEFAULT FALSE"),
+        ('can_edit_product', "BOOLEAN DEFAULT FALSE"),
+        ('can_delete_product', "BOOLEAN DEFAULT FALSE"),
+        ('can_add_category', "BOOLEAN DEFAULT FALSE"),
+        ('can_edit_category', "BOOLEAN DEFAULT FALSE"),
+        ('can_delete_category', "BOOLEAN DEFAULT FALSE"),
+        ('can_add_user', "BOOLEAN DEFAULT FALSE"),
+        ('can_edit_user', "BOOLEAN DEFAULT FALSE"),
+        ('can_delete_user', "BOOLEAN DEFAULT FALSE")
     ],
     'user_log': [
         ('ip_address', "VARCHAR(50)")
@@ -42,6 +51,26 @@ def get_default_sqlite_path():
         return 'luxfakia.db'
     return 'instance/luxfakia.db'
 
+def migrate_permissions_sqlite(conn, cursor):
+    print("Migrating permissions (SQLite)...")
+    try:
+        # Check if we need migration (if broad permission is set but granular ones are not)
+        # We can just blindly update all rows where broad permission is set.
+        # This acts as a default. If user later restricts, this won't override unless we force it.
+        # But here we only set if granular is NULL or 0 (FALSE).
+        # Actually simplest is: Update granular = 1 where manage_products = 1 AND granular IS NOT 1.
+
+        # Products Group
+        cursor.execute("UPDATE user SET can_add_product=1, can_edit_product=1, can_delete_product=1, can_add_category=1, can_edit_category=1, can_delete_category=1 WHERE can_manage_products=1")
+
+        # Users Group
+        cursor.execute("UPDATE user SET can_add_user=1, can_edit_user=1, can_delete_user=1 WHERE can_manage_users=1")
+
+        conn.commit()
+        print("Permissions migrated successfully.")
+    except Exception as e:
+        print(f"Error migrating permissions: {e}")
+
 def fix_sqlite(db_path):
     print(f"Targeting SQLite database: {db_path}")
     if not os.path.exists(db_path):
@@ -52,6 +81,7 @@ def fix_sqlite(db_path):
     cursor = conn.cursor()
 
     check_and_add_columns_sqlite(conn, cursor)
+    migrate_permissions_sqlite(conn, cursor)
     ensure_foreign_keys_sqlite(conn, cursor)
 
     conn.close()
@@ -154,6 +184,19 @@ def rebuild_table_sqlite(conn, cursor, table_name, create_sql):
         conn.rollback()
         print("CRITICAL: Manual intervention might be required.")
 
+def migrate_permissions_postgres(conn, cursor):
+    print("Migrating permissions (PostgreSQL)...")
+    try:
+        # Products Group
+        cursor.execute("UPDATE \"user\" SET can_add_product=TRUE, can_edit_product=TRUE, can_delete_product=TRUE, can_add_category=TRUE, can_edit_category=TRUE, can_delete_category=TRUE WHERE can_manage_products=TRUE")
+
+        # Users Group
+        cursor.execute("UPDATE \"user\" SET can_add_user=TRUE, can_edit_user=TRUE, can_delete_user=TRUE WHERE can_manage_users=TRUE")
+
+        print("Permissions migrated successfully.")
+    except Exception as e:
+        print(f"Error migrating permissions: {e}")
+
 def fix_postgres(db_url):
     print("Detected PostgreSQL database.")
 
@@ -173,6 +216,7 @@ def fix_postgres(db_url):
         cursor = conn.cursor()
 
         check_and_add_columns_postgres(conn, cursor)
+        migrate_permissions_postgres(conn, cursor)
         ensure_foreign_keys_postgres(conn, cursor)
 
         conn.close()
