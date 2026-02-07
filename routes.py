@@ -1,9 +1,34 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for, flash, current_app, send_file
+from flask import Blueprint, render_template, request, session, redirect, url_for, flash, current_app, send_file, jsonify
 from flask_login import current_user
-from models import Product, db, Order, OrderItem, HomeSection, Category, DbImage
+from models import Product, db, Order, OrderItem, HomeSection, Category, DbImage, UserLog
 import io
 
 main_bp = Blueprint('main', __name__)
+
+@main_bp.app_context_processor
+def inject_cart_data():
+    cart = session.get('cart', {})
+    total_price = 0
+    if cart:
+        try:
+            product_ids = [int(pid) for pid in cart.keys()]
+            if product_ids:
+                products = Product.query.filter(Product.id.in_(product_ids)).all()
+                product_map = {p.id: p for p in products}
+
+                for pid_str, quantity in cart.items():
+                    product = product_map.get(int(pid_str))
+                    if product:
+                         item_total = product.price * quantity
+                         for pricing in product.pricings:
+                             if pricing.quantity == quantity:
+                                 item_total = pricing.price
+                                 break
+                         total_price += item_total
+        except Exception as e:
+            current_app.logger.error(f"Error calculating cart total in context processor: {e}")
+
+    return dict(cart_total=total_price)
 
 @main_bp.route('/db_image/<int:image_id>')
 def get_db_image(image_id):
@@ -27,8 +52,10 @@ def index():
     all_products = Product.query.filter_by(is_hidden=False).all()
     all_categories = Category.query.all()
 
-    # Fetch Limited Offer Section
+    # Fetch Home Sections
     limited_offer = HomeSection.query.filter_by(section_name='limited_offer').first()
+    hero_section = HomeSection.query.filter_by(section_name='hero').first()
+    promo_banner = HomeSection.query.filter_by(section_name='promo_banner').first()
 
     # Simulate different collections
     # In a real app, these would be filtered by date added, sales count, etc.
@@ -46,6 +73,8 @@ def index():
                          featured_products=featured_collection,
                          all_products=all_products,
                          limited_offer=limited_offer,
+                         hero_section=hero_section,
+                         promo_banner=promo_banner,
                          all_categories=all_categories)
 
 @main_bp.route('/about')
@@ -124,6 +153,8 @@ def cart():
 def add_to_cart(product_id):
     product = Product.query.get_or_404(product_id)
     if product.is_out_of_stock:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+             return jsonify({'status': 'error', 'message': 'This product is out of stock.'})
         flash('This product is out of stock.', 'danger')
         return redirect(request.referrer or url_for('main.shop'))
 
@@ -135,7 +166,11 @@ def add_to_cart(product_id):
 
     # Allow float quantity
     try:
-        quantity = float(request.values.get('quantity', 1.0))
+        if request.is_json:
+            data = request.get_json()
+            quantity = float(data.get('quantity', 1.0))
+        else:
+            quantity = float(request.values.get('quantity', 1.0))
     except ValueError:
         quantity = 1.0
 
@@ -149,6 +184,14 @@ def add_to_cart(product_id):
 
     session.modified = True
     current_app.logger.info(f"Added product {product_id} (qty: {quantity}) to cart")
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+         return jsonify({
+             'status': 'success',
+             'message': f'Added {quantity} item(s) to cart',
+             'cart_count': len(cart)
+         })
+
     flash(f'Added {quantity} item(s) to cart', 'success')
     return redirect(request.referrer or url_for('main.shop'))
 
@@ -249,6 +292,19 @@ def checkout():
             db.session.add(item)
 
         db.session.commit()
+
+        # Log purchase attempt
+        try:
+            log_user_id = current_user.id if current_user.is_authenticated else None
+            log = UserLog(
+                user_id=log_user_id,
+                action='purchase_attempt',
+                details=f"Order ID: {new_order.id}, Total: {new_order.total_amount}"
+            )
+            db.session.add(log)
+            db.session.commit()
+        except Exception as e:
+            current_app.logger.error(f"Logging error: {e}")
 
         current_app.logger.info(f"Order created: {new_order.id} for {name} ({total_price})")
 

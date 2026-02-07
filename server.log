@@ -1,0 +1,6 @@
+[2026-02-07 15:09:45 +0000] [10144] [INFO] Starting gunicorn 25.0.2
+[2026-02-07 15:09:45 +0000] [10144] [INFO] Listening at: http://0.0.0.0:5000 (10144)
+[2026-02-07 15:09:45 +0000] [10144] [INFO] Using worker: sync
+[2026-02-07 15:09:45 +0000] [10267] [INFO] Booting worker with pid: 10267
+[2026-02-07 15:09:45 +0000] [10267] [INFO] Application starting... Environment: Production
+[2026-02-07 15:13:11 +0000] [10267] [INFO] Added product 1 (qty: 1.0) to cart

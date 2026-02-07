@@ -19,6 +19,11 @@ MISSING_COLUMNS = {
     ],
     'product_pricing': [
         ('display_unit', "VARCHAR(20) DEFAULT 'Kg'")
+    ],
+    'user': [
+        ('permissions', "VARCHAR(500)"),
+        ('reset_token', "VARCHAR(100)"),
+        ('reset_token_expiry', "DATETIME")
     ]
 }
 

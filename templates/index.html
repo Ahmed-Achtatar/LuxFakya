@@ -1,6 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+{% if hero_section and hero_section.image_url %}
+<!-- Dynamic Hero Section -->
+<div class="hero-section" style="background-image: url('{{ hero_section.image_url }}');" data-aos="fade-in">
+    <div class="hero-overlay"></div>
+    <div class="hero-content text-center">
+        {% set hero_title = hero_section|attr('title_' + current_lang) or get_text('hero_slide1_title') %}
+        {% set hero_text = hero_section|attr('text_' + current_lang) or get_text('hero_slide1_pre') %}
+
+        <h5 class="text-gold text-uppercase letter-spacing-2 mb-3 display-6" style="font-size: 1.2rem;">{{ hero_text }}</h5>
+        <h1 class="display-1 fw-bold text-white mb-4 font-serif">{{ hero_title }}</h1>
+        <a href="{{ url_for('main.shop') }}" class="btn btn-gold rounded-pill px-5 py-3 text-uppercase fw-bold mt-4">{{ get_text('hero_slide1_btn') }}</a>
+    </div>
+</div>
+{% else %}
 <!-- Hero Carousel -->
 <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-aos="fade-in">
     <div class="carousel-indicators">
@@ -46,6 +61,7 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
+{% endif %}
 
 <!-- Categories Section -->
 <div class="container floating-categories">

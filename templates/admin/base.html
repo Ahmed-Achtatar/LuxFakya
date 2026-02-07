@@ -48,8 +48,17 @@
                 <a href="{{ url_for('admin.list_users') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint in ['admin.list_users', 'admin.user_detail'] %}active{% endif %}">
                     <i class="fas fa-users me-2"></i>{{ translations[current_lang]['users'] }}
                 </a>
+                <a href="{{ url_for('admin.logs') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint == 'admin.logs' %}active{% endif %}">
+                    <i class="fas fa-history me-2"></i>Logs
+                </a>
                 <a href="{{ url_for('admin.home_settings') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint == 'admin.home_settings' %}active{% endif %}">
-                    <i class="fas fa-cog me-2"></i>{{ translations[current_lang]['settings'] }}
+                    <i class="fas fa-percentage me-2"></i>Limited Offer
+                </a>
+                <a href="{{ url_for('admin.hero_settings') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint == 'admin.hero_settings' %}active{% endif %}">
+                    <i class="fas fa-image me-2"></i>Hero Section
+                </a>
+                <a href="{{ url_for('admin.promo_settings') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint == 'admin.promo_settings' %}active{% endif %}">
+                    <i class="fas fa-bullhorn me-2"></i>Promo Banner
                 </a>
                 <a href="{{ url_for('main.index') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
                     <i class="fas fa-home me-2"></i>{{ translations[current_lang]['view_site'] }}
