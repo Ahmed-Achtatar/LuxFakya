@@ -66,12 +66,6 @@
                 </a>
                 {% endif %}
 
-                {% if current_user.role == 'admin' or current_user.can_manage_users %}
-                <a href="{{ url_for('admin.logs') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {% if request.endpoint == 'admin.logs' %}active{% endif %}">
-                    <i class="fas fa-history me-2"></i>Logs
-                </a>
-                {% endif %}
-
                 <a href="{{ url_for('main.index') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
                     <i class="fas fa-home me-2"></i>{{ translations[current_lang]['view_site'] }}
                 </a>

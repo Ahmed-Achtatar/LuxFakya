@@ -5,7 +5,7 @@ import traceback
 from flask import Flask, session, request, send_from_directory, jsonify
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
-from models import db, User, Category
+from models import db, User, Category, SiteSetting
 from translations import translations
 
 def create_app(test_config=None):
@@ -97,9 +97,16 @@ def create_app(test_config=None):
         except Exception:
             categories = []
 
+        # Fetch free shipping threshold
+        try:
+            threshold_setting = SiteSetting.query.filter_by(key='free_shipping_threshold').first()
+            free_shipping_threshold = float(threshold_setting.value) if threshold_setting and threshold_setting.value else 500.0
+        except Exception:
+            free_shipping_threshold = 500.0
+
         # Calculate cart total for free shipping banner
         cart_total = 0
-        remaining_amount = 500
+        remaining_amount = free_shipping_threshold
         cart = session.get('cart', {})
 
         if cart:
@@ -130,7 +137,7 @@ def create_app(test_config=None):
             except Exception as e:
                 app.logger.error(f"Error calculating cart total: {e}")
 
-        remaining_amount = max(0, 500 - cart_total)
+        remaining_amount = max(0, free_shipping_threshold - cart_total)
 
         return dict(
             get_text=get_text,
@@ -140,7 +147,7 @@ def create_app(test_config=None):
             all_categories=categories,
             cart_total=cart_total,
             remaining_amount=remaining_amount,
-            free_shipping_threshold=500
+            free_shipping_threshold=free_shipping_threshold
         )
 
     with app.app_context():
