@@ -43,7 +43,7 @@ class AdminUserManagementTestCase(unittest.TestCase):
         content = response.data.decode('utf-8')
 
         # Check for sections
-        self.assertIn('Staff (Admin & Moderators)', content)
+        self.assertIn('Personnel (Admin &amp; Modérateurs)', content)
         self.assertIn('Clients', content)
 
         # Check that 'mod' is in Staff section (rudimentary check based on order or proximity,
@@ -69,16 +69,17 @@ class AdminUserManagementTestCase(unittest.TestCase):
         # Visit user detail page
         response = self.client.get(f'/admin/users/{client_id}')
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Promote to Moderator', response.data.decode('utf-8'))
-        self.assertNotIn('Can Manage Orders', response.data.decode('utf-8')) # Form should be hidden
+        self.assertIn('name="action" value="promote"', response.data.decode('utf-8'))
+        self.assertNotIn('name="can_manage_orders"', response.data.decode('utf-8')) # Form should be hidden
 
         # Promote
         response = self.client.post(f'/admin/users/{client_id}', data={'action': 'promote'}, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn('User promoted to Moderator', response.data.decode('utf-8'))
+        # Check for success message (part of it) or just check state
+        self.assertIn('alert-success', response.data.decode('utf-8'))
 
         # Check permissions form is now visible
-        self.assertIn('Can Manage Orders', response.data.decode('utf-8'))
+        self.assertIn('name="can_manage_orders"', response.data.decode('utf-8'))
 
         # Check DB
         with self.app.app_context():

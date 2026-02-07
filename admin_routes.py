@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
 from flask_login import login_user, logout_user, login_required, current_user
 from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection, DbImage, UserLog, SiteSetting
+from translations import translations
 import os
 import uuid
 import io
@@ -10,6 +11,11 @@ from datetime import datetime
 from PIL import Image
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+def get_trans(key):
+    lang = session.get('lang', 'fr')
+    if lang == 'en': lang = 'fr'
+    return translations.get(lang, {}).get(key, key)
 
 # Allowed extensions for image upload
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
@@ -78,7 +84,7 @@ def restrict_access():
     )
 
     if not (is_admin or has_perms):
-        flash('Access denied. Admin or Moderator privileges required.', 'danger')
+        flash(get_trans('msg_access_denied_admin'), 'danger')
         return redirect(url_for('main.index'))
 
 def permission_required(permission_name):
@@ -91,7 +97,7 @@ def permission_required(permission_name):
             if getattr(current_user, permission_name, False):
                 return f(*args, **kwargs)
 
-            flash('Access denied. Insufficient permissions.', 'danger')
+            flash(get_trans('msg_access_denied_perms'), 'danger')
             return redirect(url_for('admin.dashboard'))
         return decorated_function
     return decorator
@@ -101,7 +107,7 @@ def login():
     if current_user.is_authenticated:
         if getattr(current_user, 'role', 'customer') == 'admin':
             return redirect(url_for('admin.dashboard'))
-        flash('You are already logged in as a customer.', 'info')
+        flash(get_trans('msg_already_logged_customer'), 'info')
         return redirect(url_for('main.index'))
 
     if request.method == 'POST':
@@ -120,12 +126,12 @@ def login():
             )
 
             if not (is_admin or has_perms):
-                flash('Access denied. Not an admin or moderator account.', 'danger')
+                flash(get_trans('msg_access_denied_account'), 'danger')
             else:
                 login_user(user)
                 return redirect(url_for('admin.dashboard'))
         else:
-            flash('Invalid username or password', 'danger')
+            flash(get_trans('msg_invalid_credentials'), 'danger')
 
     return render_template('admin/login.html')
 
@@ -150,7 +156,7 @@ def user_detail(user_id):
              if request.form.get('action') == 'promote':
                  user.can_manage_orders = True # Default permission to make them staff
                  db.session.commit()
-                 flash('User promoted to Moderator. You can now assign specific permissions.', 'success')
+                 flash(get_trans('msg_user_promoted'), 'success')
                  return redirect(url_for('admin.user_detail', user_id=user.id))
 
              user.can_manage_orders = True if request.form.get('can_manage_orders') else False
@@ -158,9 +164,9 @@ def user_detail(user_id):
              user.can_manage_products = True if request.form.get('can_manage_products') else False
              user.can_manage_content = True if request.form.get('can_manage_content') else False
              db.session.commit()
-             flash('Permissions updated.', 'success')
+             flash(get_trans('msg_perms_updated'), 'success')
         else:
-             flash('Only Admins can change permissions.', 'warning')
+             flash(get_trans('msg_admin_only_perms'), 'warning')
 
     return render_template('admin/user_detail.html', user=user)
 
@@ -174,9 +180,9 @@ def add_user():
         password = request.form.get('password')
 
         if User.query.filter_by(username=username).first():
-            flash('Username already exists.', 'danger')
+            flash(get_trans('msg_username_exists'), 'danger')
         elif email and User.query.filter_by(email=email).first():
-            flash('Email already exists.', 'danger')
+            flash(get_trans('msg_email_exists'), 'danger')
         else:
             user = User(username=username, email=email)
             user.set_password(password)
@@ -190,7 +196,7 @@ def add_user():
             db.session.add(user)
             db.session.commit()
 
-            flash('User created successfully.', 'success')
+            flash(get_trans('msg_user_created'), 'success')
             return redirect(url_for('admin.list_users'))
 
     return render_template('admin/add_moderator.html')
@@ -288,7 +294,7 @@ def confirm_order(order_id):
     if order.status != 'Completed':
         order.status = 'Completed'
         db.session.commit()
-        flash('Order confirmed successfully.', 'success')
+        flash(get_trans('msg_order_confirmed'), 'success')
     return redirect(url_for('admin.order_detail', order_id=order.id))
 
 @admin_bp.route('/orders/<int:order_id>/cancel', methods=['POST'])
@@ -299,7 +305,7 @@ def cancel_order(order_id):
     if order.status != 'Cancelled':
         order.status = 'Cancelled'
         db.session.commit()
-        flash('Order cancelled successfully.', 'warning')
+        flash(get_trans('msg_order_cancelled'), 'warning')
     return redirect(url_for('admin.order_detail', order_id=order.id))
 
 @admin_bp.route('/categories')
@@ -323,12 +329,12 @@ def add_category():
                 image_url = optimize_and_save_image(file)
 
         if Category.query.filter_by(name=name).first():
-            flash('Category already exists', 'danger')
+            flash(get_trans('msg_cat_exists'), 'danger')
         else:
             category = Category(name=name, image_url=image_url)
             db.session.add(category)
             db.session.commit()
-            flash('Category added successfully', 'success')
+            flash(get_trans('msg_cat_added'), 'success')
             return redirect(url_for('admin.categories'))
     return render_template('admin/category_form.html', title='Add Category')
 
@@ -347,12 +353,12 @@ def edit_category(id):
 
         if new_name != category.name:
             if Category.query.filter_by(name=new_name).first():
-                flash('Category with this name already exists', 'danger')
+                flash(get_trans('msg_cat_name_exists'), 'danger')
                 return render_template('admin/category_form.html', title='Edit Category', category=category)
             category.name = new_name
 
         db.session.commit()
-        flash('Category updated successfully', 'success')
+        flash(get_trans('msg_cat_updated'), 'success')
         return redirect(url_for('admin.categories'))
 
     return render_template('admin/category_form.html', title='Edit Category', category=category)
@@ -364,11 +370,11 @@ def delete_category(id):
     category = Category.query.get_or_404(id)
     # Check if products exist in this category
     if Product.query.filter_by(category_id=category.id).first():
-        flash('Cannot delete category with associated products. Please reassign products first.', 'danger')
+        flash(get_trans('msg_cat_delete_error'), 'danger')
     else:
         db.session.delete(category)
         db.session.commit()
-        flash('Category deleted successfully', 'success')
+        flash(get_trans('msg_cat_deleted'), 'success')
     return redirect(url_for('admin.categories'))
 
 @admin_bp.route('/add', methods=['GET', 'POST'])
@@ -438,7 +444,7 @@ def add_product():
 
         db.session.commit()
 
-        flash('Product added successfully', 'success')
+        flash(get_trans('msg_product_added'), 'success')
         return redirect(url_for('admin.dashboard'))
 
     return render_template('admin/add_product.html', categories=categories)
@@ -494,7 +500,7 @@ def edit_product(product_id):
                 db.session.add(new_pricing)
 
         db.session.commit()
-        flash('Product updated successfully', 'success')
+        flash(get_trans('msg_product_updated'), 'success')
         return redirect(url_for('admin.dashboard'))
 
     return render_template('admin/edit_product.html', product=product, categories=categories)
@@ -506,7 +512,7 @@ def delete_product(product_id):
     product = Product.query.get_or_404(product_id)
     db.session.delete(product)
     db.session.commit()
-    flash('Product deleted', 'success')
+    flash(get_trans('msg_product_deleted'), 'success')
     return redirect(url_for('admin.dashboard'))
 
 @admin_bp.route('/product/<int:product_id>/toggle_hidden', methods=['POST'])
@@ -516,8 +522,8 @@ def toggle_hidden(product_id):
     product = Product.query.get_or_404(product_id)
     product.is_hidden = not product.is_hidden
     db.session.commit()
-    status = 'hidden' if product.is_hidden else 'visible'
-    flash(f'Product {product.name} is now {status}.', 'success')
+    status = get_trans('status_hidden') if product.is_hidden else get_trans('status_visible')
+    flash(get_trans('msg_product_status').format(name=product.name, status=status), 'success')
     return redirect(url_for('admin.dashboard'))
 
 @admin_bp.route('/product/<int:product_id>/toggle_stock', methods=['POST'])
@@ -527,8 +533,8 @@ def toggle_stock(product_id):
     product = Product.query.get_or_404(product_id)
     product.is_out_of_stock = not product.is_out_of_stock
     db.session.commit()
-    status = 'out of stock' if product.is_out_of_stock else 'in stock'
-    flash(f'Product {product.name} is now {status}.', 'success')
+    status = get_trans('status_out_of_stock') if product.is_out_of_stock else get_trans('status_in_stock')
+    flash(get_trans('msg_product_status').format(name=product.name, status=status), 'success')
     return redirect(url_for('admin.dashboard'))
 
 @admin_bp.route('/settings/home', methods=['GET', 'POST'])
@@ -598,7 +604,7 @@ def home_settings():
             free_shipping_setting.value = threshold_val
 
         db.session.commit()
-        flash('Settings updated successfully', 'success')
+        flash(get_trans('msg_settings_updated'), 'success')
         return redirect(url_for('admin.home_settings'))
 
     return render_template('admin/home_settings.html', sections=sections, free_shipping_threshold=free_shipping_threshold)

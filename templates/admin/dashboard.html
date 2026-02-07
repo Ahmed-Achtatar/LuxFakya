@@ -113,14 +113,14 @@
                             <!-- Toggle Visibility -->
                             <form action="{{ url_for('admin.toggle_hidden', product_id=product.id) }}" method="POST" style="display:inline;">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="btn btn-sm {% if product.is_hidden %}btn-secondary{% else %}btn-outline-secondary{% endif %} me-1" title="{% if product.is_hidden %}Show{% else %}Hide{% endif %}">
+                                <button type="submit" class="btn btn-sm {% if product.is_hidden %}btn-secondary{% else %}btn-outline-secondary{% endif %} me-1" title="{% if product.is_hidden %}{{ translations[current_lang]['title_show'] }}{% else %}{{ translations[current_lang]['title_hide'] }}{% endif %}">
                                     <i class="fas {% if product.is_hidden %}fa-eye-slash{% else %}fa-eye{% endif %}"></i>
                                 </button>
                             </form>
                             <!-- Toggle Stock -->
                             <form action="{{ url_for('admin.toggle_stock', product_id=product.id) }}" method="POST" style="display:inline;">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="btn btn-sm {% if product.is_out_of_stock %}btn-danger{% else %}btn-outline-success{% endif %} me-1" title="{% if product.is_out_of_stock %}Mark In Stock{% else %}Mark Out of Stock{% endif %}">
+                                <button type="submit" class="btn btn-sm {% if product.is_out_of_stock %}btn-danger{% else %}btn-outline-success{% endif %} me-1" title="{% if product.is_out_of_stock %}{{ translations[current_lang]['title_mark_stock'] }}{% else %}{{ translations[current_lang]['title_mark_out_stock'] }}{% endif %}">
                                     <i class="fas {% if product.is_out_of_stock %}fa-times-circle{% else %}fa-check-circle{% endif %}"></i>
                                 </button>
                             </form>

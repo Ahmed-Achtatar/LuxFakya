@@ -16,7 +16,7 @@
                     <div class="row g-3">
                         <div class="col-md-12 mb-3">
                             <label for="name" class="form-label text-uppercase small text-muted fw-bold">{{ translations[current_lang]['lbl_name'] }}</label>
-                            <input type="text" class="form-control form-control-lg bg-light border-0" id="name" name="name" required placeholder="e.g. Saffron Premium">
+                            <input type="text" class="form-control form-control-lg bg-light border-0" id="name" name="name" required placeholder="{{ translations[current_lang]['placeholder_product_name'] }}">
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -30,7 +30,7 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="unit" class="form-label text-uppercase small text-muted fw-bold">{{ translations[current_lang]['lbl_unit'] }}</label>
-                            <input type="text" class="form-control form-control-lg bg-light border-0" id="unit" name="unit" value="pcs" required placeholder="e.g. kg, g, box">
+                            <input type="text" class="form-control form-control-lg bg-light border-0" id="unit" name="unit" value="pcs" required placeholder="{{ translations[current_lang]['placeholder_unit'] }}">
                         </div>
 
                         <div class="col-md-12 mb-3">
@@ -44,11 +44,11 @@
                         <div class="col-md-12 mb-3">
                             <div class="form-check form-switch form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="is_hidden" name="is_hidden">
-                                <label class="form-check-label" for="is_hidden">Hide from Shop</label>
+                                <label class="form-check-label" for="is_hidden">{{ translations[current_lang]['hide_from_shop'] }}</label>
                             </div>
                             <div class="form-check form-switch form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="is_out_of_stock" name="is_out_of_stock">
-                                <label class="form-check-label" for="is_out_of_stock">Out of Stock</label>
+                                <label class="form-check-label" for="is_out_of_stock">{{ translations[current_lang]['mark_out_of_stock'] }}</label>
                             </div>
                         </div>
 

@@ -18,7 +18,7 @@
                         <thead class="bg-light">
                             <tr>
                                 <th class="ps-4 py-3 border-bottom-0">{{ translations[current_lang]['th_id'] }}</th>
-                                <th class="py-3 border-bottom-0">Image</th>
+                                <th class="py-3 border-bottom-0">{{ translations[current_lang]['th_image'] }}</th>
                                 <th class="py-3 border-bottom-0">{{ translations[current_lang]['th_name'] }}</th>
                                 <th class="py-3 text-end pe-4 border-bottom-0">{{ translations[current_lang]['th_actions'] }}</th>
                             </tr>
@@ -31,7 +31,7 @@
                                     {% if category.image_url %}
                                     <img src="{{ category.image_url }}" alt="{{ category.name }}" class="rounded" style="height: 50px; width: 50px; object-fit: cover;">
                                     {% else %}
-                                    <span class="text-muted small">No Image</span>
+                                    <span class="text-muted small">{{ translations[current_lang]['no_image'] }}</span>
                                     {% endif %}
                                 </td>
                                 <td class="fw-bold fs-5">{{ category.name }}</td>
