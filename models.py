@@ -35,6 +35,19 @@ class User(UserMixin, db.Model):
     can_manage_products = db.Column(db.Boolean, default=False)
     can_manage_content = db.Column(db.Boolean, default=False)
 
+    # Detailed Permissions
+    can_add_product = db.Column(db.Boolean, default=False)
+    can_edit_product = db.Column(db.Boolean, default=False)
+    can_delete_product = db.Column(db.Boolean, default=False)
+
+    can_add_category = db.Column(db.Boolean, default=False)
+    can_edit_category = db.Column(db.Boolean, default=False)
+    can_delete_category = db.Column(db.Boolean, default=False)
+
+    can_add_user = db.Column(db.Boolean, default=False)
+    can_edit_user = db.Column(db.Boolean, default=False)
+    can_delete_user = db.Column(db.Boolean, default=False)
+
     orders = db.relationship('Order', backref='user', lazy=True)
 
     @property
@@ -43,7 +56,16 @@ class User(UserMixin, db.Model):
                self.can_manage_orders or \
                self.can_manage_users or \
                self.can_manage_products or \
-               self.can_manage_content)
+               self.can_manage_content or \
+               self.can_add_product or \
+               self.can_edit_product or \
+               self.can_delete_product or \
+               self.can_add_category or \
+               self.can_edit_category or \
+               self.can_delete_category or \
+               self.can_add_user or \
+               self.can_edit_user or \
+               self.can_delete_user)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
