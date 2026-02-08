@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-lg-6">
+    <div class="col-lg-7 mb-4">
         <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5">
             <h2 class="mb-4 font-serif fw-bold text-center">{{ get_text('checkout_title') }}</h2>
             <p class="text-center text-muted mb-4">{{ get_text('checkout_desc') }}</p>
@@ -47,6 +47,29 @@
                     <a href="{{ url_for('main.cart') }}" class="btn btn-outline-secondary border-0">{{ get_text('back_to_cart') }}</a>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+            <h4 class="font-serif fw-bold mb-4">{{ get_text('order_summary') }}</h4>
+            <div class="d-flex justify-content-between mb-3">
+                <span class="text-muted">{{ get_text('subtotal') }}</span>
+                <span class="fw-bold force-ltr">{{ total }} {{ get_text('currency') }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+                <span class="text-muted">{{ get_text('shipping') }}</span>
+                {% if shipping_fee > 0 %}
+                <span class="force-ltr">{{ shipping_fee }} {{ get_text('currency') }}</span>
+                {% else %}
+                <span class="text-success">{{ get_text('free') }}</span>
+                {% endif %}
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between mb-4">
+                <span class="fs-5 fw-bold">{{ get_text('product_table_total') }}</span>
+                <span class="fs-5 fw-bold text-gold force-ltr">{{ grand_total }} {{ get_text('currency') }}</span>
+            </div>
         </div>
     </div>
 </div>

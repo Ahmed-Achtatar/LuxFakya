@@ -39,7 +39,8 @@ class AdminModeratorTestCase(unittest.TestCase):
         }, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'User created successfully', response.data)
+        # Expect localized message (French default)
+        self.assertIn('Utilisateur créé avec succès'.encode('utf-8'), response.data)
 
         with self.app.app_context():
             user = User.query.filter_by(username='new_mod').first()

@@ -101,12 +101,16 @@ def create_app(test_config=None):
         except Exception:
             categories = []
 
-        # Fetch free shipping threshold
+        # Fetch free shipping threshold and shipping cost
         try:
             threshold_setting = SiteSetting.query.filter_by(key='free_shipping_threshold').first()
             free_shipping_threshold = float(threshold_setting.value) if threshold_setting and threshold_setting.value else 500.0
+
+            shipping_cost_setting = SiteSetting.query.filter_by(key='shipping_cost').first()
+            shipping_cost = float(shipping_cost_setting.value) if shipping_cost_setting and shipping_cost_setting.value else 35.0
         except Exception:
             free_shipping_threshold = 500.0
+            shipping_cost = 35.0
 
         # Calculate cart total for free shipping banner
         cart_total = 0
@@ -142,6 +146,7 @@ def create_app(test_config=None):
                 app.logger.error(f"Error calculating cart total: {e}")
 
         remaining_amount = max(0, free_shipping_threshold - cart_total)
+        shipping_fee = 0 if cart_total >= free_shipping_threshold else shipping_cost
 
         return dict(
             get_text=get_text,
@@ -151,7 +156,9 @@ def create_app(test_config=None):
             all_categories=categories,
             cart_total=cart_total,
             remaining_amount=remaining_amount,
-            free_shipping_threshold=free_shipping_threshold
+            free_shipping_threshold=free_shipping_threshold,
+            shipping_cost=shipping_cost,
+            shipping_fee=shipping_fee
         )
 
     with app.app_context():

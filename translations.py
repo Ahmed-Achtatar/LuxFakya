@@ -419,6 +419,9 @@ translations = {
         'btn_close': 'Fermer',
         'order_placed_desc': "Votre commande #{id} a été enregistrée avec succès.",
         'wa_instructions': "Cliquez sur le bouton ci-dessous pour nous envoyer les détails de votre commande sur WhatsApp afin de finaliser le paiement et la livraison.",
+        'shipping_cost_label': 'Frais de livraison (MAD)',
+        'shipping_cost_help': 'Montant des frais de livraison si le seuil n\'est pas atteint.',
+        'promo_fixed': 'Livraison gratuite à partir de {amount} MAD',
     },
     'ar': {
         # Nav
@@ -838,6 +841,9 @@ translations = {
         'btn_close': 'إغلاق',
         'order_placed_desc': "تم تسجيل طلبك رقم #{id} بنجاح.",
         'wa_instructions': "اضغط على الزر أدناه لإرسال تفاصيل طلبك إلينا عبر واتساب لإتمام الدفع والتوصيل.",
+        'shipping_cost_label': 'تكلفة الشحن (درهم)',
+        'shipping_cost_help': 'قيمة الشحن إذا لم يتم الوصول للحد الأدنى.',
+        'promo_fixed': 'شحن مجاني للطلبات التي تزيد عن {amount} درهم',
     }
 }
 
