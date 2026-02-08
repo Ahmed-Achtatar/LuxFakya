@@ -279,7 +279,7 @@ def dashboard():
     categories = Category.query.all()
 
     # Statistics
-    total_orders = Order.query.filter(Order.status != 'Cancelled').count()
+    total_orders = Order.query.filter(Order.status.notin_(['Cancelled', 'Pending'])).count()
     pending_orders = Order.query.filter_by(status='Pending').count()
     total_users = User.query.count()
     total_products = Product.query.count()
@@ -591,6 +591,9 @@ def home_settings():
     free_shipping_setting = SiteSetting.query.filter_by(key='free_shipping_threshold').first()
     free_shipping_threshold = free_shipping_setting.value if free_shipping_setting else '500'
 
+    shipping_cost_setting = SiteSetting.query.filter_by(key='shipping_cost').first()
+    shipping_cost = shipping_cost_setting.value if shipping_cost_setting else '35'
+
     # Commit any new sections
     if db.session.dirty or db.session.new:
         db.session.commit()
@@ -637,8 +640,15 @@ def home_settings():
                 db.session.add(free_shipping_setting)
             free_shipping_setting.value = threshold_val
 
+        shipping_cost_val = request.form.get('shipping_cost')
+        if shipping_cost_val:
+            if not shipping_cost_setting:
+                shipping_cost_setting = SiteSetting(key='shipping_cost')
+                db.session.add(shipping_cost_setting)
+            shipping_cost_setting.value = shipping_cost_val
+
         db.session.commit()
         flash(get_trans('msg_settings_updated'), 'success')
         return redirect(url_for('admin.home_settings'))
 
-    return render_template('admin/home_settings.html', sections=sections, free_shipping_threshold=free_shipping_threshold)
+    return render_template('admin/home_settings.html', sections=sections, free_shipping_threshold=free_shipping_threshold, shipping_cost=shipping_cost)

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash, current_app, send_file, jsonify
 from flask_login import current_user
-from models import Product, db, Order, OrderItem, HomeSection, Category, DbImage, UserLog
+from models import Product, db, Order, OrderItem, HomeSection, Category, DbImage, UserLog, SiteSetting
 from translations import get_trans
 import io
 
@@ -124,7 +124,22 @@ def cart():
             cart_items.append({'product': product, 'quantity': quantity, 'total': item_total})
 
     total_price = round(total_price, 2)
-    return render_template('cart.html', cart_items=cart_items, total=total_price)
+
+    # Shipping Logic
+    try:
+        threshold_setting = SiteSetting.query.filter_by(key='free_shipping_threshold').first()
+        free_shipping_threshold = float(threshold_setting.value) if threshold_setting and threshold_setting.value else 500.0
+
+        shipping_cost_setting = SiteSetting.query.filter_by(key='shipping_cost').first()
+        shipping_cost = float(shipping_cost_setting.value) if shipping_cost_setting and shipping_cost_setting.value else 35.0
+    except Exception:
+        free_shipping_threshold = 500.0
+        shipping_cost = 35.0
+
+    shipping_fee = 0 if total_price >= free_shipping_threshold else shipping_cost
+    grand_total = total_price + shipping_fee
+
+    return render_template('cart.html', cart_items=cart_items, total=total_price, shipping_fee=shipping_fee, grand_total=grand_total)
 
 @main_bp.route('/cart/add/<int:product_id>', methods=['GET', 'POST'])
 def add_to_cart(product_id):
@@ -206,6 +221,44 @@ def checkout():
     if 'cart' not in session or not session['cart']:
         return redirect(url_for('main.shop'))
 
+    cart = session['cart']
+    total_price = 0
+    order_items_preview = [] # For GET request summary
+
+    # Pre-calculate total for both GET and POST (shared logic)
+    # We need to iterate carefully.
+    # To avoid DB calls twice, we can do it in one pass if we restructure,
+    # but for simplicity, I'll keep the structure.
+
+    # Let's do a quick calculation first
+    for product_id, quantity in cart.items():
+        product = Product.query.get(int(product_id))
+        if product:
+            item_total = product.price * quantity
+            for pricing in product.pricings:
+                if pricing.quantity == quantity:
+                    item_total = pricing.price
+                    break
+            total_price += item_total
+            # For template preview
+            order_items_preview.append({'product': product, 'quantity': quantity, 'total': round(item_total, 2)})
+
+    total_price = round(total_price, 2)
+
+    # Shipping Logic
+    try:
+        threshold_setting = SiteSetting.query.filter_by(key='free_shipping_threshold').first()
+        free_shipping_threshold = float(threshold_setting.value) if threshold_setting and threshold_setting.value else 500.0
+
+        shipping_cost_setting = SiteSetting.query.filter_by(key='shipping_cost').first()
+        shipping_cost = float(shipping_cost_setting.value) if shipping_cost_setting and shipping_cost_setting.value else 35.0
+    except Exception:
+        free_shipping_threshold = 500.0
+        shipping_cost = 35.0
+
+    shipping_fee = 0 if total_price >= free_shipping_threshold else shipping_cost
+    grand_total = total_price + shipping_fee
+
     if request.method == 'POST':
         # Log Checkout Attempt
         user_id = current_user.id if current_user.is_authenticated else None
@@ -224,33 +277,29 @@ def checkout():
         address = request.form.get('address')
         city = request.form.get('city')
 
-        cart = session['cart']
-        total_price = 0
+        # Re-calculate or use pre-calculated values
+        # We need to create OrderItem objects now
         order_items = []
+        # Reuse order_items_preview? No, they are dicts, we need Model objects.
+        # But we already calculated the total price above.
+        # Let's recreate objects to be safe and clean.
 
-        # Calculate total and prepare items
         for product_id, quantity in cart.items():
             product = Product.query.get(int(product_id))
             if product:
                 item_total = product.price * quantity
-
-                # Pricing logic
                 for pricing in product.pricings:
                     if pricing.quantity == quantity:
                         item_total = pricing.price
                         break
-
-                total_price += item_total
 
                 order_item = OrderItem(
                     product_id=product.id,
                     product_name=product.name,
                     quantity=quantity,
                     unit=product.unit,
-                    price_at_purchase=item_total/quantity if quantity > 0 else 0 # Unit price roughly or total
+                    price_at_purchase=item_total/quantity if quantity > 0 else 0
                 )
-                # Store the effective unit price based on the total calculated with tier pricing
-                order_item.price_at_purchase = item_total / quantity if quantity > 0 else 0
                 order_items.append(order_item)
 
         new_order = Order(
@@ -259,7 +308,7 @@ def checkout():
             customer_email=email,
             customer_address=address,
             customer_city=city,
-            total_amount=round(total_price, 2),
+            total_amount=round(grand_total, 2), # Use grand_total with shipping
             status='Pending'
         )
 
@@ -292,7 +341,7 @@ def checkout():
 
         return redirect(url_for('main.order_confirmation', order_id=new_order.id))
 
-    return render_template('checkout.html')
+    return render_template('checkout.html', total=total_price, shipping_fee=shipping_fee, grand_total=grand_total)
 
 @main_bp.route('/order-confirmation/<int:order_id>')
 def order_confirmation(order_id):

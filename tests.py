@@ -132,7 +132,8 @@ class LuxFakiaTestCase(unittest.TestCase):
             order = Order.query.first()
             self.assertIsNotNone(order)
             self.assertEqual(order.customer_name, 'John Doe')
-            self.assertEqual(order.total_amount, 20.0) # 2 * 10.0
+            # 2 * 10.0 = 20.0. Less than 500, so +35 shipping = 55.0
+            self.assertEqual(order.total_amount, 55.0)
 
             # Check Order Items
             items = OrderItem.query.filter_by(order_id=order.id).all()
