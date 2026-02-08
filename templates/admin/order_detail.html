@@ -84,6 +84,14 @@
                     <p class="mb-0 fw-bold"><a href="tel:{{ order.customer_phone }}" class="text-decoration-none text-dark">{{ order.customer_phone }}</a></p>
                 </div>
                  <div class="mb-3">
+                    <label class="small text-muted text-uppercase mb-1">{{ translations[current_lang]['lbl_city'] }}</label>
+                    <p class="mb-0 fw-bold">{{ order.customer_city or 'N/A' }}</p>
+                </div>
+                 <div class="mb-3">
+                    <label class="small text-muted text-uppercase mb-1">{{ translations[current_lang]['address_label'] }}</label>
+                    <p class="mb-0 fw-bold">{{ order.customer_address or 'N/A' }}</p>
+                </div>
+                 <div class="mb-3">
                     <label class="small text-muted text-uppercase mb-1">{{ translations[current_lang]['order_date'] }}</label>
                     <p class="mb-0 fw-bold">{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
                 </div>

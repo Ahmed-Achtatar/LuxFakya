@@ -52,7 +52,7 @@
                     <!-- Users -->
                     <div class="form-check form-switch mb-2">
                         <input class="form-check-input" type="checkbox" id="can_manage_users" name="can_manage_users">
-                        <label class="form-check-label fw-bold" for="can_manage_users">{{ translations[current_lang]['perm_manage_users'] }} (View)</label>
+                        <label class="form-check-label fw-bold" for="can_manage_users">{{ translations[current_lang]['perm_manage_users'] }} {{ translations[current_lang]['perm_view_only'] }}</label>
                     </div>
                     <div class="ms-4">
                         <div class="form-check form-switch mb-2">
@@ -74,10 +74,10 @@
                     <!-- Products & Categories -->
                     <div class="form-check form-switch mb-2">
                         <input class="form-check-input" type="checkbox" id="can_manage_products" name="can_manage_products">
-                        <label class="form-check-label fw-bold" for="can_manage_products">{{ translations[current_lang]['perm_manage_products'] }} (View)</label>
+                        <label class="form-check-label fw-bold" for="can_manage_products">{{ translations[current_lang]['perm_manage_products'] }} {{ translations[current_lang]['perm_view_only'] }}</label>
                     </div>
                     <div class="ms-4">
-                        <h6 class="text-muted mt-2">Products</h6>
+                        <h6 class="text-muted mt-2">{{ translations[current_lang]['header_products'] }}</h6>
                         <div class="form-check form-switch mb-2">
                             <input class="form-check-input" type="checkbox" id="can_add_product" name="can_add_product">
                             <label class="form-check-label" for="can_add_product">{{ translations[current_lang]['perm_add_product'] }}</label>
@@ -91,7 +91,7 @@
                             <label class="form-check-label" for="can_delete_product">{{ translations[current_lang]['perm_delete_product'] }}</label>
                         </div>
 
-                        <h6 class="text-muted mt-2">Categories</h6>
+                        <h6 class="text-muted mt-2">{{ translations[current_lang]['header_categories'] }}</h6>
                         <div class="form-check form-switch mb-2">
                             <input class="form-check-input" type="checkbox" id="can_add_category" name="can_add_category">
                             <label class="form-check-label" for="can_add_category">{{ translations[current_lang]['perm_add_category'] }}</label>

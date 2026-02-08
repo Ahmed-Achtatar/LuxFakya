@@ -236,6 +236,11 @@ translations = {
         'desc_manage_content': "Permet à l'utilisateur de gérer les sections de la page d'accueil, les paramètres et le contenu du site.",
 
         # New Admin Translations
+        'perm_view_only': '(Voir)',
+        'prev_slide': 'Précédent',
+        'next_slide': 'Suivant',
+        'header_products': 'Produits',
+        'header_categories': 'Catégories',
         'btn_show': 'Afficher',
         'btn_hide': 'Masquer',
         'btn_mark_in_stock': 'Marquer en stock',
@@ -658,6 +663,11 @@ translations = {
         'desc_manage_content': "يسمح للمستخدم بإدارة أقسام الصفحة الرئيسية والإعدادات ومحتوى الموقع.",
 
         # New Admin Translations
+        'perm_view_only': '(عرض)',
+        'prev_slide': 'السابق',
+        'next_slide': 'التالي',
+        'header_products': 'المنتجات',
+        'header_categories': 'التصنيفات',
         'btn_show': 'عرض',
         'btn_hide': 'إخفاء',
         'btn_mark_in_stock': 'وضع في المخزون',
