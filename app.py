@@ -108,9 +108,13 @@ def create_app(test_config=None):
 
             shipping_cost_setting = SiteSetting.query.filter_by(key='shipping_cost').first()
             shipping_cost = float(shipping_cost_setting.value) if shipping_cost_setting and shipping_cost_setting.value else 35.0
+
+            meta_pixel_id_setting = SiteSetting.query.filter_by(key='meta_pixel_id').first()
+            meta_pixel_id = meta_pixel_id_setting.value if meta_pixel_id_setting and meta_pixel_id_setting.value else ''
         except Exception:
             free_shipping_threshold = 500.0
             shipping_cost = 35.0
+            meta_pixel_id = ''
 
         # Calculate cart total for free shipping banner
         cart_total = 0
@@ -158,7 +162,8 @@ def create_app(test_config=None):
             remaining_amount=remaining_amount,
             free_shipping_threshold=free_shipping_threshold,
             shipping_cost=shipping_cost,
-            shipping_fee=shipping_fee
+            shipping_fee=shipping_fee,
+            meta_pixel_id=meta_pixel_id
         )
 
     with app.app_context():

@@ -594,6 +594,9 @@ def home_settings():
     shipping_cost_setting = SiteSetting.query.filter_by(key='shipping_cost').first()
     shipping_cost = shipping_cost_setting.value if shipping_cost_setting else '35'
 
+    meta_pixel_id_setting = SiteSetting.query.filter_by(key='meta_pixel_id').first()
+    meta_pixel_id = meta_pixel_id_setting.value if meta_pixel_id_setting else ''
+
     # Commit any new sections
     if db.session.dirty or db.session.new:
         db.session.commit()
@@ -647,8 +650,15 @@ def home_settings():
                 db.session.add(shipping_cost_setting)
             shipping_cost_setting.value = shipping_cost_val
 
+        meta_pixel_id_val = request.form.get('meta_pixel_id')
+        if meta_pixel_id_val is not None:
+            if not meta_pixel_id_setting:
+                meta_pixel_id_setting = SiteSetting(key='meta_pixel_id')
+                db.session.add(meta_pixel_id_setting)
+            meta_pixel_id_setting.value = meta_pixel_id_val
+
         db.session.commit()
         flash(get_trans('msg_settings_updated'), 'success')
         return redirect(url_for('admin.home_settings'))
 
-    return render_template('admin/home_settings.html', sections=sections, free_shipping_threshold=free_shipping_threshold, shipping_cost=shipping_cost)
+    return render_template('admin/home_settings.html', sections=sections, free_shipping_threshold=free_shipping_threshold, shipping_cost=shipping_cost, meta_pixel_id=meta_pixel_id)
