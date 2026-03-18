@@ -427,6 +427,8 @@ translations = {
         'shipping_cost_label': 'Frais de livraison (MAD)',
         'shipping_cost_help': 'Montant des frais de livraison si le seuil n\'est pas atteint.',
         'promo_fixed': 'Livraison gratuite à partir de {amount} MAD',
+        'meta_pixel_id': 'ID Pixel Meta',
+        'meta_pixel_help': 'Entrez votre ID Pixel Meta pour activer le suivi. Laissez vide pour désactiver.',
     },
     'ar': {
         # Nav
@@ -854,6 +856,8 @@ translations = {
         'shipping_cost_label': 'تكلفة الشحن (درهم)',
         'shipping_cost_help': 'قيمة الشحن إذا لم يتم الوصول للحد الأدنى.',
         'promo_fixed': 'شحن مجاني للطلبات التي تزيد عن {amount} درهم',
+        'meta_pixel_id': 'معرف ميتا بكسل',
+        'meta_pixel_help': 'أدخل معرف ميتا بكسل الخاص بك لتفعيل التتبع. اتركه فارغاً للتعطيل.',
     }
 }
 
