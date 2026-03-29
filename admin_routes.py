@@ -5,6 +5,7 @@ from translations import translations, get_trans
 import os
 import uuid
 import io
+import re
 from functools import wraps
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -652,6 +653,15 @@ def home_settings():
 
         meta_pixel_id_val = request.form.get('meta_pixel_id')
         if meta_pixel_id_val is not None:
+            # Extract just the ID if a full script snippet is pasted
+            match = re.search(r'\b\d{10,20}\b', meta_pixel_id_val)
+            if match:
+                meta_pixel_id_val = match.group(0)
+            elif meta_pixel_id_val.strip() != "":
+                # If they pasted something that isn't a 10-20 digit number and it's not empty,
+                # we might just save it as is or strip it. Let's just strip whitespace.
+                meta_pixel_id_val = meta_pixel_id_val.strip()
+
             if not meta_pixel_id_setting:
                 meta_pixel_id_setting = SiteSetting(key='meta_pixel_id')
                 db.session.add(meta_pixel_id_setting)
