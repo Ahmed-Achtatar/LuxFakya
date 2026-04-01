@@ -177,6 +177,18 @@ def create_app(test_config=None):
             except Exception as e:
                 app.logger.error(f"Database schema fix failed: {e}")
 
+            # Ensure Meta Pixel ID is set
+            try:
+                meta_pixel_id_setting = SiteSetting.query.filter_by(key='meta_pixel_id').first()
+                if not meta_pixel_id_setting:
+                    meta_pixel_id_setting = SiteSetting(key='meta_pixel_id', value='1626031432043896')
+                    db.session.add(meta_pixel_id_setting)
+                elif not meta_pixel_id_setting.value:
+                    meta_pixel_id_setting.value = '1626031432043896'
+                db.session.commit()
+            except Exception as e:
+                app.logger.error(f"Failed to set Meta Pixel ID: {e}")
+
         except Exception as e:
             app.logger.error(f"Database connection failed: {e}")
             print(f"CRITICAL ERROR: Database connection failed: {e}", file=sys.stderr)
