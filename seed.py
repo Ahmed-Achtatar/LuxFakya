@@ -1,5 +1,5 @@
 from app import create_app
-from models import db, User, Category
+from models import db, User, Category, SiteSetting
 
 app = create_app()
 
@@ -50,6 +50,17 @@ def seed():
             if cat.name not in default_categories:
                 print(f"Deleting old category: {cat.name}")
                 db.session.delete(cat)
+
+        print("Checking for site settings...")
+        meta_pixel_setting = SiteSetting.query.filter_by(key='meta_pixel_id').first()
+        if not meta_pixel_setting:
+            meta_pixel_setting = SiteSetting(key='meta_pixel_id', value='1626031432043896')
+            db.session.add(meta_pixel_setting)
+            print("Seeded meta_pixel_id.")
+        else:
+            meta_pixel_setting.value = '1626031432043896'
+            db.session.add(meta_pixel_setting)
+            print("Updated meta_pixel_id.")
 
         db.session.commit()
         print("Seeding complete.")
