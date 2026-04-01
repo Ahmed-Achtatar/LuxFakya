@@ -28,3 +28,14 @@
     </div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+    if (typeof fbq === 'function') {
+        fbq('track', 'Purchase', {
+            value: '{{ order.total_amount }}',
+            currency: 'MAD'
+        });
+    }
+</script>
+{% endblock %}

@@ -333,6 +333,11 @@
                         // Badge updated via class removal
 
                         showToast(data.message, 'success');
+
+                        // Meta Pixel AddToCart tracking
+                        if (typeof fbq === 'function') {
+                            fbq('track', 'AddToCart');
+                        }
                     } else {
                         showToast('{{ get_text("error_adding_cart") }}', 'danger');
                     }
@@ -372,5 +377,7 @@
             });
         }
     </script>
+
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
