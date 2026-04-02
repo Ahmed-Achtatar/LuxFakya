@@ -110,11 +110,11 @@ def create_app(test_config=None):
             shipping_cost = float(shipping_cost_setting.value) if shipping_cost_setting and shipping_cost_setting.value else 35.0
 
             meta_pixel_id_setting = SiteSetting.query.filter_by(key='meta_pixel_id').first()
-            meta_pixel_id = meta_pixel_id_setting.value if meta_pixel_id_setting and meta_pixel_id_setting.value else ''
+            meta_pixel_id = meta_pixel_id_setting.value if meta_pixel_id_setting and meta_pixel_id_setting.value else '957435760535858'
         except Exception:
             free_shipping_threshold = 500.0
             shipping_cost = 35.0
-            meta_pixel_id = ''
+            meta_pixel_id = '957435760535858'
 
         # Calculate cart total for free shipping banner
         cart_total = 0
@@ -181,10 +181,10 @@ def create_app(test_config=None):
             try:
                 meta_pixel_id_setting = SiteSetting.query.filter_by(key='meta_pixel_id').first()
                 if not meta_pixel_id_setting:
-                    meta_pixel_id_setting = SiteSetting(key='meta_pixel_id', value='1626031432043896')
+                    meta_pixel_id_setting = SiteSetting(key='meta_pixel_id', value='957435760535858')
                     db.session.add(meta_pixel_id_setting)
-                elif not meta_pixel_id_setting.value:
-                    meta_pixel_id_setting.value = '1626031432043896'
+                else:
+                    meta_pixel_id_setting.value = '957435760535858'
                 db.session.commit()
             except Exception as e:
                 app.logger.error(f"Failed to set Meta Pixel ID: {e}")
