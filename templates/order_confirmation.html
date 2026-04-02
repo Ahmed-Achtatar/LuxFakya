@@ -32,8 +32,10 @@
 {% block extra_js %}
 <script>
     if (typeof fbq === 'function') {
+        // Need to ensure the value is treated as a number
+        var totalAmount = parseFloat('{{ order.total_amount }}');
         fbq('track', 'Purchase', {
-            value: '{{ order.total_amount }}',
+            value: totalAmount,
             currency: 'MAD'
         });
     }

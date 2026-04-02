@@ -83,6 +83,23 @@
     </div>
 </div>
 
+{% block extra_js %}
+<script>
+    // Track ViewContent on Product Detail page
+    if (typeof fbq === 'function') {
+        var productPrice = {% if product.pricings %}{{ product.pricings[0].price }}{% else %}{{ product.price }}{% endif %};
+
+        fbq('track', 'ViewContent', {
+            content_name: '{{ product.name | replace("'", "\\'") }}',
+            content_ids: ['{{ product.id }}'],
+            content_type: 'product',
+            value: productPrice,
+            currency: 'MAD'
+        });
+    }
+</script>
+{% endblock %}
+
 {% if related_products %}
 <div class="mb-5 pt-4" data-aos="fade-up" data-aos-delay="200">
     <h3 class="font-serif fw-bold mb-4">{{ get_text('you_may_also_like') }}</h3>
