@@ -78,7 +78,10 @@
 {% block extra_js %}
 <script>
     if (typeof fbq === 'function') {
-        fbq('track', 'InitiateCheckout');
+        fbq('track', 'InitiateCheckout', {
+            value: {{ grand_total }},
+            currency: 'MAD'
+        });
     }
 </script>
 {% endblock %}
