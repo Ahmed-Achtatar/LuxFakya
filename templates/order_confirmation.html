@@ -34,9 +34,16 @@
     if (typeof fbq === 'function') {
         // Need to ensure the value is treated as a number
         var totalAmount = parseFloat('{{ order.total_amount }}');
+        var contentIds = [];
+        {% for item in order.items %}
+            contentIds.push('{{ item.product_id }}');
+        {% endfor %}
+
         fbq('track', 'Purchase', {
             value: totalAmount,
-            currency: 'MAD'
+            currency: 'MAD',
+            content_ids: contentIds,
+            content_type: 'product'
         });
     }
 </script>
