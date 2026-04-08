@@ -372,7 +372,13 @@
                                     currency: 'MAD'
                                 });
                             } else {
-                                fbq('track', 'AddToCart');
+                                fbq('track', 'AddToCart', {
+                                    content_name: contentName,
+                                    content_ids: [contentId],
+                                    content_type: 'product',
+                                    value: 0.00,
+                                    currency: 'MAD'
+                                });
                             }
                         }
                     } else {
