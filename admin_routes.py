@@ -5,6 +5,7 @@ from translations import translations, get_trans
 import os
 import uuid
 import io
+import re
 from functools import wraps
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -652,6 +653,23 @@ def home_settings():
 
         meta_pixel_id_val = request.form.get('meta_pixel_id')
         if meta_pixel_id_val is not None:
+            meta_pixel_id_val = meta_pixel_id_val.strip()
+            # Try to extract the numeric ID from the provided code snippet
+            match = re.search(r'fbq\([\'"]init[\'"],\s*[\'"](\d+)[\'"]\)', meta_pixel_id_val)
+            if match:
+                meta_pixel_id_val = match.group(1)
+            else:
+                match_src = re.search(r'id=(\d+)', meta_pixel_id_val)
+                if match_src:
+                    meta_pixel_id_val = match_src.group(1)
+                else:
+                    # Strip any non-digit characters if they somehow pasted something else,
+                    # but only if it's meant to be just an ID. If it's empty, leave it empty.
+                    if meta_pixel_id_val:
+                        digits_only = re.sub(r'\D', '', meta_pixel_id_val)
+                        if digits_only:
+                            meta_pixel_id_val = digits_only
+
             if not meta_pixel_id_setting:
                 meta_pixel_id_setting = SiteSetting(key='meta_pixel_id')
                 db.session.add(meta_pixel_id_setting)
