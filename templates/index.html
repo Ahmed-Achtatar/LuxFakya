@@ -12,7 +12,7 @@
         {% for i in range(1, 4) %}
         {% set slide = hero_slides[i-1] if hero_slides|length >= i else None %}
         <div class="carousel-item {% if loop.first %}active{% endif %} hero-carousel-item"
-             style="background-image: url('{{ slide.image_url if slide and slide.image_url else url_for('static', filename='images/slide' ~ i ~ '.png') }}');">
+             style="background-image: url('{{ slide.image_url if slide and slide.image_url else ('https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132203/luxfakya/static/slide1.png' if i == 1 else 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132205/luxfakya/static/slide2.png' if i == 2 else 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132206/luxfakya/static/slide3.png') }}');">
             <div class="hero-carousel-overlay"></div>
             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100">
                 <h5 class="text-gold text-uppercase letter-spacing-2 mb-3 display-6" style="font-size: 1.2rem;">
@@ -49,15 +49,15 @@
                         {% if category.image_url %}
                             <img src="{{ category.image_url }}" alt="{{ category.name }}" class="w-100 h-100 object-fit-cover">
                         {% elif category.name == 'Dattes (تمور)' %}
-                            <img src="{{ url_for('static', filename='images/dates.png') }}" alt="{{ category.name }}">
+                            <img src="https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132198/luxfakya/static/dates.png" alt="{{ category.name }}">
                         {% elif category.name == 'Fruits secs / fruits à coque (مكسرات / فاكية)' %}
-                            <img src="{{ url_for('static', filename='images/nuts.png') }}" alt="{{ category.name }}">
+                            <img src="https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132199/luxfakya/static/nuts.png" alt="{{ category.name }}">
                         {% elif category.name == 'Fruits confits (فواكه معسلة)' %}
-                            <img src="{{ url_for('static', filename='images/driedfood.png') }}" alt="{{ category.name }}">
+                            <img src="https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132200/luxfakya/static/driedfood.png" alt="{{ category.name }}">
                         {% elif category.name == 'Fruits lyophilisés (فواكه مجففة بالتبريد)' %}
-                            <img src="{{ url_for('static', filename='images/driedfood.png') }}" alt="{{ category.name }}">
+                            <img src="https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132200/luxfakya/static/driedfood.png" alt="{{ category.name }}">
                         {% elif category.name == 'Offres (عروض)' %}
-                            <img src="{{ url_for('static', filename='images/gift.png') }}" alt="{{ category.name }}">
+                            <img src="https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132201/luxfakya/static/gift.png" alt="{{ category.name }}">
                         {% else %}
                              <img src="https://via.placeholder.com/300x300?text={{ category.name }}" alt="{{ category.name }}" class="w-100 h-100 object-fit-cover">
                         {% endif %}
@@ -213,7 +213,7 @@
                 <a href="{{ url_for('main.shop') }}" class="btn btn-gold btn-lg px-5">{{ get_text('view_offers') }}</a>
             </div>
             <div class="col-md-6 text-center" data-aos="fade-left">
-                <img src="{{ limited_offer.image_url or url_for('static', filename='images/dates.png') }}" alt="Deals" class="img-fluid rounded-3 shadow" style="max-height: 400px; object-fit: cover;">
+                <img src="{{ limited_offer.image_url or 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132198/luxfakya/static/dates.png' }}" alt="Deals" class="img-fluid rounded-3 shadow" style="max-height: 400px; object-fit: cover;">
             </div>
         </div>
     </div>

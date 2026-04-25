@@ -131,14 +131,14 @@ class Product(db.Model):
             return self.image_url
         if self.category:
             if 'Dattes' in self.category.name:
-                return '/static/images/dates.png'
+                return 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132198/luxfakya/static/dates.png'
             if 'Fruits secs' in self.category.name:
-                return '/static/images/nuts.png'
+                return 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132199/luxfakya/static/nuts.png'
             if 'Fruits confits' in self.category.name or 'Fruits lyophilisés' in self.category.name:
-                return '/static/images/driedfood.png'
+                return 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132200/luxfakya/static/driedfood.png'
             if 'Offres' in self.category.name:
-                return '/static/images/gift.png'
-        return '/static/images/logo.png'
+                return 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132201/luxfakya/static/gift.png'
+        return 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132183/luxfakya/static/logo.png'
 
     def to_dict(self):
         return {
