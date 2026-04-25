@@ -83,12 +83,6 @@ class UserLog(db.Model):
 
     user = db.relationship('User', backref=db.backref('logs', lazy=True))
 
-class DbImage(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    filename = db.Column(db.String(255), nullable=True)
-    data = db.Column(db.LargeBinary, nullable=False)
-    mimetype = db.Column(db.String(100), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
 from flask_login import login_user, logout_user, login_required, current_user
-from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection, DbImage, UserLog, SiteSetting
+from models import db, User, Product, ProductPricing, Order, OrderItem, Category, HomeSection, UserLog, SiteSetting
 from translations import translations, get_trans
 import os
 import uuid

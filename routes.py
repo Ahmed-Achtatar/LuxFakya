@@ -1,20 +1,11 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash, current_app, send_file, jsonify
 from flask_login import current_user
-from models import Product, db, Order, OrderItem, HomeSection, Category, DbImage, UserLog, SiteSetting
+from models import Product, db, Order, OrderItem, HomeSection, Category, UserLog, SiteSetting
 from translations import get_trans
 import io
 
 main_bp = Blueprint('main', __name__)
 
-@main_bp.route('/db_image/<int:image_id>')
-def get_db_image(image_id):
-    image = DbImage.query.get_or_404(image_id)
-    return send_file(
-        io.BytesIO(image.data),
-        mimetype=image.mimetype,
-        as_attachment=False,
-        download_name=image.filename
-    )
 
 @main_bp.route('/set_lang/<lang_code>')
 def set_lang(lang_code):
