@@ -29,8 +29,8 @@
 
     {% block extra_css %}{% endblock %}
 
-    {% if meta_pixel_id %}
     <!-- Meta Pixel Code -->
+    {% if meta_pixel_id %}
     <script>
       !function(f,b,e,v,n,t,s)
       {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -46,8 +46,8 @@
     <noscript><img height="1" width="1" style="display:none"
       src="https://www.facebook.com/tr?id={{ meta_pixel_id }}&ev=PageView&noscript=1"
     /></noscript>
-    <!-- End Meta Pixel Code -->
     {% endif %}
+    <!-- End Meta Pixel Code -->
 </head>
 <body>
     <div class="site-wrapper d-flex flex-column min-vh-100">
@@ -336,7 +336,50 @@
 
                         // Meta Pixel AddToCart tracking
                         if (typeof fbq === 'function') {
-                            fbq('track', 'AddToCart');
+                            // Extract price if available from the form
+                            const selectEl = form.querySelector('select[name="quantity"]');
+                            let itemPrice = 0;
+                            let contentName = '';
+                            if (selectEl) {
+                                const selectedOption = selectEl.options[selectEl.selectedIndex];
+                                if (selectedOption) {
+                                    itemPrice = parseFloat(selectedOption.getAttribute('data-price') || 0);
+                                }
+                            }
+
+                            // Get product name if possible, by traversing DOM to card title
+                            const card = form.closest('.product-card') || form.closest('.card');
+                            if (card) {
+                                const titleEl = card.querySelector('.card-title') || card.querySelector('h1.display-4');
+                                if (titleEl) {
+                                    contentName = titleEl.textContent.trim();
+                                }
+                            }
+
+                            // Extract Product ID from action URL
+                            let contentId = '';
+                            const match = form.action.match(/\/cart\/add\/(\d+)/);
+                            if (match) {
+                                contentId = match[1];
+                            }
+
+                            if (itemPrice > 0) {
+                                fbq('track', 'AddToCart', {
+                                    content_name: contentName,
+                                    content_ids: [contentId],
+                                    content_type: 'product',
+                                    value: itemPrice,
+                                    currency: 'MAD'
+                                });
+                            } else {
+                                fbq('track', 'AddToCart', {
+                                    content_name: contentName,
+                                    content_ids: [contentId],
+                                    content_type: 'product',
+                                    value: 0.00,
+                                    currency: 'MAD'
+                                });
+                            }
                         }
                     } else {
                         showToast('{{ get_text("error_adding_cart") }}', 'danger');

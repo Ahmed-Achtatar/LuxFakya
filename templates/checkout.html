@@ -78,7 +78,17 @@
 {% block extra_js %}
 <script>
     if (typeof fbq === 'function') {
-        fbq('track', 'InitiateCheckout');
+        var contentIds = [];
+        {% for product_id, qty in session.get('cart', {}).items() %}
+            contentIds.push('{{ product_id }}');
+        {% endfor %}
+
+        fbq('track', 'InitiateCheckout', {
+            value: {{ grand_total }},
+            currency: 'MAD',
+            content_ids: contentIds,
+            content_type: 'product'
+        });
     }
 </script>
 {% endblock %}
