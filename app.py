@@ -2,6 +2,12 @@ import os
 import sys
 import logging
 import traceback
+from dotenv import load_dotenv
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+load_dotenv()
 from flask import Flask, session, request, send_from_directory, jsonify
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
@@ -28,6 +34,14 @@ def create_app(test_config=None):
             app.logger.setLevel(logging.INFO)
 
     app.logger.info(f"Application starting... Environment: {'Production' if not app.debug else 'Debug'}")
+
+    # Cloudinary Config
+    cloudinary.config(
+        cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+        api_key=os.environ.get('CLOUDINARY_API_KEY'),
+        api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
+        secure=True
+    )
 
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-luxfakia')
 

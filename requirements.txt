@@ -6,3 +6,5 @@ Flask-WTF
 gunicorn
 psycopg2-binary
 Pillow
+cloudinary
+python-dotenv

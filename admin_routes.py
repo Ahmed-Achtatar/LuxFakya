@@ -9,6 +9,8 @@ from functools import wraps
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from PIL import Image
+import cloudinary
+import cloudinary.uploader
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -35,31 +37,30 @@ def optimize_and_save_image(file):
         img.save(output_buffer, format='WEBP', optimize=True, quality=80)
         output_buffer.seek(0)
 
-        new_image = DbImage(
-            filename=f"{filename_base}.webp",
-            data=output_buffer.getvalue(),
-            mimetype='image/webp'
+        # Upload to Cloudinary
+        upload_result = cloudinary.uploader.upload(
+            output_buffer,
+            folder="luxfakya",
+            public_id=f"{filename_base}_{uuid.uuid4().hex[:8]}",
+            format="webp"
         )
-        db.session.add(new_image)
-        db.session.commit()
 
-        return url_for('main.get_db_image', image_id=new_image.id)
+        return upload_result['secure_url']
 
     except Exception as e:
-        current_app.logger.error(f"Optimization error: {e}")
-        # Fallback to original format
-        file.seek(0)
-        data = file.read()
-
-        new_image = DbImage(
-            filename=filename,
-            data=data,
-            mimetype=getattr(file, 'content_type', 'application/octet-stream')
-        )
-        db.session.add(new_image)
-        db.session.commit()
-
-        return url_for('main.get_db_image', image_id=new_image.id)
+        current_app.logger.error(f"Cloudinary upload error: {e}")
+        # Fallback to direct upload if optimization fails or Cloudinary fails
+        try:
+            file.seek(0)
+            upload_result = cloudinary.uploader.upload(
+                file,
+                folder="luxfakya"
+            )
+            return upload_result['secure_url']
+        except Exception as e2:
+            current_app.logger.error(f"Cloudinary fallback upload error: {e2}")
+            # If everything fails, we'd need another fallback, but for now we expect Cloudinary to work
+            return "https://via.placeholder.com/300"
 
 @admin_bp.before_request
 def restrict_access():
