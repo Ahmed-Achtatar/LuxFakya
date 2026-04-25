@@ -127,18 +127,27 @@ class Product(db.Model):
 
     @property
     def display_image_url(self):
-        if self.image_url:
-            return self.image_url
-        if self.category:
+        url = self.image_url
+        if not url and self.category:
             if 'Dattes' in self.category.name:
-                return 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132198/luxfakya/static/dates.png'
-            if 'Fruits secs' in self.category.name:
-                return 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132199/luxfakya/static/nuts.png'
-            if 'Fruits confits' in self.category.name or 'Fruits lyophilisés' in self.category.name:
-                return 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132200/luxfakya/static/driedfood.png'
-            if 'Offres' in self.category.name:
-                return 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132201/luxfakya/static/gift.png'
-        return 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132183/luxfakya/static/logo.png'
+                url = 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132198/luxfakya/static/dates.png'
+            elif 'Fruits secs' in self.category.name:
+                url = 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132199/luxfakya/static/nuts.png'
+            elif 'Fruits confits' in self.category.name or 'Fruits lyophilisés' in self.category.name:
+                url = 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132200/luxfakya/static/driedfood.png'
+            elif 'Offres' in self.category.name:
+                url = 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132201/luxfakya/static/gift.png'
+            else:
+                url = 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132183/luxfakya/static/logo.png'
+        
+        if not url:
+            url = 'https://res.cloudinary.com/dkj3xajcy/image/upload/v1777132183/luxfakya/static/logo.png'
+             
+        # Inject optimization parameters if it's a Cloudinary URL
+        if 'cloudinary.com' in url and '/upload/' in url and '/f_auto,q_auto/' not in url:
+            url = url.replace('/upload/', '/upload/f_auto,q_auto/')
+            
+        return url
 
     def to_dict(self):
         return {

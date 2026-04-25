@@ -98,6 +98,14 @@ def create_app(test_config=None):
     app.register_blueprint(admin_bp)
     app.register_blueprint(auth_bp)
 
+    @app.template_filter('optimize_image')
+    def optimize_image_filter(url):
+        if not url:
+            return url
+        if 'cloudinary.com' in url and '/upload/' in url and '/f_auto,q_auto/' not in url:
+            return url.replace('/upload/', '/upload/f_auto,q_auto/')
+        return url
+
     @app.context_processor
     def inject_global_context():
         lang = session.get('lang', 'fr')
